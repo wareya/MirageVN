@@ -1,5 +1,7 @@
 # MirageVN
 
+<p align="center"><img src='https://user-images.githubusercontent.com/585488/170622103-1df90280-e630-40ef-9441-25461343b3fa.png' width=640></p>
+
 MirageVN is an experimental VN engine built on top of Godot 3.
 
 As it is experimental software, it is missing a lot of creature comforts that VN engines typically have, and leaves many things up to the user to finish implementing. It is also very immature, so there are some common things that it does not yet support, and there are a lot of rough edges.
@@ -107,7 +109,7 @@ Note: if you have any colons in narration, this tool will interpret the first on
 
 Note 2: In Godot's script editor, you can indent or unindent entire sections of code by multi-line selecting them and pressing tab or shift-tab. You can do this to make Godot stop complaining about the indentation being wrong.
 
-**WARNING**: MirageVN's code uses spaces for indentation, because it's what I use. Godot defaults to using tabstops for indentation. This may cause problems for you. You can convert an entire script file to a single indentation type with the `Edit -> Convert Indent to (Spaces/Tabs)` menu item in Godot's script editor. This will fix your problems.
+**WARNING**: MirageVN's code uses spaces for indentation, because it's what I use. Godot defaults to using "hard tabs" for indentation, with spaces being a non-default editor option. This discrepancy may cause problems for you. You can convert an entire script file to be a consistent indentation type with the `Edit -> Convert Indent to (Spaces/Tabs)` menu item in Godot's script editor. This will fix your problems.
 
 ## Cutscene scripting documentation
 
