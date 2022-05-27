@@ -1,0 +1,9 @@
+.import/
+.builds/
+.trash/
+test/
+sounds/ignore
+bgm/ignore
+*.flac
+*.7z
+*.zip

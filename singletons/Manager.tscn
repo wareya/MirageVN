@@ -1,0 +1,571 @@
+[gd_scene load_steps=50 format=2]
+
+[ext_resource path="res://singletons/Manager.gd" type="Script" id=1]
+[ext_resource path="res://singletons/Background.gd" type="Script" id=2]
+[ext_resource path="res://art/ui/next.png" type="Texture" id=3]
+[ext_resource path="res://singletons/BGMaterial.tres" type="Material" id=4]
+[ext_resource path="res://art/transition/bleedcircle.png" type="Texture" id=6]
+[ext_resource path="res://singletons/Tachie.tscn" type="PackedScene" id=7]
+[ext_resource path="res://art/ui/textbox4.png" type="Texture" id=8]
+[ext_resource path="res://singletons/TachieShader.tres" type="Material" id=9]
+[ext_resource path="res://art/ui/transparent.png" type="Texture" id=13]
+[ext_resource path="res://art/transition/center.png" type="Texture" id=14]
+[ext_resource path="res://art/ui/textbox2.png" type="Texture" id=15]
+[ext_resource path="res://art/ui/done.png" type="Texture" id=16]
+[ext_resource path="res://art/normal/noisy.png" type="Texture" id=17]
+[ext_resource path="res://resources/ScreenFader.shader" type="Shader" id=18]
+[ext_resource path="res://singletons/ScreenFader.gd" type="Script" id=19]
+[ext_resource path="res://fonts/Quando-Regular.ttf" type="DynamicFontData" id=20]
+[ext_resource path="res://fonts/AndadaPro-Bold.ttf" type="DynamicFontData" id=21]
+[ext_resource path="res://fonts/AndadaPro-Italic.ttf" type="DynamicFontData" id=22]
+[ext_resource path="res://fonts/AndadaPro-BoldItalic.ttf" type="DynamicFontData" id=23]
+[ext_resource path="res://art/cutscene/bg/night bg.jpg" type="Texture" id=25]
+[ext_resource path="res://singletons/MouseCatcher.gd" type="Script" id=26]
+[ext_resource path="res://resources/ButtonBG.theme" type="Theme" id=27]
+[ext_resource path="res://fonts/Monda-Regular.ttf" type="DynamicFontData" id=28]
+
+[sub_resource type="Animation" id=1]
+resource_name = "default"
+length = 0.001
+tracks/0/type = "value"
+tracks/0/path = NodePath(".:volume_db")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 0 ),
+"transitions": PoolRealArray( 1 ),
+"update": 0,
+"values": [ 0.0 ]
+}
+
+[sub_resource type="Animation" id=2]
+resource_name = "fadeout"
+tracks/0/type = "value"
+tracks/0/path = NodePath(".:volume_db")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 0, 0.3, 0.7, 1 ),
+"transitions": PoolRealArray( 1, 1, 1, 1 ),
+"update": 0,
+"values": [ 0.0, -6.0, -20.0, -80.0 ]
+}
+tracks/1/type = "method"
+tracks/1/path = NodePath(".")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/keys = {
+"times": PoolRealArray( 1 ),
+"transitions": PoolRealArray( 1 ),
+"values": [ {
+"args": [  ],
+"method": "stop"
+} ]
+}
+
+[sub_resource type="CanvasItemMaterial" id=30]
+
+[sub_resource type="Shader" id=40]
+code = "// NOTE: Shader automatically converted from Godot Engine 3.4.4.stable's CanvasItemMaterial.
+
+shader_type canvas_item;
+render_mode blend_mix;
+
+// for future use if godot adds SDF font importing
+
+/*
+float estimate_distance(sampler2D sampler, vec2 uv, vec2 px_size) {
+    return texture(sampler, uv).a - 0.5;
+}
+
+void fragment(){
+    float dist = estimate_distance(TEXTURE, UV, TEXTURE_PIXEL_SIZE);
+    COLOR.a = clamp((dist / min(1.0, dFdx(UV.x)/TEXTURE_PIXEL_SIZE.x)) + 0.5, 0.0, 1.0);
+    //COLOR.a = dist;
+    //COLOR.a = 1.0;
+}
+*/"
+
+[sub_resource type="ShaderMaterial" id=41]
+shader = SubResource( 40 )
+
+[sub_resource type="DynamicFont" id=16]
+size = 25
+outline_size = 1
+outline_color = Color( 0.0901961, 0.0901961, 0.105882, 1 )
+use_filter = true
+font_data = ExtResource( 23 )
+
+[sub_resource type="DynamicFont" id=17]
+size = 25
+outline_size = 1
+outline_color = Color( 0.0901961, 0.0901961, 0.105882, 1 )
+use_filter = true
+font_data = ExtResource( 22 )
+
+[sub_resource type="DynamicFont" id=18]
+size = 25
+outline_size = 1
+outline_color = Color( 0.0901961, 0.0901961, 0.105882, 1 )
+use_filter = true
+font_data = ExtResource( 21 )
+
+[sub_resource type="DynamicFont" id=19]
+size = 22
+outline_size = 1
+outline_color = Color( 0, 0, 0, 1 )
+use_filter = true
+extra_spacing_top = 2
+extra_spacing_bottom = 1
+font_data = ExtResource( 20 )
+
+[sub_resource type="AtlasTexture" id=34]
+atlas = ExtResource( 3 )
+region = Rect2( 144, 0, 48, 48 )
+
+[sub_resource type="AtlasTexture" id=7]
+atlas = ExtResource( 3 )
+region = Rect2( 192, 0, 48, 48 )
+
+[sub_resource type="AtlasTexture" id=8]
+atlas = ExtResource( 3 )
+region = Rect2( 240, 0, 48, 48 )
+
+[sub_resource type="AtlasTexture" id=3]
+atlas = ExtResource( 3 )
+region = Rect2( 0, 0, 48, 48 )
+
+[sub_resource type="AtlasTexture" id=4]
+atlas = ExtResource( 3 )
+region = Rect2( 48, 0, 48, 48 )
+
+[sub_resource type="AtlasTexture" id=5]
+atlas = ExtResource( 3 )
+region = Rect2( 96, 0, 48, 48 )
+
+[sub_resource type="AtlasTexture" id=14]
+atlas = ExtResource( 16 )
+region = Rect2( 240, 0, 48, 48 )
+
+[sub_resource type="AtlasTexture" id=9]
+atlas = ExtResource( 16 )
+region = Rect2( 192, 0, 48, 48 )
+
+[sub_resource type="AtlasTexture" id=10]
+atlas = ExtResource( 16 )
+region = Rect2( 0, 0, 48, 48 )
+
+[sub_resource type="AtlasTexture" id=11]
+atlas = ExtResource( 16 )
+region = Rect2( 48, 0, 48, 48 )
+
+[sub_resource type="AtlasTexture" id=12]
+atlas = ExtResource( 16 )
+region = Rect2( 96, 0, 48, 48 )
+
+[sub_resource type="AtlasTexture" id=13]
+atlas = ExtResource( 16 )
+region = Rect2( 144, 0, 48, 48 )
+
+[sub_resource type="SpriteFrames" id=15]
+animations = [ {
+"frames": [ SubResource( 34 ), SubResource( 34 ), SubResource( 7 ), SubResource( 8 ), SubResource( 3 ), SubResource( 4 ), SubResource( 5 ), SubResource( 34 ), SubResource( 34 ), SubResource( 34 ), SubResource( 34 ), SubResource( 34 ) ],
+"loop": true,
+"name": "next",
+"speed": 15.0
+}, {
+"frames": [ SubResource( 14 ), SubResource( 14 ), SubResource( 9 ), SubResource( 10 ), SubResource( 11 ), SubResource( 12 ), SubResource( 13 ), SubResource( 9 ), SubResource( 14 ), SubResource( 14 ), SubResource( 14 ), SubResource( 14 ) ],
+"loop": true,
+"name": "done",
+"speed": 15.0
+} ]
+
+[sub_resource type="DynamicFont" id=24]
+size = 21
+outline_size = 1
+outline_color = Color( 0.223529, 0.227451, 0.286275, 1 )
+use_filter = true
+extra_spacing_space = 3
+font_data = ExtResource( 20 )
+
+[sub_resource type="DynamicFont" id=38]
+size = 14
+use_filter = true
+extra_spacing_top = -1
+extra_spacing_bottom = 1
+font_data = ExtResource( 28 )
+
+[sub_resource type="CanvasItemMaterial" id=27]
+
+[sub_resource type="ShaderMaterial" id=42]
+shader = ExtResource( 18 )
+shader_param/fadeamount = 0.0
+shader_param/invert = false
+shader_param/contrast = 1.0
+
+[node name="HUD" type="CanvasLayer"]
+layer = 11
+script = ExtResource( 1 )
+
+[node name="ClearColor" type="CanvasLayer" parent="."]
+layer = -63
+
+[node name="Rect" type="ColorRect" parent="ClearColor"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+color = Color( 0.121569, 0.12549, 0.137255, 1 )
+__meta__ = {
+"_edit_lock_": true,
+"_edit_use_anchors_": false
+}
+
+[node name="BGM" type="AudioStreamPlayer" parent="."]
+bus = "BGM"
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="BGM"]
+autoplay = "default"
+anims/default = SubResource( 1 )
+anims/fadeout = SubResource( 2 )
+
+[node name="Jingle" type="AudioStreamPlayer" parent="."]
+volume_db = -12.0
+bus = "OtherSFX"
+
+[node name="Ambiance" type="AudioStreamPlayer" parent="."]
+
+[node name="Scene" type="CanvasLayer" parent="."]
+
+[node name="Background" type="TextureRect" parent="Scene"]
+material = ExtResource( 4 )
+anchor_right = 1.0
+anchor_bottom = 1.0
+texture = ExtResource( 25 )
+expand = true
+stretch_mode = 1
+script = ExtResource( 2 )
+fade_texture = ExtResource( 6 )
+normal_map = ExtResource( 17 )
+fade_contrast = 4.0
+fade_invert = true
+normal_strength = Vector2( 0.038, 0.095 )
+normal_scale = Vector2( 0.241, 0.308 )
+normal_timescale = Vector2( 0.008, 0 )
+normal_offset = Vector2( 0.36563, 0.26384 )
+texture2 = ExtResource( 25 )
+fadeamount = 0.882
+
+[node name="Tachie5" parent="Scene" instance=ExtResource( 7 )]
+visible = false
+material = ExtResource( 9 )
+texture = ExtResource( 13 )
+scale = 1.0
+
+[node name="Tachie4" parent="Scene" instance=ExtResource( 7 )]
+visible = false
+material = ExtResource( 9 )
+texture = ExtResource( 13 )
+scale = 1.0
+
+[node name="Tachie3" parent="Scene" instance=ExtResource( 7 )]
+visible = false
+material = ExtResource( 9 )
+texture = ExtResource( 13 )
+scale = 1.0
+
+[node name="Tachie2" parent="Scene" instance=ExtResource( 7 )]
+visible = false
+material = ExtResource( 9 )
+texture = ExtResource( 13 )
+scale = 1.0
+
+[node name="Tachie1" parent="Scene" instance=ExtResource( 7 )]
+visible = false
+material = ExtResource( 9 )
+rect_min_size = Vector2( 1280, 720 )
+texture = ExtResource( 13 )
+scale = 1.0
+
+[node name="Textbox" type="Control" parent="."]
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_top = -224.0
+mouse_filter = 2
+__meta__ = {
+"_edit_group_": true
+}
+
+[node name="ADV" type="TextureRect" parent="Textbox"]
+show_behind_parent = true
+material = SubResource( 30 )
+anchor_right = 1.0
+anchor_bottom = 1.0
+texture = ExtResource( 15 )
+expand = true
+stretch_mode = 1
+
+[node name="NVL" type="TextureRect" parent="Textbox"]
+visible = false
+modulate = Color( 1, 1, 1, 0.552941 )
+show_behind_parent = true
+material = SubResource( 30 )
+anchor_right = 1.0
+anchor_bottom = 1.0
+texture = ExtResource( 8 )
+expand = true
+stretch_mode = 1
+
+[node name="Face" type="TextureRect" parent="Textbox"]
+anchor_left = 0.5
+anchor_right = 0.5
+margin_left = -957.16
+margin_top = -31.0
+margin_right = -0.160004
+margin_bottom = 647.0
+expand = true
+stretch_mode = 6
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Label" type="RichTextLabel" parent="Textbox"]
+material = SubResource( 41 )
+anchor_left = 0.5
+anchor_right = 0.5
+anchor_bottom = 1.0
+margin_left = -360.0
+margin_top = 63.0
+margin_right = 360.0
+margin_bottom = -27.0
+rect_clip_content = false
+mouse_filter = 1
+custom_colors/font_color_shadow = Color( 0, 0, 0, 0.501961 )
+custom_constants/shadow_offset_x = 2
+custom_constants/shadow_offset_y = 2
+custom_constants/line_separation = 2
+custom_fonts/bold_italics_font = SubResource( 16 )
+custom_fonts/italics_font = SubResource( 17 )
+custom_fonts/bold_font = SubResource( 18 )
+custom_fonts/normal_font = SubResource( 19 )
+bbcode_enabled = true
+bbcode_text = "Welcome to MirageVN. [b]b[/b] [i]i[/i] [b][i]bi[/i][/b]
+[b]Bold test.[/b]
+[i]Italics test.[/i]
+[b][i]Bold italics test.[/i][/b]"
+text = "Welcome to MirageVN. b i bi
+Bold test.
+Italics test.
+Bold italics test."
+
+[node name="NextAnimHolder" type="Control" parent="Textbox"]
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+margin_left = -360.0
+margin_top = -161.0
+margin_right = -320.0
+margin_bottom = -121.0
+
+[node name="NextAnim" type="AnimatedSprite" parent="Textbox/NextAnimHolder"]
+position = Vector2( 756, 110 )
+frames = SubResource( 15 )
+animation = "done"
+playing = true
+
+[node name="Name" type="RichTextLabel" parent="Textbox"]
+anchor_left = 0.527
+anchor_right = 0.527
+margin_left = -361.464
+margin_top = 24.0
+margin_right = 361.536
+margin_bottom = 57.0
+mouse_filter = 1
+custom_colors/font_color_shadow = Color( 0, 0, 0, 0.501961 )
+custom_constants/shadow_offset_x = 2
+custom_constants/shadow_offset_y = 2
+custom_fonts/normal_font = SubResource( 24 )
+bbcode_enabled = true
+bbcode_text = "Guide"
+text = "Guide"
+
+[node name="MouseCatcher" type="Control" parent="."]
+anchor_right = 1.0
+anchor_bottom = 1.0
+script = ExtResource( 26 )
+
+[node name="Buttons" type="Control" parent="."]
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_top = -67.0
+mouse_filter = 2
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Quicksave" type="Button" parent="Buttons"]
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = -512.0
+margin_top = -24.0
+margin_right = -393.0
+theme = ExtResource( 27 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Label" type="Label" parent="Buttons/Quicksave"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+custom_colors/font_color_shadow = Color( 0, 0, 0, 1 )
+custom_fonts/font = SubResource( 38 )
+text = "Quicksave"
+align = 1
+valign = 1
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Quickload" type="Button" parent="Buttons"]
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = -393.0
+margin_top = -24.0
+margin_right = -274.0
+theme = ExtResource( 27 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Label" type="Label" parent="Buttons/Quickload"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+custom_colors/font_color_shadow = Color( 0, 0, 0, 1 )
+custom_fonts/font = SubResource( 38 )
+text = "Quickload"
+align = 1
+valign = 1
+
+[node name="Auto" type="Button" parent="Buttons"]
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = -274.0
+margin_top = -24.0
+margin_right = -155.0
+theme = ExtResource( 27 )
+toggle_mode = true
+
+[node name="Label" type="Label" parent="Buttons/Auto"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+custom_colors/font_color_shadow = Color( 0, 0, 0, 1 )
+custom_fonts/font = SubResource( 38 )
+text = "Auto"
+align = 1
+valign = 1
+
+[node name="Skip" type="Button" parent="."]
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = -155.0
+margin_top = -24.0
+margin_right = -36.0
+theme = ExtResource( 27 )
+toggle_mode = true
+
+[node name="Label" type="Label" parent="Skip"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+custom_colors/font_color_shadow = Color( 0, 0, 0, 1 )
+custom_fonts/font = SubResource( 38 )
+text = "Skip"
+align = 1
+valign = 1
+
+[node name="ScrollbackBG" type="ColorRect" parent="."]
+visible = false
+material = SubResource( 27 )
+anchor_right = 1.0
+anchor_bottom = 1.0
+color = Color( 0.0705882, 0.105882, 0.188235, 0.501961 )
+__meta__ = {
+"_edit_lock_": true,
+"_edit_use_anchors_": false
+}
+
+[node name="Scrollback" type="ScrollContainer" parent="."]
+anchor_left = 0.5
+anchor_right = 0.5
+anchor_bottom = 1.0
+margin_left = -360.0
+margin_right = 326.0
+mouse_filter = 2
+scroll_horizontal_enabled = false
+__meta__ = {
+"_edit_group_": true
+}
+
+[node name="List" type="VBoxContainer" parent="Scrollback"]
+margin_right = 686.0
+mouse_filter = 2
+size_flags_horizontal = 3
+custom_constants/separation = 0
+
+[node name="BleepPlayer" type="AudioStreamPlayer" parent="."]
+
+[node name="FadeLayer" type="CanvasLayer" parent="."]
+layer = 128
+
+[node name="ScreenFader" type="TextureRect" parent="FadeLayer"]
+modulate = Color( 0, 0, 0, 1 )
+material = SubResource( 42 )
+anchor_right = 1.0
+anchor_bottom = 1.0
+mouse_filter = 2
+texture = ExtResource( 14 )
+script = ExtResource( 19 )
+
+[node name="Choices" type="VBoxContainer" parent="."]
+anchor_left = 0.5
+anchor_right = 0.5
+anchor_bottom = 1.0
+margin_left = -128.0
+margin_top = 184.0
+margin_right = 128.0
+margin_bottom = -248.0
+rect_clip_content = true
+custom_constants/separation = 0
+alignment = 2
+__meta__ = {
+"_edit_lock_": true,
+"_edit_use_anchors_": false
+}
+
+[node name="DebugText" type="Label" parent="."]
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = 896.0
+margin_bottom = -341.0
+align = 2
+autowrap = true
+__meta__ = {
+"_edit_lock_": true,
+"_edit_use_anchors_": false
+}
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]

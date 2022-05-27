@@ -1,0 +1,15 @@
+[remap]
+
+importer="ogg_vorbis"
+type="AudioStreamOGGVorbis"
+path="res://.import/excited music.ogg-b777b884f107bdd6cb206f5313f58d81.oggstr"
+
+[deps]
+
+source_file="res://bgm/excited music.ogg"
+dest_files=[ "res://.import/excited music.ogg-b777b884f107bdd6cb206f5313f58d81.oggstr" ]
+
+[params]
+
+loop=true
+loop_offset=0

@@ -1,0 +1,98 @@
+[gd_scene load_steps=6 format=2]
+
+[ext_resource path="res://singletons/Tachie.gd" type="Script" id=1]
+[ext_resource path="res://art/cutscene/tachie/vn engine test tachie base.png" type="Texture" id=2]
+[ext_resource path="res://art/ui/transparent.png" type="Texture" id=3]
+
+[sub_resource type="Shader" id=6]
+code = "shader_type canvas_item;
+
+uniform vec2 rectsize;
+uniform sampler2D texture2;
+uniform vec2 texturesize;
+uniform vec2 texture2size;
+uniform float fadeamount;
+uniform vec2 position;
+uniform vec2 scale;
+
+varying vec2 _uv;
+varying vec2 _uv2;
+
+
+void vertex() {
+    float target_ratio = rectsize.x / rectsize.y;
+    float actual_ratio   = texturesize.x / texturesize.y;
+    float actual_ratio_2 = texture2size.x / texture2size.y;
+    
+    vec2 uv_in = UV.xy;
+    
+    uv_in -= position/rectsize;
+    
+    if(true)//actual_ratio <= target_ratio) // wider, shrink x
+    {
+        _uv = uv_in * vec2(target_ratio/actual_ratio, 1.0);
+        _uv.x += (1.0-(target_ratio/actual_ratio))/2.0;
+    }
+    else // taller, grow y
+    {
+        _uv = uv_in * vec2(1.0, actual_ratio/target_ratio);
+        _uv.y += (1.0-(actual_ratio/target_ratio))/2.0;
+    }
+    if(true)//actual_ratio_2 <= target_ratio) // wider, shrink x
+    {
+        _uv2 = uv_in * vec2(target_ratio/actual_ratio_2, 1.0);
+        _uv2.x += (1.0-(target_ratio/actual_ratio_2))/2.0;
+    }
+    else // taller, grow y
+    {
+        _uv2 = uv_in * vec2(1.0, actual_ratio_2/target_ratio);
+        _uv2.y += (1.0-(actual_ratio_2/target_ratio))/2.0;
+    }
+    _uv = (_uv-vec2(0.5))/scale + vec2(0.5);
+    _uv2 = (_uv2-vec2(0.5))/scale + vec2(0.5);
+}
+
+void fragment() {
+// Texture:2
+    vec2 uv = _uv + vec2(1.0, 0.0)/texturesize;
+    vec2 uv2 = _uv2 + vec2(1.0, 0.0)/texture2size;
+    vec4 colorA = texture(TEXTURE , uv);
+    if (uv.x < 0.0 || uv.x > 1.0 || uv.y < 0.0 || uv.y > 1.0)
+        colorA = vec4(0.0, 0.0, 0.0, 0.0);
+    vec4 colorB = texture(texture2, uv2);
+    colorA.rgb *= colorA.a;
+    colorB.rgb *= colorB.a;
+    vec4 colorC = mix(colorA, colorB, fadeamount);
+    if(colorC.a > 0.0)
+        colorC.rgb /= colorC.a;
+    
+// Output:0
+    COLOR = colorC;
+}
+
+void light() {
+// Output:0
+
+}
+"
+
+[sub_resource type="ShaderMaterial" id=7]
+shader = SubResource( 6 )
+shader_param/rectsize = Vector2( 1280, 720 )
+shader_param/texturesize = Vector2( 2039, 2894 )
+shader_param/texture2size = Vector2( 16, 16 )
+shader_param/fadeamount = 0.0
+shader_param/position = Vector2( 0.5, 100 )
+shader_param/scale = Vector2( 1.5, 1.5 )
+shader_param/texture2 = ExtResource( 3 )
+
+[node name="Tachie" type="TextureRect"]
+material = SubResource( 7 )
+anchor_right = 1.0
+anchor_bottom = 1.0
+texture = ExtResource( 2 )
+expand = true
+stretch_mode = 1
+script = ExtResource( 1 )
+texture2 = ExtResource( 3 )
+position = Vector2( 0, 200 )

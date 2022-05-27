@@ -1,0 +1,90 @@
+[gd_scene load_steps=5 format=2]
+
+[ext_resource path="res://resources/ButtonBG.theme" type="Theme" id=1]
+[ext_resource path="res://scenes/ui/Menu.gd" type="Script" id=2]
+[ext_resource path="res://fonts/Quando-Regular.ttf" type="DynamicFontData" id=3]
+
+[sub_resource type="DynamicFont" id=1]
+size = 25
+outline_size = 1
+outline_color = Color( 0, 0, 0, 1 )
+use_filter = true
+extra_spacing_top = 3
+extra_spacing_bottom = 1
+font_data = ExtResource( 3 )
+
+[node name="Menu" type="CanvasLayer"]
+layer = 63
+script = ExtResource( 2 )
+
+[node name="Buttons" type="VBoxContainer" parent="."]
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+margin_left = -200.0
+margin_top = -271.0
+margin_right = 200.0
+margin_bottom = -55.0
+
+[node name="New Game" type="Button" parent="Buttons" groups=["UIButton"]]
+margin_right = 400.0
+margin_bottom = 48.0
+rect_min_size = Vector2( 256, 48 )
+theme = ExtResource( 1 )
+custom_colors/font_color_disabled = Color( 1, 1, 1, 0.501961 )
+custom_colors/font_color_focus = Color( 1, 1, 1, 1 )
+custom_colors/font_color = Color( 0.87451, 0.87451, 0.87451, 1 )
+custom_colors/font_color_hover = Color( 1, 1, 1, 1 )
+custom_colors/font_color_pressed = Color( 1, 1, 1, 1 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Label" type="RichTextLabel" parent="Buttons/New Game"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = 12.0
+margin_top = 4.0
+margin_right = -8.0
+margin_bottom = -4.0
+mouse_filter = 2
+custom_colors/font_color_shadow = Color( 0, 0, 0, 0.501961 )
+custom_constants/shadow_offset_x = 2
+custom_constants/shadow_offset_y = 2
+custom_constants/shadow_as_outline = 0
+custom_fonts/normal_font = SubResource( 1 )
+bbcode_enabled = true
+bbcode_text = "[center]New Game[/center]"
+text = "New Game"
+
+[node name="Continue" type="Button" parent="Buttons" groups=["UIButton"]]
+margin_top = 52.0
+margin_right = 400.0
+margin_bottom = 100.0
+rect_min_size = Vector2( 256, 48 )
+theme = ExtResource( 1 )
+custom_colors/font_color = Color( 1, 1, 1, 1 )
+custom_colors/font_color_hover = Color( 1, 1, 1, 1 )
+custom_colors/font_color_pressed = Color( 1, 1, 1, 1 )
+disabled = true
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Label" type="RichTextLabel" parent="Buttons/Continue"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = 12.0
+margin_top = 4.0
+margin_right = -8.0
+margin_bottom = -4.0
+mouse_filter = 2
+custom_colors/font_color_shadow = Color( 0, 0, 0, 0.501961 )
+custom_constants/shadow_offset_x = 2
+custom_constants/shadow_offset_y = 2
+custom_constants/shadow_as_outline = 0
+custom_fonts/normal_font = SubResource( 1 )
+bbcode_enabled = true
+bbcode_text = "[center]Continue[/center]"
+text = "Continue"

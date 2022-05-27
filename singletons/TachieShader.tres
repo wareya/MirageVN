@@ -1,0 +1,128 @@
+[gd_resource type="ShaderMaterial" load_steps=3 format=2]
+
+[ext_resource path="res://art/ui/transparent.png" type="Texture" id=1]
+
+[sub_resource type="Shader" id=6]
+code = "shader_type canvas_item;
+
+uniform vec2 rectsize;
+uniform sampler2D texture2;
+uniform vec2 texturesize;
+uniform vec2 texture2size;
+uniform float fadeamount;
+uniform vec2 position;
+uniform vec2 scale;
+
+uniform bool flipx_1;
+uniform bool flipx_2;
+
+uniform float mip_hint;
+
+varying vec2 _uv;
+varying vec2 _uv2;
+
+varying float tex1_ratio;
+varying float tex2_ratio;
+
+uniform vec4 env_color;
+uniform vec4 env_light;
+uniform float env_saturation;
+
+// Converts a color from sRGB gamma to linear light gamma
+
+float overlay_scalar(float a, float b) {
+    if (a < 0.5) return 2.0*a*b;
+    else return 1.0 - 2.0*(1.0-a)*(1.0-b);
+}
+vec4 overlay(vec4 a, vec4 b) {
+    a.r = overlay_scalar(a.r, b.r);
+    a.g = overlay_scalar(a.g, b.g);
+    a.b = overlay_scalar(a.b, b.b);
+    return a;
+}
+
+void vertex() {
+    float target_ratio = rectsize.x / rectsize.y;
+    float actual_ratio   = texturesize.x / texturesize.y;
+    float actual_ratio_2 = texture2size.x / texture2size.y;
+    
+    vec2 uv_in = UV.xy;
+    
+    uv_in -= position/rectsize;
+    
+    if(true)//actual_ratio <= target_ratio) // wider, shrink x
+    {
+        tex1_ratio = texturesize.y/rectsize.y;
+        _uv = uv_in * vec2(target_ratio/actual_ratio, 1.0);
+        _uv.x += (1.0-(target_ratio/actual_ratio))/2.0;
+    }
+    else // taller, grow y
+    {
+        _uv = uv_in * vec2(1.0, actual_ratio/target_ratio);
+        _uv.y += (1.0-(actual_ratio/target_ratio))/2.0;
+    }
+    if(true)//actual_ratio_2 <= target_ratio) // wider, shrink x
+    {
+        tex2_ratio = texture2size.y/rectsize.y;
+        _uv2 = uv_in * vec2(target_ratio/actual_ratio_2, 1.0);
+        _uv2.x += (1.0-(target_ratio/actual_ratio_2))/2.0;
+    }
+    else // taller, grow y
+    {
+        _uv2 = uv_in * vec2(1.0, actual_ratio_2/target_ratio);
+        _uv2.y += (1.0-(actual_ratio_2/target_ratio))/2.0;
+    }
+    _uv = (_uv-vec2(0.5))/scale + vec2(0.5);
+    _uv2 = (_uv2-vec2(0.5))/scale + vec2(0.5);
+}
+
+void fragment() {
+// Texture:2
+    vec2 uv = _uv + vec2(1.0, 0.0)/texturesize;
+    vec2 uv2 = _uv2 + vec2(1.0, 0.0)/texture2size;
+    float tex1_scale = 1.0/tex1_ratio/scale.y*mip_hint;
+    if (flipx_1) uv.x  = 1.0 - uv.x;
+    if (flipx_2) uv2.x = 1.0 - uv2.x;
+    vec4 colorA = textureLod(TEXTURE , uv, log2(tex1_ratio/scale.y/mip_hint) - 0.25);
+    if (uv.x < 0.0 || uv.x > 1.0 || uv.y < 0.0 || uv.y > 1.0)
+        colorA = vec4(0.0, 0.0, 0.0, 0.0);
+    vec4 colorB = textureLod(texture2, uv2, log2(tex2_ratio/scale.y/mip_hint) - 0.25);
+    if (uv2.x < 0.0 || uv2.x > 1.0 || uv2.y < 0.0 || uv2.y > 1.0)
+        colorB = vec4(0.0, 0.0, 0.0, 0.0);
+    colorA.rgb *= colorA.a;
+    colorB.rgb *= colorB.a;
+    vec4 colorC = mix(colorA, colorB, fadeamount);
+    if(colorC.a > 0.0)
+        colorC.rgb /= colorC.a;
+    
+    vec4 gray = vec4(vec3(colorC.r/3.0 + colorC.g/3.0 + colorC.b/3.0), colorC.a);
+    colorC = env_saturation * colorC + (1.0-env_saturation) * gray;
+    
+    colorC = overlay(colorC, env_color);
+    colorC *= env_light;
+    
+// Output:0
+    COLOR = colorC;
+}
+
+void light() {
+// Output:0
+
+}
+"
+
+[resource]
+shader = SubResource( 6 )
+shader_param/rectsize = Vector2( 1280, 720 )
+shader_param/texturesize = Vector2( 16, 16 )
+shader_param/texture2size = Vector2( 16, 16 )
+shader_param/fadeamount = 0.0
+shader_param/position = Vector2( 0.5, 250 )
+shader_param/scale = Vector2( 1.75, 1.75 )
+shader_param/flipx_1 = null
+shader_param/flipx_2 = null
+shader_param/mip_hint = 1.48056
+shader_param/env_color = Color( 0.5, 0.5, 0.5, 1 )
+shader_param/env_light = Color( 1, 1, 1, 1 )
+shader_param/env_saturation = 1.0
+shader_param/texture2 = ExtResource( 1 )

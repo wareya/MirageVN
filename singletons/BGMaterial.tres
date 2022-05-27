@@ -1,0 +1,23 @@
+[gd_resource type="ShaderMaterial" load_steps=5 format=2]
+
+[ext_resource path="res://art/cutscene/bg/night bg.jpg" type="Texture" id=1]
+[ext_resource path="res://art/normal/noisy.png" type="Texture" id=2]
+[ext_resource path="res://art/transition/bleedcircle.png" type="Texture" id=3]
+[ext_resource path="res://singletons/BGShader.gdshader" type="Shader" id=4]
+
+[resource]
+shader = ExtResource( 4 )
+shader_param/texturesize = Vector2( 1920, 1080 )
+shader_param/texture2size = Vector2( 1920, 1080 )
+shader_param/fadeamount = 0.882
+shader_param/contrast = 4.0
+shader_param/invert = true
+shader_param/rectsize = null
+shader_param/normal_strength = Vector2( 0.0038, 0.0095 )
+shader_param/normal_scale = Vector2( 0.241, 0.308 )
+shader_param/normal_offset = Vector2( 0.201355, 0.26384 )
+shader_param/transform_1 = Transform2D( 1, 0, 0, 1, 0, 0 )
+shader_param/transform_2 = Transform2D( 1, 0, 0, 1, 0, 0 )
+shader_param/texture2 = ExtResource( 1 )
+shader_param/texture3 = ExtResource( 3 )
+shader_param/normalmap = ExtResource( 2 )

@@ -1,0 +1,66 @@
+[gd_resource type="Theme" load_steps=9 format=2]
+
+[ext_resource path="res://art/ui/scroll fg a.png" type="Texture" id=1]
+[ext_resource path="res://art/ui/scroll fg b.png" type="Texture" id=2]
+[ext_resource path="res://art/ui/scroll fg c.png" type="Texture" id=3]
+[ext_resource path="res://art/ui/scroll bg.png" type="Texture" id=4]
+
+[sub_resource type="StyleBoxTexture" id=28]
+content_margin_left = 2.0
+content_margin_right = 2.0
+content_margin_top = 2.0
+content_margin_bottom = 2.0
+texture = ExtResource( 1 )
+region_rect = Rect2( 0, 0, 16, 16 )
+margin_left = 7.0
+margin_right = 7.0
+margin_top = 7.0
+margin_bottom = 7.0
+
+[sub_resource type="StyleBoxTexture" id=29]
+content_margin_left = 2.0
+content_margin_right = 2.0
+content_margin_top = 2.0
+content_margin_bottom = 2.0
+texture = ExtResource( 2 )
+region_rect = Rect2( 0, 0, 16, 16 )
+margin_left = 7.0
+margin_right = 7.0
+margin_top = 7.0
+margin_bottom = 7.0
+
+[sub_resource type="StyleBoxTexture" id=30]
+content_margin_left = 2.0
+content_margin_right = 2.0
+content_margin_top = 2.0
+content_margin_bottom = 2.0
+texture = ExtResource( 3 )
+region_rect = Rect2( 0, 0, 16, 16 )
+margin_left = 7.0
+margin_right = 7.0
+margin_top = 7.0
+margin_bottom = 7.0
+
+[sub_resource type="StyleBoxTexture" id=31]
+content_margin_left = 0.0
+content_margin_right = 0.0
+content_margin_top = 0.0
+content_margin_bottom = 0.0
+texture = ExtResource( 4 )
+region_rect = Rect2( 0, 0, 16, 16 )
+margin_left = 5.0
+margin_right = 5.0
+margin_top = 5.0
+margin_bottom = 5.0
+
+[resource]
+HScrollBar/styles/grabber = SubResource( 28 )
+HScrollBar/styles/grabber_highlight = SubResource( 29 )
+HScrollBar/styles/grabber_pressed = SubResource( 30 )
+HScrollBar/styles/scroll = SubResource( 31 )
+HScrollBar/styles/scroll_focus = SubResource( 31 )
+VScrollBar/styles/grabber = SubResource( 28 )
+VScrollBar/styles/grabber_highlight = SubResource( 29 )
+VScrollBar/styles/grabber_pressed = SubResource( 30 )
+VScrollBar/styles/scroll = SubResource( 31 )
+VScrollBar/styles/scroll_focus = SubResource( 31 )

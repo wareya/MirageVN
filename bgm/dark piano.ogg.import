@@ -1,0 +1,15 @@
+[remap]
+
+importer="ogg_vorbis"
+type="AudioStreamOGGVorbis"
+path="res://.import/dark piano.ogg-91b962655ca3d549ddb8f641b5a7690b.oggstr"
+
+[deps]
+
+source_file="res://bgm/dark piano.ogg"
+dest_files=[ "res://.import/dark piano.ogg-91b962655ca3d549ddb8f641b5a7690b.oggstr" ]
+
+[params]
+
+loop=true
+loop_offset=0

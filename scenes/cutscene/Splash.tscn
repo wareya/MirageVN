@@ -1,0 +1,18 @@
+[gd_scene load_steps=3 format=2]
+
+[ext_resource path="res://scenes/cutscene/Cutscene.gd" type="Script" id=1]
+[ext_resource path="res://cutscenes/Splash.gd" type="Script" id=2]
+
+[node name="Splash" type="Node2D"]
+script = ExtResource( 1 )
+cutscene = ExtResource( 2 )
+
+[node name="CanvasLayer" type="CanvasLayer" parent="."]
+
+[node name="ColorRect" type="ColorRect" parent="CanvasLayer"]
+visible = false
+margin_right = 1304.0
+margin_bottom = 726.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
