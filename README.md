@@ -30,6 +30,13 @@ Useful features MirageVN does **NOT** currently have, and that you will need to 
 - Rewinding via backlog
 - Facial animation
 - Expression overlays (expression variations need to be full independent images right now)
+- Ruby text
+
+Known issues:
+
+- Godot doesn't support mixed-DPI setups 100%; I have a 1x DPI scale main monitor, and if I drag godot projects onto my 1.25x DPI scale monitor, they end up blurry
+- While window resizing results in sharp text and sprites, the project is not truly base-resolution-independent; changing the default window resolution away from 720p will slightly break now things are positioned
+- Certain things that should be project-wide shared settings are currently hardcoded, like tachie fading time etc.
 
 ## How to use
 
