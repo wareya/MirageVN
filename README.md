@@ -59,6 +59,14 @@ You will now be inside of MirageVN.
 
 Press the "play" button in the top right corner of the editor to launch the demo project. Feel free to read through it, but beware that the second cutscene expects you to find your way around the editor and tinker with its cutscene code.
 
+### Cutscene scripting documentation
+
+Bare-bones cutscene scrpiting docs: https://github.com/wareya/MirageVN/wiki/Cutscene-Scripting-Documentation
+
+MirageVN's documentation is not yet complete. However, the demo cutscenes use almost all of MirageVN's built-in functionality at least once, and there are copious comments. This should be enough to get you started while full documentation is written.
+
+MirageVN is currently experimental and immature, so anything can change at any time. If you start a serious project, keep a local backup copy of the base project to reference later, in case the published version of MirageVN changes from how your project's copy works.
+
 ### Tour of Godot's UI and of the demo project
 
 In the editor, find and click through the File System panel to get an idea of what the project's file structure looks like.
@@ -75,7 +83,7 @@ It starts with a giant wall of comments giving warnings about the cutscene prepr
 
 Scroll down and skim the cutscene. This is essentially what a typical MirageVN cutscene script looks like, animations and transitions and all. In this particular cutscene script, there are comments explaining most of what's going on, and some common pitfalls. The next cutscene script, `1-1-Test.gd`, comments on fewer things, but the comments that it *does* have are much more detailed and stern.
 
-### Getting narration/dialogue into the right format.
+## Getting narration/dialogue into the right format.
 
 MirageVN's cutscene syntax was designed with one goal in mind: make it *straightforward* to get lots of text from a nametagged document into a cutscene script, working, as fast as possible. *Then* you can go in and do the tedious-but-hard-to-automate process of adding in the commands for things like tachie (standing sprite) placement, background transitions, music, sound effects, etc.
 
@@ -118,12 +126,6 @@ Note: if you have any colons in narration, this tool will interpret the first on
 Note 2: In Godot's script editor, you can indent or unindent entire sections of code by multi-line selecting them and pressing tab or shift-tab. You can do this to make Godot stop complaining about the indentation being wrong.
 
 **WARNING**: MirageVN's code uses spaces for indentation, because it's what I use. Godot defaults to using "hard tabs" for indentation, with spaces being a non-default editor option. This discrepancy may cause problems for you. You can convert an entire script file to be a consistent indentation type with the `Edit -> Convert Indent to (Spaces/Tabs)` menu item in Godot's script editor. This will fix your problems.
-
-## Cutscene scripting documentation
-
-I have not written actual documentation for MirageVN's cutscene scripting features yet. However, the demo cutscenes use almost all of MirageVN's built-in functionality at least once, and there are copious comments. I hope this is enough to get you started while I prepare to write real documentation.
-
-MirageVN is currently experimental and immature, so anything can change at any time. If you start a serious project, keep a local backup copy of the base project to reference later, in case the published version of MirageVN changes from how your project's copy works.
 
 ## Credits / License
 
