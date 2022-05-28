@@ -1,6 +1,8 @@
 extends CanvasLayer
 
-
+# Gets the number of seconds that have passed since the game engine was booted.
+# Useful for debugging.
+# Not useful for logic; use `get_process_delta_time` instead.
 func get_sec():
     return OS.get_ticks_usec()/1_000_000.0
 
@@ -53,6 +55,8 @@ var changing_room = false
 var changing_room_out = false
 signal room_changed
 signal room_change_complete
+# Changes to a new scene.
+# Unless you're creating a gameplay VN, you probably do not want to use this function directly.
 func change_to(target_level : String, flat_fade : bool = false):
     if changing_room_out:
         return
@@ -90,36 +94,12 @@ func change_to(target_level : String, flat_fade : bool = false):
         
         changing_room = false
         emit_signal("room_change_complete")
-    #else:
-    #    place_player(target_node)
 
 func _change_to(scene):
     if get_tree().current_scene and is_instance_valid(get_tree().current_scene):
         get_tree().current_scene.free()
     get_tree().get_root().add_child(scene)
     get_tree().current_scene = scene
-    #place_player(target_node)
-
-func add_entity(node : Node):
-    var holder = get_from_group("Entities")
-    if !holder:
-        holder = get_tree().current_scene
-    holder.add_child(node)
-
-func place_player(target_node):
-    var player = get_player()
-    if player == null:
-        #player = preload("res://scenes/entity/world/MyChar.tscn").instance()
-        #get_tree().current_scene.add_child(player)
-        #player.make_player()
-        pass
-    if target_node:
-        var spawn = get_tree().current_scene.find_node(target_node, true, false)
-        if spawn and player:
-            player.global_position = spawn.global_position
-    if player:
-        player.inform_mapchange()
-
 
 func parse_cutscene(script : GDScript):
     if script == null:
@@ -129,7 +109,7 @@ func parse_cutscene(script : GDScript):
 # save/saving/savedata related stuff
 
 # YOUR FLAGS ETC GO HERE
-# This is a dictionary. See https://docs.godotengine.org/en/stable/classes/class_dictionary.html
+# This is a dictionary. See https://docs.godotengine.org/en/3.4/classes/class_dictionary.html
 # Don't store objects that inherit from Reference in here.
 # Also don't store any data that cannot be JSON-serialized in here.
 # Such objects will not be saved/loaded properly.
@@ -169,6 +149,7 @@ func get_savable_scene_name():
     else:
         return "res://cutscenes/Dummy.gd"
 
+# Copies save-related data into a dictionary.
 func save_to_dict() -> Dictionary:
     var ret = {}
     # for loading:
@@ -186,6 +167,8 @@ func save_to_dict() -> Dictionary:
     ret["scene_number"] = scene_number
     return ret
 
+# Loads save-related data out from a dictionary and then forcibly changes the scene
+# to that save's cutscene script and fast-forwards (in a single frame) to where the user saved.
 func load_from_dict(data : Dictionary):
     SAVED_CUTSCENE = data["SAVED_CUTSCENE"]
     SAVED_LINE = data["SAVED_LINE"]
@@ -421,6 +404,8 @@ func bgm_fade(fade_time = 0.7):
     bgm_fading = false
     emit_signal("new_bgm_playing")
 
+# Plays new BGM. Fades the current BGM out first.
+# Use `null` to turn the BGM off. The fade will be slower.
 func play_bgm(bgm : AudioStream, fade_time = 0.7):
     if LOAD_SKIP:
         $BGM.stream = bgm
@@ -463,12 +448,12 @@ var highest_combo = 0
 var input_mode = "gameplay"
 var input_mode_stack = []
 
+# You probably don't need to use this unless you're making a gameplay-heavy VN or a minigame.
 func push_input_mode(mode):
-    #print("???? PUSHING input mode (%s)" % mode)
     input_mode_stack.push_back(input_mode)
     input_mode = mode
+# You probably don't need to use this unless you're making a gameplay-heavy VN or a minigame.
 func pop_input_mode(mode):
-    #print("???? popping input mode (%s)" % mode)
     if input_mode == mode:
         input_mode = input_mode_stack.pop_back()
     else:
@@ -482,9 +467,11 @@ var textbox_visibility_intent = false
 
 var typein_mode = true
 var typein_chars = -1
-func textbox_set_typin(onoff : bool):
+# Sets whether the type-in effect happens for newly-added text.
+func textbox_set_typein(onoff : bool):
     typein_mode = onoff
 
+# Sets which continue icon the textbox displays: "done" for square, "next" for arrow.
 func textbox_set_continue_icon(mode : String):
     if mode == "done":
         $Textbox/NextAnimHolder/NextAnim.animation = "done"
@@ -492,6 +479,7 @@ func textbox_set_continue_icon(mode : String):
         $Textbox/NextAnimHolder/NextAnim.animation = "next"
 
 var timers = {}
+# Creates and returns a timer that's aware of `do_timer_skip()`.
 func cutscene_timer(time : float) -> SkippableTimer:
     var timer = SkippableTimer.new(time, true)
     timers[timer] = null
@@ -508,6 +496,8 @@ func process_cutscene_timers(delta):
 
 var text_mode_NVL = false
 
+# Switches to NVL mode. The textbox will be screen-sized and add new text instead of replacing it.
+# Use pageflip_NVL to manually clear the textbox and create a new page.
 func set_NVL_mode():
     $Textbox/Label.bbcode_text = ""
     $Textbox/Label.visible_characters = 0
@@ -527,6 +517,7 @@ func set_NVL_mode():
     $Textbox/ADV.hide()
     $Textbox/NVL.show()
 
+# Switches to NVL mode. The textbox will be small and replace its full text when updated.
 func set_ADV_mode():
     $Textbox/Label.bbcode_text = ""
     $Textbox/Label.visible_characters = 0
@@ -603,12 +594,17 @@ func _process(delta):
     m1_pressed = false
     pass
 
+# Sets the background distortion configuration. There is a transition.
+# Distortion configurations are defined in `_normal_configs` in `Background.gd`.
 func configure_bg_distortion(mode : int):
     background.configure_bg_distortion(mode)
 
+# Sets what normal map texture is used by the background distortion system.
 func set_bg_normal_map(normal_map : Texture):
     background.normal_map = normal_map
 
+# Returns the background node.
+# You probably don't need to use this function.
 func get_bg():
     return background
 
@@ -623,31 +619,28 @@ func stuff_to_xform(position : Vector2, zoom : Vector2, angle : float = 0.0):
     xform = xform.rotated(angle)
     return xform
 
+# Sets the start and end transforms of the current, or being-transitioned-away-from, background.
 func set_bg_transform_1(position : Vector2, zoom : Vector2, angle : float = 0.0):
     var xform = stuff_to_xform(position, zoom, angle)
     background.set_transform_1(xform)
+# Sets just the end transform of the current, or being-transitioned-away-from, background.
 func set_bg_transform_1_target(position : Vector2, zoom : Vector2, angle : float = 0.0, time = 4.0):
     var xform = stuff_to_xform(position, zoom, angle)
     background.set_transform_1_target(xform, time)
+# Sets the start and end transforms of the next, or being-transitioned-towards, background.
 func set_bg_transform_2(position : Vector2, zoom : Vector2, angle : float = 0.0):
     var xform = stuff_to_xform(position, zoom, angle)
     background.set_transform_2(xform)
+# Sets just the end transform of the next, or being-transitioned-towards, background.
 func set_bg_transform_2_target(position : Vector2, zoom : Vector2, angle : float = 0.0, time = 4.0):
     var xform = stuff_to_xform(position, zoom, angle)
     background.set_transform_2_target(xform, time)
 
+# Adds text to an always-visible text layer on the screen.
+# Resets every frame.
+# Useful for debugging minigames.
 func debug_text(s):
     $DebugText.text += "%s\n" % s
-
-func get_player() -> Node:
-    var player : Node = null
-    for obj in get_tree().get_nodes_in_group("Player"):
-        player = obj
-        break
-    return player
-
-func is_player(node : Node):
-    return node.is_in_group("Player") and node == get_player()
 
 signal choice_finished
 func choice_select(choice_button):
@@ -660,6 +653,8 @@ func choice_select(choice_button):
     taken_choices.push_back(choice_button.text)
     emit_signal("choice_finished", choice_button.text)
 
+# Presents the user with a choice.
+# See `1-1-Test.gd` in the demo project to see how to use choices.
 func choice(choices):
     if LOAD_SKIP:
         _LOAD_CHOICE += 1
@@ -866,9 +861,13 @@ func process_cutscene(delta):
 var screen_shake_amount = 4.0
 var screen_shake_power = 0.0
 var screen_shake_power_target = 0.0
+# Stops screen shake.
+# There is a transition. No associated signal.
 func screen_shake_start():
     screen_shake_power_target = 1.0
-    
+
+# Stops screen shake.
+# There is a transition. No associated signal.
 func screen_shake_stop():
     screen_shake_power_target = 0.0
 
@@ -877,6 +876,9 @@ signal bg_transition_done
 const __transparent = preload("res://art/ui/transparent.png")
 var bg_nonce = 0
 var last_set_bg : Texture = null
+# Fades to a new background. Handles panning transforms gracefully.
+# The new background will have a clean panning transform; you will need to re-apply the panning
+# transform with `set_bg_transform_2[_target]` for the  target bg to be transformed.
 func set_bg(bg : Texture = null, instant : bool = false, no_textbox_hide = false):
     if bg == null and last_set_bg != null:
         bg = last_set_bg
@@ -950,6 +952,7 @@ func set_bg(bg : Texture = null, instant : bool = false, no_textbox_hide = false
         emit_signal("bg_transition_done")
 
 var _default_bg_mask = preload("res://art/transition/flat.png")
+# Sets the fading mask for the next background transition. Retained through further transitions.
 func set_bg_fade_mask(texture : Texture = _default_bg_mask, invert : bool = false, contrast : float = 1.0):
     if texture == _default_bg_mask:
         contrast = 0.0
@@ -977,6 +980,15 @@ var tachie_owners = [
 ]
 
 signal tachie_zoom_finished
+# Sets how zoomed-in a tachie is, in base resolution pixels. There is a transition.
+# Note: if you want certain tachie to render over other tachie, you need to reposition them within
+# their parent node. "Later" children of their parent node will render above "earlier" children.
+# As such, because Tachie1 is at the bottom by default, it will render above other tachie
+# by default, even if it has less zoom.
+# The base zoom and position of all tachie are defined in the `anim_default` variable
+# in `res://singletons/Tachie.gd`.
+# Tachie are scaled so that their top and bottom edges fit the screen by default, and then
+# zoomed in by the scale factor in `anim_default`, and then positioned.
 func set_tachie_zoom(slot : int, zoom : float):
     var tachie_slot : Tachie = tachie_slots[slot]
     tachie_slot.set_zoom(zoom)
@@ -984,6 +996,11 @@ func set_tachie_zoom(slot : int, zoom : float):
     emit_signal("tachie_zoom_finished")
 
 signal tachie_offset_finished
+# Sets the position offset for a tachie, in base resolution pixels. There is a transition.
+# The base zoom and position of all tachie are defined in the `anim_default` variable
+# in `res://singletons/Tachie.gd`.
+# Tachie are scaled so that their top and bottom edges fit the screen by default, and then
+# zoomed in by the scale factor in `anim_default`, and then positioned.
 func set_tachie_offset(slot : int, offset : Vector2):
     var tachie_slot : Tachie = tachie_slots[slot]
     tachie_slot.set_offset(offset)
@@ -993,7 +1010,7 @@ func set_tachie_offset(slot : int, offset : Vector2):
 # Call right after set_tachie, e.g.
 #    Manager.set_tachie(1, tachie_normal, "center")
 #    Manager.set_next_tachie_flipped(1)
-# Causes the tachie to be flipped starting with the target of the next/current tachie transition.
+# Causes a tachie to be flipped starting with the target of the next/current tachie transition.
 # This is retained past future transitions. To unflip the tachie, you must call this again with
 # false in the second argument slot.
 func set_tachie_next_flipped(slot : int, flipped : bool = true):
@@ -1001,6 +1018,11 @@ func set_tachie_next_flipped(slot : int, flipped : bool = true):
     tachie_slot.set_next_flipped(flipped)
 
 signal tachie_finished
+# Changes a tachie and optionally performs an animation during the transition.
+# Pass `null` as the tachie sprite texture to hide the tachie slot/make it invisible.
+# Manager will emit the "tachie_finished" signal when the transition/animation finishes.
+# Animations are defined in `res://singletons/Tachie.gd`, in the `special_anims` variable and
+# the `play_animation()` function.
 func set_tachie(slot : int, tachie : Texture, animation : String = "", no_textbox_hide = false, time : float = -1):
     if !no_textbox_hide and !LOAD_SKIP:
         if textbox_visibility_intent:
@@ -1027,6 +1049,8 @@ func set_tachie(slot : int, tachie : Texture, animation : String = "", no_textbo
         yield(tachie_slot, "animation_finished")
         emit_signal("tachie_finished")
 
+# Makes a tachie (standing sprite) perform an animation. The current sprite will be retained.
+# Manager will emit the "tachie_finished" signal when the animation finishes.
 func do_tachie_animation(slot : int, animation : String, time : float = -1):
     var tachie_slot : Tachie = tachie_slots[slot]
     if animation == "":
@@ -1047,20 +1071,33 @@ func do_tachie_animation(slot : int, animation : String, time : float = -1):
         yield(tachie_slot, "animation_finished")
         emit_signal("tachie_finished")
 
+# Sets the owner of a given tachie.
+# Used by the textbox identity system if an identity icon can't be found.
+# Note: the identity system is a huge hack. If you're making a full-size game, you should replace it.
 func set_tachie_owner(slot : int, identity : String):
     tachie_owners[slot] = identity
 
+# Makes a tachie play a particular animation.
+# Rarely used. Might be broken.
 func animate_tachie(slot : int, animation : String = ""):
     tachie_slots[slot].play_animation(animation)
 
+# Forces a tachie to skip to the end of its transition. Does not reset it.
+# Rarely used. Might be broken.
 func stop_tachie(slot : int):
     tachie_slots[slot].force_finish_anim()
 
+# Hides a specific tachie. Does not reset it.
+# No associated signal.
+# Rarely used. Might be broken.
 func hide_tachie(slot : int):
     var tachie_slot : TextureRect = tachie_slots[slot]
     if tachie_slot.modulate.a > 1 or tachie_slot.visible:
         tachie_slot.fadeout()
 
+# Fades out all tachie. Does not reset them.
+# No associated signal.
+# Rarely used. Might be broken.
 func hide_all_tachie():
     for tachie_slot in tachie_slots:
         if tachie_slot != null:
@@ -1073,14 +1110,21 @@ func skip_pressed():
         skip_pressed_during_read_text = true
         print("wheee")
 
+# Returns true if the user is reading in skip mode or holding down the "skip" input.
 func realtime_skip():
     return Input.is_action_pressed("skip") or $Skip.pressed
 
+# Returns whether non-timerlike general skippable things should be skipped this frame.
+# True if loading, holding the "skip" input, or the skip button is pressed.
+# You probably want to use do_timer_skip() instead.
 func do_general_skip():
     if LOAD_SKIP or realtime_skip():
         return true
     return false
-        
+
+# Returns whether timers should be skipped this frame.
+# True if loading, holding the "skip" input, the skip button is pressed, or the user is
+# performing inputs that should interrupt timers.
 func do_timer_skip():
     if do_general_skip():
         return true
@@ -1115,6 +1159,9 @@ func _textbox_show():
         if do_timer_skip(): i = 1.0
         $Textbox.modulate.a = smoothstep(0.0, 1.0, i)
     emit_signal("textbox_shown")
+
+# Shows the text box. An animation plays.
+# Returns the name of the signal within `Manager` that fires off when the animation finishes.
 func textbox_show():
     _textbox_show()
     return "textbox_shown"
@@ -1149,11 +1196,15 @@ func _textbox_hide(no_clear = false):
     $Textbox.hide()
     
     emit_signal("textbox_hidden")
+
+# Hides the text box. An animation plays. Clears the textbox by default, pass `true` to suppress.
+# Returns the name of the signal within `Manager` that fires off when the animation finishes.
 func textbox_hide(no_clear = false):
     _textbox_hide(no_clear)
     return "textbox_hidden"
 
 # Sound effect that interrupts the BGM.
+# No associated signal.
 #func play_jingle(jingle : AudioStream):
 #    if LOAD_SKIP:
 #        return
@@ -1165,7 +1216,9 @@ func textbox_hide(no_clear = false):
 #    yield($Jingle, "finished")
 #    $BGM.stream_paused = false
 
-# Sound effect.
+# Plays a sound effect.
+# Returns the sound effect's emitter. Every call creates a new, unique emitter.
+# The returned emitter will emit the "finished" signal on finish if it finishes gracefully.
 func sfx(sfx, pos = Vector2(), channel : String = "SFX", delay : float = 0.0):
     if LOAD_SKIP:
         return
@@ -1175,19 +1228,11 @@ func sfx(sfx, pos = Vector2(), channel : String = "SFX", delay : float = 0.0):
         print("!!!!!9314391438 woke up from yield")
     return EmitterFactory.emit(null, sfx, pos, channel)
 
+# Plays background ambiance. No associated signal.
 func ambiance(sound : AudioStream):
     $Ambiance.stop()
     $Ambiance.stream = sound
     $Ambiance.play()
-
-# Set the speaker tag in the textbox. Try not to use directly.
-func textbox_set_tag(bbcode : String):
-    if bbcode == "":
-        $Textbox/Label/Tag.hide()
-        $Textbox/Label/Tag.bbcode_text = ""
-    else:
-        $Textbox/Label/Tag.show()
-        $Textbox/Label/Tag.bbcode_text = bbcode
 
 var override_mode_after_cutscene = null
 
@@ -1258,7 +1303,7 @@ func set_font_outline_size(size : int):
         if font and font is DynamicFont:
             font.outline_size = size
 
-# Edit color constance to your preference.
+# Currently does nothing. For ADV games with separate dialogue and narration textboxes.
 func set_light_on_dark():
     $Textbox/NextAnimHolder/NextAnim.modulate = Color("#ffffff")
     $Textbox/Label.add_color_override("default_color", Color("#ffffff"))
@@ -1267,7 +1312,7 @@ func set_light_on_dark():
     $Textbox/Label.add_constant_override("shadow_offset_y", 1)
     set_font_outline_size(2)
     set_font_outline_color("#393a49")
-    pass
+# Currently does nothing. For ADV games with separate dialogue and narration textboxes.
 func set_dark_on_light():
     $Textbox/NextAnimHolder/NextAnim.modulate = Color("#261810")
     $Textbox/Label.add_color_override("default_color", Color("#261810"))
@@ -1276,7 +1321,6 @@ func set_dark_on_light():
     $Textbox/Label.add_constant_override("shadow_offset_y", 0)
     set_font_outline_size(2)
     set_font_outline_color(Color("#C0FFFFFF"))
-    pass
 
 func group_exists(s : String) -> bool:
     return get_tree().get_nodes_in_group(s).size() > 0
@@ -1285,6 +1329,10 @@ func get_from_group(s : String) -> bool:
     return nodes[0] if nodes.size() > 0 else null
 
 var is_narration = false
+# Sets the nametag, icon, and 'bleep' for the next line of text.
+# The nametag "<<NARRATOR>>" is special and causes the line to be treated as narration.
+# Warning: I have not tested identities other than "<<NARRATOR>>" in NVL mode. They might be broken.
+# You probably don't need to call this function directly.
 func textbox_set_identity(name : String = "<<NARRATOR>>", icon : Texture = null, bleep : AudioStream = null):
     # FIXME everything related to displaying the speaker's face anywhere other than their tachie
     # is an absolute disaster jesus christ
@@ -1535,6 +1583,12 @@ func pageflip_NVL():
     typein_chars = 0
     
 
+# Adds bbcode to the textbox.
+# Replaces existing bbcode in ADV mode, adds bbcode in NVL mode.
+# Supports newline characters (\n).
+# Godot bbcode docs:
+# https://docs.godotengine.org/en/3.4/tutorials/ui/bbcode_in_richtextlabel.html
+# You probably don't need to call this function directly.
 func textbox_set_bbcode(bbcode : String):
     text_has_been_added_since_loadline_update = true
     last_displayed_line = bbcode
@@ -1591,7 +1645,8 @@ func textbox_set_bbcode(bbcode : String):
     else:
         $Textbox/Label.modulate = Color.white
 
-
+# Clears the textbox.
+# You probably don't need to call this function directly.
 func textbox_clear():
     $Textbox/Label.bbcode_text = ""
     $Textbox/Icon.bbcode_text = ""
@@ -1604,6 +1659,7 @@ var env_light = Color(1.0, 1.0, 1.0)
 var env_transition_speed = 1.0
 
 var env_nonce = 0
+# Sets the environmental coloration for tachie (standing sprites).
 func set_env(saturation : float = 1.0, color : Color = Color(0.5, 0.5, 0.5), light : Color = Color(1.0, 1.0, 1.0)):
     env_nonce += 1
     var start_nonce = env_nonce
@@ -1629,6 +1685,7 @@ func set_env(saturation : float = 1.0, color : Color = Color(0.5, 0.5, 0.5), lig
 
 var default_effect_framerate = 30
 
+# Node that holds an animated effect overlay. Progresses automatically.
 class Effect extends TextureRect:
     var size : Vector2
     var count : Vector2
@@ -1677,6 +1734,9 @@ class DummyEffect extends Node:
         print("dummy effect finishing")
         emit_signal("finished")
 
+# Low-level animated overlay effect spawner.
+# Takes a Texture and a Vector2 with the number of horizontal and vertical animation frames.
+# The texture is treated as a spritesheet, and is animated from left to right, then top to bottom.
 func spawn_effect_raw(_atlas : Texture, _count : Vector2) -> Effect:
     var effect = Effect.new(_atlas, _count)
     $Scene.add_child(effect)
@@ -1684,6 +1744,10 @@ func spawn_effect_raw(_atlas : Texture, _count : Vector2) -> Effect:
     effect.anchor_bottom = 1.0
     return effect
 
+
+# Spawns an animated overlay effect by name.
+# There are two built in effects: "Bubble" and "Splash".
+# Edit this function to add more.
 func spawn_effect(name : String):
     if do_timer_skip():
         var ret = DummyEffect.new()

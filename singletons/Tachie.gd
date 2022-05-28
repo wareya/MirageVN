@@ -170,6 +170,8 @@ func _anim_shake():
     var bounce = sin(x*PI*4) * x * (1-x) * 5
     anim_state.pos.x -= bounce*15
 
+# Dictionary of anim names to function name strings.
+# Special animations are relative to the tachie's animated base position.
 var special_anims = {
     "bounce" : "_anim_bounce",
     "bounceup" : "_anim_bounceup",
