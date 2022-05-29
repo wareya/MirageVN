@@ -63,7 +63,7 @@ Press the "play" button in the top right corner of the editor to launch the demo
 
 ### Cutscene scripting documentation
 
-Barebones cutscene scrpiting docs: https://github.com/wareya/MirageVN/wiki/Cutscene-Scripting-Documentation
+Barebones cutscene scripting docs: https://github.com/wareya/MirageVN/wiki/Cutscene-Scripting-Documentation
 
 ### Tour of Godot's UI and of the demo project
 
