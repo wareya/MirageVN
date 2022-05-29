@@ -6,6 +6,8 @@ MirageVN is an experimental VN engine built on top of Godot 3.
 
 As it is experimental software, it is missing a lot of creature comforts that VN engines typically have, and leaves many things up to the user to finish implementing. It is also very immature, so there are some common things that it does not yet support, and there are a lot of rough edges.
 
+Because of MirageVN's immaturity, anything can change at any time. If you start a serious project, keep a local backup copy of the base project to reference later, in case the published version of MirageVN changes from how your project's copy works.
+
 But all of the truly "difficult" VN-specific functionality is there.
 
 ## Features
