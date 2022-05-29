@@ -61,11 +61,7 @@ Press the "play" button in the top right corner of the editor to launch the demo
 
 ### Cutscene scripting documentation
 
-Bare-bones cutscene scrpiting docs: https://github.com/wareya/MirageVN/wiki/Cutscene-Scripting-Documentation
-
-MirageVN's documentation is not yet complete. However, the demo cutscenes use almost all of MirageVN's built-in functionality at least once, and there are copious comments. This should be enough to get you started while full documentation is written.
-
-MirageVN is currently experimental and immature, so anything can change at any time. If you start a serious project, keep a local backup copy of the base project to reference later, in case the published version of MirageVN changes from how your project's copy works.
+Barebones cutscene scrpiting docs: https://github.com/wareya/MirageVN/wiki/Cutscene-Scripting-Documentation
 
 ### Tour of Godot's UI and of the demo project
 
