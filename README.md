@@ -45,7 +45,7 @@ Known issues:
 
 ### Getting Started
 
-Download the repository into a new folder/directory somewhere on your system.
+[Download the repository](https://github.com/wareya/MirageVN/archive/refs/heads/main.zip) into a new folder/directory somewhere on your system.
 
 [Download the newest version of Godot 3](https://godotengine.org/download) on a computer and place it somewhere useful.
 
