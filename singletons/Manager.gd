@@ -11,7 +11,7 @@ var fade_color : Color = Color.white
 signal fade_completed
 var fading = false
 var fade_nonce = 0
-func do_fade_anim(invert = false, fadein = false, fade_time = 0.75):
+func do_fade_anim(invert = false, fadein = false, fade_time = EngineSettings.scene_fade_time):
     # Use a coroutine to handle the fade overlay. Use a nonce to exit out early if necessary.
     fading = true
     var start_time = get_sec()
@@ -318,12 +318,12 @@ func admit_read_line(load_only = false):
     sysfile.close()
 
 
-
 # mmm, auto
 
-var auto_delay_amount = 1.5
+var auto_delay_amount = EngineSettings.auto_delay_amount
+var auto_delay_per_character = EngineSettings.auto_delay_per_character
+
 var auto_delay_timer = -1.0
-var auto_delay_per_character = 0.015
 func auto():
     $Skip.pressed = false
 
@@ -369,6 +369,13 @@ func _ready():
     _unused = $Buttons/Auto.connect("pressed", self, "auto")
     _unused = $Skip.connect("pressed", self, "skip_pressed")
 
+var skip_pressed_during_read_text = false
+func skip_pressed():
+    if is_line_read():
+        skip_pressed_during_read_text = true
+        print("wheee")
+
+
 func volts_to_db(x):
     return log(x)/log(10)*10*2.0 # 2.0 to get voltage db instead of power db
 
@@ -376,7 +383,7 @@ signal new_bgm_playing
 var next_bgm = null
 var bgm_fading = false
 var _bgm_fade_force_remaining_time_at_most = -1.0
-func bgm_fade(fade_time = 0.7):
+func bgm_fade(fade_time = EngineSettings.bgm_fade_time):
     if bgm_fading:
         _bgm_fade_force_remaining_time_at_most = fade_time
         return
@@ -406,7 +413,7 @@ func bgm_fade(fade_time = 0.7):
 
 # Plays new BGM. Fades the current BGM out first.
 # Use `null` to turn the BGM off. The fade will be slower.
-func play_bgm(bgm : AudioStream, fade_time = 0.7):
+func play_bgm(bgm : AudioStream, fade_time = EngineSettings.bgm_fade_time):
     if LOAD_SKIP:
         $BGM.stream = bgm
         yield(get_tree(), "idle_frame")
@@ -419,8 +426,8 @@ func play_bgm(bgm : AudioStream, fade_time = 0.7):
         yield(get_tree(), "idle_frame")
         emit_signal("new_bgm_playing")
     elif $BGM.stream != bgm:
-        if bgm == null and fade_time == 0.7:
-            fade_time = 1.5
+        if bgm == null and fade_time == EngineSettings.bgm_fade_time:
+            fade_time *= 2.0
         next_bgm = bgm
         bgm_fade(fade_time)
 
@@ -689,7 +696,7 @@ var cutscene_processing_blocked = false
 
 var skip_textbox_timer_this_frame = false
 var autocontinue = false
-var chars_per_sec = 120
+var chars_per_sec = EngineSettings.textbox_typein_chars_per_sec
 var already_processing = false
 var manually_hidden = false
 var cutscene_life = 0.0
@@ -789,7 +796,7 @@ func process_cutscene(delta):
         typein_chars = -1
         $Textbox/Label.visible_characters = -1
         print("waking up cutscene")
-        delayed_emit_signal("cutscene_continue", 1/20.0)
+        delayed_emit_signal("cutscene_continue", 1/EngineSettings.cutscene_skip_rate)
     elif !just_continued and (Input.is_action_just_pressed("ui_accept") or m1_pressed or Input.is_action_just_pressed("skip") or Input.is_action_just_pressed("ui_down")):
         $Buttons/Auto.pressed = false
         $Skip.pressed = false
@@ -858,7 +865,7 @@ func process_cutscene(delta):
         
     already_processing = false
 
-var screen_shake_amount = 4.0
+var screen_shake_amount = EngineSettings.screen_shake_default_power
 var screen_shake_power = 0.0
 var screen_shake_power_target = 0.0
 # Stops screen shake.
@@ -925,7 +932,7 @@ func set_bg(bg : Texture = null, instant : bool = false, no_textbox_hide = false
             background.fadeamount = 0.0
             background.texture2 = bg
         
-        var fade_time = 1.25
+        var fade_time = EngineSettings.bg_fade_time
         var i = 0.0
         while i < 1.0:
             yield(get_tree(), "idle_frame")
@@ -1042,7 +1049,7 @@ func set_tachie(slot : int, tachie : Texture, animation : String = "", no_textbo
     if time >= 0.0:
         tachie_slot.anim_time = time
     else:
-        tachie_slot.anim_time = 0.4
+        tachie_slot.anim_time = EngineSettings.tachie_anim_time
     if LOAD_SKIP or tachie_slot.anim_time == 0.0:
         tachie_slot.force_finish_anim()
     else:
@@ -1064,7 +1071,7 @@ func do_tachie_animation(slot : int, animation : String, time : float = -1):
     if time >= 0.0:
         tachie_slot.anim_time = time
     else:
-        tachie_slot.anim_time = 0.4
+        tachie_slot.anim_time = EngineSettings.tachie_anim_time
     if LOAD_SKIP:
         tachie_slot.force_finish_anim()
     else:
@@ -1104,18 +1111,14 @@ func hide_all_tachie():
             if tachie_slot.modulate.a > 1 or tachie_slot.visible:
                 tachie_slot.fadeout()
 
-var skip_pressed_during_read_text = false
-func skip_pressed():
-    if is_line_read():
-        skip_pressed_during_read_text = true
-        print("wheee")
-
 # Returns true if the user is reading in skip mode or holding down the "skip" input.
+# Does not return true if loading.
 func realtime_skip():
     return Input.is_action_pressed("skip") or $Skip.pressed
 
 # Returns whether non-timerlike general skippable things should be skipped this frame.
 # True if loading, holding the "skip" input, or the skip button is pressed.
+# Does not skip if the user is just mashing the confirm button.
 # You probably want to use do_timer_skip() instead.
 func do_general_skip():
     if LOAD_SKIP or realtime_skip():
@@ -1124,7 +1127,7 @@ func do_general_skip():
 
 # Returns whether timers should be skipped this frame.
 # True if loading, holding the "skip" input, the skip button is pressed, or the user is
-# performing inputs that should interrupt timers.
+# performing inputs that should interrupt timers (e.g. mashing the confirm button).
 func do_timer_skip():
     if do_general_skip():
         return true
@@ -1144,7 +1147,7 @@ func _textbox_show():
     textbox_visibility_intent = true
     manually_hidden = false
     $Textbox.modulate.a = 0.0
-    var fade_time = 0.25
+    var fade_time = EngineSettings.textbox_fade_time
     var i = 0.0
     while i < 1.0:
         yield(get_tree(), "idle_frame")
@@ -1179,7 +1182,7 @@ func _textbox_hide(no_clear = false):
         $Textbox/Name.bbcode_text = ""
     
     $Textbox.modulate.a = 1.0
-    var fade_time = 0.25
+    var fade_time = EngineSettings.textbox_fade_time
     var i = 0.0
     while i < 1.0:
         yield(get_tree(), "idle_frame")
@@ -1303,7 +1306,7 @@ func set_font_outline_size(size : int):
         if font and font is DynamicFont:
             font.outline_size = size
 
-# Currently does nothing. For ADV games with separate dialogue and narration textboxes.
+# Currently disused. For ADV games with separate dialogue and narration textboxes.
 func set_light_on_dark():
     $Textbox/NextAnimHolder/NextAnim.modulate = Color("#ffffff")
     $Textbox/Label.add_color_override("default_color", Color("#ffffff"))
@@ -1312,7 +1315,7 @@ func set_light_on_dark():
     $Textbox/Label.add_constant_override("shadow_offset_y", 1)
     set_font_outline_size(2)
     set_font_outline_color("#393a49")
-# Currently does nothing. For ADV games with separate dialogue and narration textboxes.
+# Currently disused. For ADV games with separate dialogue and narration textboxes.
 func set_dark_on_light():
     $Textbox/NextAnimHolder/NextAnim.modulate = Color("#261810")
     $Textbox/Label.add_color_override("default_color", Color("#261810"))
@@ -1387,17 +1390,12 @@ class BacklogEntry:
     var icon : Texture
     var bbcode : String
     var is_narration : bool
-    # warning-ignore:shadowed_variable
-    # warning-ignore:shadowed_variable
-    # warning-ignore:shadowed_variable
-    # warning-ignore:shadowed_variable
-    # warning-ignore:shadowed_variable
-    static func build(name : String, icon : Texture, bbcode : String, is_narration : bool):
+    static func build(_name : String, _icon : Texture, _bbcode : String, _is_narration : bool):
         var ret = BacklogEntry.new()
-        ret.name = name
-        ret.icon = icon
-        ret.bbcode = bbcode
-        ret.is_narration = is_narration
+        ret.name = _name
+        ret.icon = _icon
+        ret.bbcode = _bbcode
+        ret.is_narration = _is_narration
         return ret
 
 var backlog_entry_size = 128+8*2
@@ -1416,6 +1414,7 @@ func backlog_hide():
     cutscene_paused = false
     $ScrollbackBG.hide()
     # scrolling doesn't update properly if we hide the scroll container, so we have to emulate hiding it with modulation and input mode stuff instead
+    # FIXME: can we maybe stuff it into a viewport and then move it off screen? and pop it out when we want it again?
     $Scrollback.show()
     $Scrollback.modulate.a = 0.0
     $Scrollback.mouse_filter = Control.MOUSE_FILTER_IGNORE
@@ -1425,7 +1424,6 @@ func backlog_hide():
     if backlog_shown:
         $Textbox.visible = backlog_textbox_visibility_storage
     backlog_shown = false
-    print("intent: ", textbox_visibility_intent)
 
 var backlog_shown = false
 func backlog_show():
@@ -1563,7 +1561,7 @@ func backlog_add(bbcode : String, is_narration : bool):
     if len($Scrollback/List.get_children()) == 0:
         $Scrollback/List.add_child(make_dummy())
     backlog.push_back(BacklogEntry.build($Textbox/Name.bbcode_text, $Textbox/Face.texture, bbcode, is_narration))
-    while backlog.size() > 200:
+    while backlog.size() > EngineSettings.backlog_max_size:
         backlog.pop_front()
         var dead = $Scrollback/List.get_children()[1]
         dead.queue_free()
@@ -1581,7 +1579,8 @@ func pageflip_NVL():
     $Textbox/Label.bbcode_text = ""
     $Textbox/Label.visible_characters = 0
     typein_chars = 0
-    
+
+var force_text_added_not_replaced = false
 
 # Adds bbcode to the textbox.
 # Replaces existing bbcode in ADV mode, adds bbcode in NVL mode.
@@ -1606,7 +1605,7 @@ func textbox_set_bbcode(bbcode : String):
     
     if !$Textbox.visible or !textbox_visibility_intent:
         textbox_show()
-    if text_mode_NVL:
+    if text_mode_NVL or force_text_added_not_replaced:
         var old_len = $Textbox/Label.get_total_character_count()
         $Textbox/Label.append_bbcode(bbcode)
         if typein_mode:
@@ -1656,8 +1655,6 @@ var env_saturation = 1.0
 var env_color = Color(0.5, 0.5, 0.5)
 var env_light = Color(1.0, 1.0, 1.0)
 
-var env_transition_speed = 1.0
-
 var env_nonce = 0
 # Sets the environmental coloration for tachie (standing sprites).
 func set_env(saturation : float = 1.0, color : Color = Color(0.5, 0.5, 0.5), light : Color = Color(1.0, 1.0, 1.0)):
@@ -1668,7 +1665,7 @@ func set_env(saturation : float = 1.0, color : Color = Color(0.5, 0.5, 0.5), lig
     var old_saturation = env_saturation
     var progress = 0.0
     while progress < 1.0:
-        progress += get_process_delta_time() * env_transition_speed
+        progress += get_process_delta_time() * EngineSettings.env_transition_speed
         progress = clamp(progress, 0.0, 1.0)
         
         env_saturation = lerp(old_saturation, saturation, progress)
@@ -1683,18 +1680,16 @@ func set_env(saturation : float = 1.0, color : Color = Color(0.5, 0.5, 0.5), lig
     env_color = color
     env_light = light
 
-var default_effect_framerate = 30
-
 # Node that holds an animated effect overlay. Progresses automatically.
 class Effect extends TextureRect:
     var size : Vector2
     var count : Vector2
     
-    var framerate = 30
+    var framerate = EngineSettings.effect_default_framerate
     
     signal finished
     func _init(_atlas : Texture, _count : Vector2):
-        framerate = Manager.default_effect_framerate
+        framerate = EngineSettings.effect_default_framerate
         
         expand = true
         stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED

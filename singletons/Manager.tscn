@@ -256,7 +256,7 @@ fade_invert = true
 normal_strength = Vector2( 0.038, 0.095 )
 normal_scale = Vector2( 0.241, 0.308 )
 normal_timescale = Vector2( 0.008, 0 )
-normal_offset = Vector2( 0.452716, 0.26384 )
+normal_offset = Vector2( 0.6336, 0.26384 )
 texture2 = ExtResource( 25 )
 fadeamount = 0.882
 
@@ -315,8 +315,11 @@ visible = false
 modulate = Color( 1, 1, 1, 0.552941 )
 show_behind_parent = true
 material = SubResource( 30 )
-anchor_right = 1.0
+anchor_left = 0.5
+anchor_right = 0.5
 anchor_bottom = 1.0
+margin_left = -640.0
+margin_right = 640.0
 texture = ExtResource( 8 )
 expand = true
 stretch_mode = 1
@@ -377,7 +380,7 @@ margin_bottom = -121.0
 position = Vector2( 756, 110 )
 frames = SubResource( 15 )
 animation = "done"
-frame = 9
+frame = 1
 playing = true
 
 [node name="Name" type="RichTextLabel" parent="Textbox"]

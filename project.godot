@@ -46,6 +46,7 @@ config/icon="res://icon.png"
 
 [autoload]
 
+EngineSettings="*res://singletons/EngineSettings.gd"
 Manager="*res://singletons/Manager.tscn"
 EmitterFactory="*res://singletons/EmitterFactory.tscn"
 Helpers="*res://singletons/Helpers.gd"

@@ -98,12 +98,12 @@ func update_uniforms():
         material.set_shader_param("env_color", Color(0.5, 0.5, 0.5))
         material.set_shader_param("env_light", Color(1.0, 1.0, 1.0))
 
-# less zoom
-#var anim_default = {"pos" : Vector2(0.5, 200), "scale" : 1.5, "alpha" : 1.0, "texfade" : 0.0}
-# more zoom
-var anim_default = {"pos" : Vector2(0.5, 250), "scale" : 1.75, "alpha" : 1.0, "texfade" : 0.0}
-# even more zoom
-#var anim_default = {"pos" : Vector2(0.5, 300), "scale" : 2.0, "alpha" : 1.0, "texfade" : 0.0}
+var anim_default = {
+  "pos" : EngineSettings.tachie_anim_default_pos,
+  "scale" : EngineSettings.tachie_anim_default_scale,
+  "alpha" : 1.0,
+  "texfade" : 0.0,
+}
 var anim_from = anim_default.duplicate()
 var anim_to = anim_default.duplicate()
 var anim_state = anim_default.duplicate()
@@ -187,7 +187,7 @@ var special_anims = {
 }
 
 signal animation_finished
-var anim_time = 0.4
+var anim_time = EngineSettings.tachie_anim_time
 func process_animation(delta):
     if Engine.editor_hint:
         return
@@ -198,9 +198,10 @@ func process_animation(delta):
             anim_time = 0.0001
         
         # slow down animations that go a long distance
-        if abs(anim_to.pos.x - anim_from.pos.x) > 384:
-            var amount = abs(anim_to.pos.x - anim_from.pos.x) - 384
-            var factor = 1.0 + amount/384
+        var soft_limit = EngineSettings.tachie_anim_longer_distance
+        if abs(anim_to.pos.x - anim_from.pos.x) > soft_limit:
+            var amount = abs(anim_to.pos.x - anim_from.pos.x) - soft_limit
+            var factor = 1.0 + amount/soft_limit
             anim_progress += delta/(anim_time*factor)
         else:
             anim_progress += delta/anim_time
@@ -231,7 +232,7 @@ func process_animation(delta):
 
 signal zoom_finished
 var zoom_nonce = 0
-var zoom_time = 0.4
+var zoom_time = EngineSettings.tachie_anim_time
 func set_zoom(zoom : float):
     zoom_nonce += 1
     var start_nonce = zoom_nonce
@@ -267,7 +268,7 @@ func set_zoom(zoom : float):
 
 signal offset_finished
 var offset_nonce = 0
-var offset_time = 0.4
+var offset_time = EngineSettings.tachie_anim_time
 func set_offset(arg_offset : Vector2):
     print("entering set_offset")
     offset_nonce += 1

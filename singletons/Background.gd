@@ -32,7 +32,7 @@ var normal_config_target = normal_config.duplicate(true)
 var normal_config_interp = 1.0
 
 func do_normal_config_interp(delta : float):
-    normal_config_interp += delta
+    normal_config_interp += delta / max(0.0001, EngineSettings.bg_fade_time)
     normal_config_interp = clamp(normal_config_interp, 0.0, 1.0)
     for prop in normal_config.keys():
         normal_config[prop] = normal_config_start[prop].linear_interpolate(normal_config_target[prop], normal_config_interp)
@@ -59,7 +59,7 @@ func set_transform_1(transform : Transform2D):
     transform_1        = transform
     transform_1_target = transform
     transform_1_progress = 1.0
-func set_transform_1_target(transform : Transform2D, time = 1.0):
+func set_transform_1_target(transform : Transform2D, time = EngineSettings.bg_fade_time):
     transform_1 = transform_1_target
     transform_1_target = transform
     transform_1_progress = 0.0
@@ -74,7 +74,7 @@ func set_transform_2(transform : Transform2D):
     transform_2 = transform
     transform_2_target = transform
     transform_2_progress = 1.0
-func set_transform_2_target(transform : Transform2D, time = 1.0):
+func set_transform_2_target(transform : Transform2D, time = EngineSettings.bg_fade_time):
     transform_2 = transform_2_target
     transform_2_target = transform
     transform_2_progress = 0.0
