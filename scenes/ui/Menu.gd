@@ -19,6 +19,8 @@ func _ready():
         yield(Manager, "fade_completed")
     Manager.play_bgm(preload("res://bgm/excited music.ogg"))
     
+    _unused = $"Buttons/Settings".connect("pressed", Manager, "settings")
+
 
 
 func _process(_delta):

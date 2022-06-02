@@ -1,5 +1,17 @@
 extends CanvasLayer
 
+static func reconcile_borderless_fullscreen():
+    if ProjectSettings.get_setting("display/window/size/fullscreen"):
+        if OS.window_borderless:
+            OS.window_fullscreen = false
+            OS.window_maximized = true
+        else:
+            OS.window_fullscreen = true
+            OS.window_maximized = false
+
+func _init():
+    reconcile_borderless_fullscreen()
+
 # Gets the number of seconds that have passed since the game engine was booted.
 # Useful for debugging.
 # Not useful for logic; use `get_process_delta_time` instead.
@@ -221,12 +233,11 @@ func quickload():
     else:
         # TODO handle error in a user-visible way
         print("no quicksave exists")
+    quicksave.close()
 
 func notify_load_finished():
     LOAD_SKIP = false
     custom_save_data = SAVED_CUSTOM_SAVE_DATA.duplicate(true)
-
-
 
 ####!!!!DO NOT TOUCH!!!!
 # for skip-until-unread, already-read colorizer, etc
@@ -337,7 +348,7 @@ signal bg_transform_finished
 
 func _ready():
     admit_read_line(true)
-    print()
+    
     var dir = Directory.new()
     var _unused = dir.open("user://")
     if !dir.dir_exists("saves"):
@@ -364,10 +375,14 @@ func _ready():
     background.connect("transform_2_finished", self, "emit_signal", ["bg_transform_2_finished"])
     background.connect("transform_finished", self, "emit_signal", ["bg_transform_finished"])
     
+    _unused = $Buttons/Settings.connect("pressed", self, "settings")
     _unused = $Buttons/Quicksave.connect("pressed", self, "quicksave")
     _unused = $Buttons/Quickload.connect("pressed", self, "quickload")
     _unused = $Buttons/Auto.connect("pressed", self, "auto")
     _unused = $Skip.connect("pressed", self, "skip_pressed")
+
+func settings():
+    get_tree().get_root().add_child(preload("res://scenes/ui/OptionsManager.tscn").instance())
 
 var skip_pressed_during_read_text = false
 func skip_pressed():
@@ -375,9 +390,13 @@ func skip_pressed():
         skip_pressed_during_read_text = true
         print("wheee")
 
-
 func volts_to_db(x):
     return log(x)/log(10)*10*2.0 # 2.0 to get voltage db instead of power db
+
+func db_to_volts(x):
+    if x < -1000.0:
+        return 0.0
+    return pow(10, x/20.0)
 
 signal new_bgm_playing
 var next_bgm = null
@@ -493,7 +512,7 @@ func cutscene_timer(time : float) -> SkippableTimer:
     return timer
 
 func process_cutscene_timers(delta):
-    if cutscene_paused:
+    if block_simulation():
         return
     for timer in timers:
         if !is_instance_valid(timer) or timer.dead:
@@ -576,6 +595,15 @@ func check_window_size_stuff():
 
 var delta_elapsed = 0.0
 func _process(delta):
+    input_disabled = false
+    $MouseCatcher.visible = true
+    for node in get_tree().get_nodes_in_group("MenuScreen"):
+        $MouseCatcher.visible = false
+        input_disabled = true
+        $Buttons.hide()
+        $Skip.hide()
+        break
+    
     #print(LOAD_LINE)
     #for i in range(OS.get_screen_count()):
     #    print(OS.get_screen_dpi(i))
@@ -587,19 +615,19 @@ func _process(delta):
         skip_pressed_during_read_text = false
     
     process_cutscene(delta)
-    $Buttons.visible = $Textbox.visible
-    $Buttons.modulate = $Textbox.modulate
-    $Skip.visible = $Textbox.visible
-    $Skip.modulate = $Textbox.modulate
-    if $Skip.pressed:
-        $Buttons/Auto.pressed = false
-        $Skip.visible = true
-        $Skip.modulate = Color.white
-    if changing_room:
-        $Buttons.visible = false
-        $Skip.visible = false
+    if !input_disabled:
+        $Buttons.visible = $Textbox.visible
+        $Buttons.modulate = $Textbox.modulate
+        $Skip.visible = $Textbox.visible
+        $Skip.modulate = $Textbox.modulate
+        if $Skip.pressed:
+            $Buttons/Auto.pressed = false
+            $Skip.visible = true
+            $Skip.modulate = Color.white
+        if changing_room:
+            $Buttons.visible = false
+            $Skip.visible = false
     m1_pressed = false
-    pass
 
 # Sets the background distortion configuration. There is a transition.
 # Distortion configurations are defined in `_normal_configs` in `Background.gd`.
@@ -730,38 +758,39 @@ func process_cutscene(delta):
         else:
             $Scene.offset = Vector2()
         
-    if Input.is_action_just_pressed("ui_page_down"):
-        prints(textbox_visibility_intent, manually_hidden, $Textbox.visible, $Textbox.modulate.a, cutscene_paused)
+    #if Input.is_action_just_pressed("ui_page_down"):
+    #    prints(textbox_visibility_intent, manually_hidden, $Textbox.visible, $Textbox.modulate.a, cutscene_paused)
     
     var suppress_textbox_toggle = false
     if $ScrollbackBG.visible:
         $Skip.pressed = false
         $Buttons/Auto.pressed = false
-        if Input.is_action_just_pressed("ui_up") or Input.is_action_just_released("mscroll_up"):
-            $Scrollback.scroll_vertical -= backlog_entry_size
-        if Input.is_action_just_pressed("ui_down") or Input.is_action_just_released("mscroll_down"):
-            var old = $Scrollback.scroll_vertical
-            $Scrollback.scroll_vertical += backlog_entry_size
-            if $Scrollback.scroll_vertical == old:
+        if !input_disabled:
+            if Input.is_action_just_pressed("ui_up") or Input.is_action_just_released("mscroll_up"):
+                $Scrollback.scroll_vertical -= backlog_entry_size
+            if Input.is_action_just_pressed("ui_down") or Input.is_action_just_released("mscroll_down"):
+                var old = $Scrollback.scroll_vertical
+                $Scrollback.scroll_vertical += backlog_entry_size
+                if $Scrollback.scroll_vertical == old:
+                    backlog_hide()
+                    if manually_hidden:
+                        textbox_show()
+                        manually_hidden = false
+                    suppress_textbox_toggle = true
+                    skip_textbox_timer_this_frame = true
+            if Input.is_action_just_pressed("ui_end"):
+                scroll_backlog_to_end()
+            if Input.is_action_just_pressed("ui_home"):
+                $Scrollback.scroll_vertical = 0
+            if Input.is_action_just_pressed("ui_cancel") or Input.is_action_just_pressed("ui_accept") or Input.is_action_just_pressed("m2"):
                 backlog_hide()
                 if manually_hidden:
                     textbox_show()
                     manually_hidden = false
                 suppress_textbox_toggle = true
                 skip_textbox_timer_this_frame = true
-        if Input.is_action_just_pressed("ui_end"):
-            scroll_backlog_to_end()
-        if Input.is_action_just_pressed("ui_home"):
-            $Scrollback.scroll_vertical = 0
-        if Input.is_action_just_pressed("ui_cancel") or Input.is_action_just_pressed("ui_accept") or Input.is_action_just_pressed("m2"):
-            backlog_hide()
-            if manually_hidden:
-                textbox_show()
-                manually_hidden = false
-            suppress_textbox_toggle = true
-            skip_textbox_timer_this_frame = true
     
-    if Input.is_action_just_pressed("ui_home") or Input.is_action_just_pressed("ui_up") or Input.is_action_just_released("mscroll_up"):
+    if !input_disabled and (Input.is_action_just_pressed("ui_home") or Input.is_action_just_pressed("ui_up") or Input.is_action_just_released("mscroll_up")):
         $Skip.pressed = false
         $Buttons/Auto.pressed = false
         backlog_show()
@@ -772,7 +801,29 @@ func process_cutscene(delta):
         $Buttons/Auto.pressed = false
         return
     
-    if (Input.is_action_just_pressed("m2") or Input.is_action_just_pressed("x")) and !suppress_textbox_toggle:
+    
+    # need to copy this because adding theme overrides thrashes it for the remainder of the frame
+    var char_limit = $Textbox/Label.get_total_character_count()
+    
+    # apply settings
+    if UserSettings.text_shadow:
+        $Textbox/Label.add_constant_override("shadow_offset_x", 2)
+        $Textbox/Label.add_constant_override("shadow_offset_y", 2)
+        $Textbox/Label.add_color_override("font_color_shadow", Color(0.0, 0.0, 0.0, 0.5))
+    else:
+        $Textbox/Label.add_constant_override("shadow_offset_x", 0)
+        $Textbox/Label.add_constant_override("shadow_offset_y", 0)
+        $Textbox/Label.add_color_override("font_color_shadow", Color(0.0, 0.0, 0.0, 0.0))
+    
+    for _font in ["bold_italics_font", "bold_font", "italics_font", "normal_font", "mono_font"]:
+        var font : Font = $Textbox/Label.get_font(_font)
+        if font and font is DynamicFont:
+            font.outline_size = 1.0 if UserSettings.text_outline else 0.0
+    
+    $Textbox/ADV.modulate.a = UserSettings.textbox_opacity
+    
+    
+    if !input_disabled and (Input.is_action_just_pressed("m2") or Input.is_action_just_pressed("x")) and !suppress_textbox_toggle:
         if $Skip.pressed:
             $Skip.pressed = false
         elif $Buttons/Auto.pressed:
@@ -783,7 +834,7 @@ func process_cutscene(delta):
         elif manually_hidden:
             textbox_show()
             manually_hidden = false
-    if Input.is_action_just_pressed("m1") or Input.is_action_just_pressed("ui_accept") or Input.is_action_just_pressed("ui_down"):
+    if !input_disabled and (Input.is_action_just_pressed("m1") or Input.is_action_just_pressed("ui_accept") or Input.is_action_just_pressed("ui_down")):
         if !textbox_visibility_intent and manually_hidden:
             $Buttons/Auto.pressed = false
             textbox_show()
@@ -795,24 +846,21 @@ func process_cutscene(delta):
     if realtime_skip() and typein_chars >= 0:
         typein_chars = -1
         $Textbox/Label.visible_characters = -1
-        print("waking up cutscene")
         delayed_emit_signal("cutscene_continue", 1/EngineSettings.cutscene_skip_rate)
-    elif !just_continued and (Input.is_action_just_pressed("ui_accept") or m1_pressed or Input.is_action_just_pressed("skip") or Input.is_action_just_pressed("ui_down")):
+    elif !just_continued and !input_disabled and (Input.is_action_just_pressed("ui_accept") or m1_pressed or Input.is_action_just_pressed("skip") or Input.is_action_just_pressed("ui_down")):
         $Buttons/Auto.pressed = false
         $Skip.pressed = false
         if !textbox_visibility_intent:
             skip_textbox_timer_this_frame = true
-        if $Textbox/Label.visible_characters < 0 or $Textbox/Label.visible_characters >= $Textbox/Label.get_total_character_count():
-            print("waking up cutscene")
+        if $Textbox/Label.visible_characters < 0 or $Textbox/Label.visible_characters >= char_limit:
             admit_read_line()
             emit_signal("cutscene_continue")
             yield(get_tree(), "idle_frame")
             just_continued = true
-            #print("setting to true")
         else:
             typein_chars = -1
             $Textbox/Label.visible_characters = -1
-    elif textbox_visibility_intent and (typein_chars < 0 or $Textbox/Label.visible_characters == $Textbox/Label.get_total_character_count()) and $Buttons/Auto.pressed:
+    elif textbox_visibility_intent and (typein_chars < 0 or $Textbox/Label.visible_characters == char_limit) and $Buttons/Auto.pressed:
         var actual_delay_amount = auto_delay_amount + auto_delay_per_character * last_displayed_line.length()
         if auto_delay_timer < actual_delay_amount:
             auto_delay_timer = clamp(auto_delay_timer, 0, actual_delay_amount)
@@ -821,10 +869,9 @@ func process_cutscene(delta):
             auto_delay_timer = 0.0
             typein_chars = -1
             $Textbox/Label.visible_characters = -1
-            print("waking up cutscene")
             delayed_emit_signal("cutscene_continue", 1/20.0)
     
-    if typein_chars >= 0 and typein_chars < $Textbox/Label.get_total_character_count():
+    if typein_chars >= 0 and typein_chars < char_limit:
         auto_delay_timer = 0.0
         if $Textbox/Name.visible or $Textbox/Face.texture != null:
             if $BleepPlayer.stream:
@@ -838,7 +885,7 @@ func process_cutscene(delta):
                 stream.loop_mode = AudioStreamSample.LOOP_DISABLED
         
         if $Textbox.modulate.a == 1.0 and !just_continued:
-            typein_chars += delta*chars_per_sec
+            typein_chars += delta*chars_per_sec*UserSettings.text_speed
         $Textbox/Label.visible_characters = floor(typein_chars)
         $Textbox/NextAnimHolder/NextAnim.hide()
     else:
@@ -848,7 +895,7 @@ func process_cutscene(delta):
             var stream : AudioStreamSample = $BleepPlayer.stream
             stream.loop_mode = AudioStreamSample.LOOP_DISABLED
         
-        if $Textbox/Label.get_total_character_count() > 0:
+        if char_limit > 0:
             if !$Textbox/NextAnimHolder/NextAnim.visible:
                 $Textbox/NextAnimHolder/NextAnim.frame = 0
             if !$Choices.visible:
@@ -913,7 +960,7 @@ func set_bg(bg : Texture = null, instant : bool = false, no_textbox_hide = false
         background.fadeamount = 0.0
         background.cycle_transform()
         yield(get_tree(), "idle_frame")
-        while cutscene_paused:
+        while block_simulation():
             yield(get_tree(), "idle_frame")
         emit_signal("bg_transition_done")
     else:
@@ -938,7 +985,7 @@ func set_bg(bg : Texture = null, instant : bool = false, no_textbox_hide = false
             yield(get_tree(), "idle_frame")
             if start_nonce != bg_nonce:
                 return
-            if cutscene_paused:
+            if block_simulation():
                 continue
             var delta = get_process_delta_time()
             i += delta / fade_time
@@ -954,7 +1001,7 @@ func set_bg(bg : Texture = null, instant : bool = false, no_textbox_hide = false
         background.texture2 = __transparent
         background.fadeamount = 0.0
         background.cycle_transform()
-        while cutscene_paused:
+        while block_simulation():
             yield(get_tree(), "idle_frame")
         emit_signal("bg_transition_done")
 
@@ -1139,6 +1186,7 @@ func do_timer_skip():
         return true
     return false
 
+var input_disabled = false
 
 signal textbox_shown
 func _textbox_show():
@@ -1151,7 +1199,7 @@ func _textbox_show():
     var i = 0.0
     while i < 1.0:
         yield(get_tree(), "idle_frame")
-        if cutscene_paused:
+        if block_simulation():
             continue
         if !textbox_visibility_intent:
             emit_signal("textbox_shown")
@@ -1186,7 +1234,7 @@ func _textbox_hide(no_clear = false):
     var i = 0.0
     while i < 1.0:
         yield(get_tree(), "idle_frame")
-        if cutscene_paused:
+        if block_simulation():
             continue
         if textbox_visibility_intent:
             emit_signal("textbox_hidden")
@@ -1331,7 +1379,7 @@ func get_from_group(s : String) -> bool:
     var nodes = get_tree().get_nodes_in_group(s)
     return nodes[0] if nodes.size() > 0 else null
 
-var is_narration = false
+var current_line_is_narration = false
 # Sets the nametag, icon, and 'bleep' for the next line of text.
 # The nametag "<<NARRATOR>>" is special and causes the line to be treated as narration.
 # Warning: I have not tested identities other than "<<NARRATOR>>" in NVL mode. They might be broken.
@@ -1340,7 +1388,7 @@ func textbox_set_identity(name : String = "<<NARRATOR>>", icon : Texture = null,
     # FIXME everything related to displaying the speaker's face anywhere other than their tachie
     # is an absolute disaster jesus christ
     if name_first_person_whitelist.find(name) >= 0:
-        is_narration = false
+        current_line_is_narration = false
         #set_light_on_dark() # For games with distinct narration/dialogue boxes
         #$Textbox/Sprite.texture = _textbox_dialogue
         $Textbox/Name.bbcode_text = name
@@ -1349,7 +1397,7 @@ func textbox_set_identity(name : String = "<<NARRATOR>>", icon : Texture = null,
         $Textbox/Name.hide()
         #$Textbox/Label.margin_left = 50
     elif name != "<<NARRATOR>>":
-        is_narration = false
+        current_line_is_narration = false
         #set_light_on_dark() # For games with distinct narration/dialogue boxes
         #$Textbox/Sprite.texture = _textbox_dialogue
         $Textbox/Name.bbcode_text = name
@@ -1369,7 +1417,7 @@ func textbox_set_identity(name : String = "<<NARRATOR>>", icon : Texture = null,
             #$Textbox/Label.margin_left = 50
         $Textbox/Name.show()
     else:
-        is_narration = true
+        current_line_is_narration = true
         #set_dark_on_light() # For games with distinct narration/dialogue boxes
         #$Textbox/Sprite.texture = _textbox_narration
         $Textbox/Name.bbcode_text = ""
@@ -1407,7 +1455,7 @@ func scroll_backlog_to_end():
     $Scrollback.scroll_vertical = $Scrollback/List.rect_size.y#+$Scrollback.rect_size.y
 
 func block_simulation():
-    return cutscene_paused
+    return cutscene_paused or get_tree().get_nodes_in_group("MenuScreen").size() > 0
 
 var backlog_textbox_visibility_storage = false
 func backlog_hide():
@@ -1594,7 +1642,7 @@ func textbox_set_bbcode(bbcode : String):
     if skip_pressed_during_read_text and !is_line_read():
         $Skip.pressed = false
     
-    backlog_add(bbcode, is_narration)
+    backlog_add(bbcode, current_line_is_narration)
     
     #if do_logging:
     #    var logline = ""

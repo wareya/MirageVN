@@ -2,15 +2,15 @@
 
 importer="texture"
 type="StreamTexture"
-path="res://.import/textbox3.png-9725ebbb6ff23eeabd2f7cb7456cc90a.stex"
+path="res://.import/sliderbar_handle.png-cf6b0e2fbba3b419ca4020c0a53ca365.stex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://art/ui/textbox3.png"
-dest_files=[ "res://.import/textbox3.png-9725ebbb6ff23eeabd2f7cb7456cc90a.stex" ]
+source_file="res://art/ui/sliderbar_handle.png"
+dest_files=[ "res://.import/sliderbar_handle.png-cf6b0e2fbba3b419ca4020c0a53ca365.stex" ]
 
 [params]
 
@@ -20,8 +20,8 @@ compress/hdr_mode=0
 compress/bptc_ldr=0
 compress/normal_map=0
 flags/repeat=0
-flags/filter=false
-flags/mipmaps=false
+flags/filter=true
+flags/mipmaps=true
 flags/anisotropic=false
 flags/srgb=2
 process/fix_alpha_border=true

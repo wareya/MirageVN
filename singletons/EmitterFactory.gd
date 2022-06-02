@@ -42,7 +42,6 @@ class Emitter extends AudioStreamPlayer:
             queue_free()
 
     func emit(parent : Node, sound, channel):
-        print("_______PARENT ", parent)
         parent.add_child(self)
         stream = sound
         bus = channel

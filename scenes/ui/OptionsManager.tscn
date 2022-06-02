@@ -1,0 +1,558 @@
+[gd_scene load_steps=23 format=2]
+
+[ext_resource path="res://fonts/Monda-Regular.ttf" type="DynamicFontData" id=1]
+[ext_resource path="res://scenes/ui/OptionsManager.gd" type="Script" id=2]
+[ext_resource path="res://art/ui/menubg.png" type="Texture" id=3]
+[ext_resource path="res://fonts/Galdeano-Regular.ttf" type="DynamicFontData" id=4]
+[ext_resource path="res://art/ui/line_test.png" type="Texture" id=5]
+[ext_resource path="res://fonts/AndadaPro-Italic.ttf" type="DynamicFontData" id=6]
+[ext_resource path="res://fonts/Quando-Regular.ttf" type="DynamicFontData" id=7]
+[ext_resource path="res://fonts/AndadaPro-BoldItalic.ttf" type="DynamicFontData" id=8]
+[ext_resource path="res://fonts/AndadaPro-Bold.ttf" type="DynamicFontData" id=9]
+[ext_resource path="res://art/ui/textbox2.png" type="Texture" id=10]
+[ext_resource path="res://art/cutscene/bg/grass bg.jpg" type="Texture" id=11]
+
+[sub_resource type="DynamicFont" id=1]
+size = 64
+use_mipmaps = true
+use_filter = true
+font_data = ExtResource( 4 )
+
+[sub_resource type="DynamicFont" id=112]
+use_mipmaps = true
+use_filter = true
+font_data = ExtResource( 4 )
+
+[sub_resource type="DynamicFont" id=111]
+size = 19
+use_mipmaps = true
+use_filter = true
+extra_spacing_top = -5
+extra_spacing_bottom = -3
+font_data = ExtResource( 1 )
+
+[sub_resource type="StyleBoxFlat" id=119]
+bg_color = Color( 0, 0, 0, 1 )
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color( 1, 1, 1, 1 )
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+expand_margin_left = 4.0
+expand_margin_right = 4.0
+expand_margin_top = 4.0
+expand_margin_bottom = 4.0
+
+[sub_resource type="CanvasItemMaterial" id=113]
+
+[sub_resource type="Shader" id=40]
+code = "// NOTE: Shader automatically converted from Godot Engine 3.4.4.stable's CanvasItemMaterial.
+
+shader_type canvas_item;
+render_mode blend_mix;
+
+// for future use if godot adds SDF font importing
+
+/*
+float estimate_distance(sampler2D sampler, vec2 uv, vec2 px_size) {
+    return texture(sampler, uv).a - 0.5;
+}
+
+void fragment(){
+    float dist = estimate_distance(TEXTURE, UV, TEXTURE_PIXEL_SIZE);
+    COLOR.a = clamp((dist / min(1.0, dFdx(UV.x)/TEXTURE_PIXEL_SIZE.x)) + 0.5, 0.0, 1.0);
+    //COLOR.a = dist;
+    //COLOR.a = 1.0;
+}
+*/"
+
+[sub_resource type="ShaderMaterial" id=114]
+shader = SubResource( 40 )
+
+[sub_resource type="DynamicFont" id=115]
+size = 25
+outline_size = 1
+outline_color = Color( 0.0901961, 0.0901961, 0.105882, 1 )
+use_filter = true
+font_data = ExtResource( 8 )
+
+[sub_resource type="DynamicFont" id=116]
+size = 25
+outline_size = 1
+outline_color = Color( 0.0901961, 0.0901961, 0.105882, 1 )
+use_filter = true
+font_data = ExtResource( 6 )
+
+[sub_resource type="DynamicFont" id=117]
+size = 25
+outline_size = 1
+outline_color = Color( 0.0901961, 0.0901961, 0.105882, 1 )
+use_filter = true
+font_data = ExtResource( 9 )
+
+[sub_resource type="DynamicFont" id=118]
+size = 22
+outline_size = 1
+outline_color = Color( 0, 0, 0, 1 )
+use_filter = true
+extra_spacing_top = 2
+extra_spacing_bottom = 1
+font_data = ExtResource( 7 )
+
+[node name="OptionsManager" type="CanvasLayer" groups=["MenuScreen"]]
+layer = 64
+script = ExtResource( 2 )
+
+[node name="Background" type="NinePatchRect" parent="."]
+anchor_right = 1.0
+anchor_bottom = 1.0
+texture = ExtResource( 3 )
+region_rect = Rect2( 0, 0, 960, 720 )
+axis_stretch_horizontal = 1
+
+[node name="FillRect" type="ColorRect" parent="."]
+anchor_right = 1.0
+anchor_bottom = 1.0
+rect_pivot_offset = Vector2( 1481, -122 )
+color = Color( 0, 0, 0, 0.243137 )
+
+[node name="safe-rect-43" type="ColorRect" parent="."]
+visible = false
+anchor_left = 0.5
+anchor_right = 0.5
+anchor_bottom = 1.0
+margin_left = -450.0
+margin_right = 450.0
+rect_pivot_offset = Vector2( 1481, -122 )
+color = Color( 0, 0, 0, 0.243137 )
+
+[node name="NinePatchRect" type="NinePatchRect" parent="."]
+anchor_right = 1.014
+anchor_bottom = 1.0
+margin_top = 121.0
+margin_right = -34.92
+margin_bottom = -591.0
+texture = ExtResource( 5 )
+patch_margin_left = 4
+patch_margin_top = 4
+patch_margin_right = 4
+patch_margin_bottom = 4
+
+[node name="NinePatchRect" type="NinePatchRect" parent="NinePatchRect"]
+anchor_left = 0.49
+anchor_top = -15.125
+anchor_right = 0.49
+anchor_bottom = 1.0
+margin_left = -289.87
+margin_top = 129.0
+margin_right = -281.87
+margin_bottom = 566.0
+texture = ExtResource( 5 )
+patch_margin_left = 4
+patch_margin_top = 4
+patch_margin_right = 4
+patch_margin_bottom = 4
+
+[node name="Title" type="Label" parent="."]
+anchor_left = 0.5
+anchor_right = 0.5
+margin_left = -450.0
+margin_top = 53.0
+margin_right = -190.0
+margin_bottom = 113.0
+custom_fonts/font = SubResource( 1 )
+text = "Settings"
+align = 1
+valign = 1
+
+[node name="Description" type="Label" parent="."]
+anchor_left = 0.514
+anchor_right = 0.514
+margin_left = -207.92
+margin_top = 74.0
+margin_right = 293.08
+margin_bottom = 120.0
+custom_fonts/font = SubResource( 112 )
+valign = 2
+
+[node name="Infodump" type="Label" parent="."]
+margin_left = 486.0
+margin_top = 12.0
+margin_right = 822.0
+margin_bottom = 30.0
+custom_fonts/font = SubResource( 112 )
+text = "Some settings only apply after re-launching the game."
+
+[node name="Infodump2" type="Label" parent="."]
+margin_left = 35.0
+margin_top = 12.0
+margin_right = 466.0
+margin_bottom = 53.0
+custom_fonts/font = SubResource( 112 )
+text = "NOTE: To avoid a problem with how Godot loads project settings, some options don't load when running godot from the editor."
+autowrap = true
+
+[node name="FPSDisplay" type="Label" parent="."]
+margin_left = 486.0
+margin_top = 30.0
+margin_right = 829.0
+margin_bottom = 48.0
+custom_fonts/font = SubResource( 112 )
+text = "Current framerate: "
+
+[node name="CategoryButtons" type="Control" parent="."]
+anchor_left = 0.5
+anchor_right = 0.5
+anchor_bottom = 1.0
+margin_left = -640.0
+margin_top = 144.0
+margin_right = -311.0
+
+[node name="ScreenButton" type="Button" parent="CategoryButtons"]
+anchor_left = 1.0
+anchor_right = 1.0
+margin_left = -135.0
+margin_right = -4.0
+margin_bottom = 32.0
+rect_pivot_offset = Vector2( 92, 28 )
+custom_fonts/font = SubResource( 111 )
+toggle_mode = true
+pressed = true
+text = "Screen"
+
+[node name="DisplayButton" type="Button" parent="CategoryButtons"]
+anchor_left = 1.0
+anchor_right = 1.0
+margin_left = -135.0
+margin_top = 40.0
+margin_right = -4.0
+margin_bottom = 72.0
+rect_pivot_offset = Vector2( 92, 28 )
+custom_fonts/font = SubResource( 111 )
+toggle_mode = true
+text = "Display"
+
+[node name="AudioButton" type="Button" parent="CategoryButtons"]
+anchor_left = 1.0
+anchor_right = 1.0
+margin_left = -135.0
+margin_top = 80.0
+margin_right = -4.0
+margin_bottom = 112.0
+rect_pivot_offset = Vector2( 92, 28 )
+custom_fonts/font = SubResource( 111 )
+toggle_mode = true
+text = "Audio"
+
+[node name="ReturnButton" type="Button" parent="CategoryButtons"]
+anchor_left = 1.0
+anchor_right = 1.0
+margin_left = -135.0
+margin_top = 120.0
+margin_right = -4.0
+margin_bottom = 152.0
+rect_pivot_offset = Vector2( 92, 28 )
+custom_fonts/font = SubResource( 111 )
+toggle_mode = true
+text = "Return"
+
+[node name="ScreenSettings" type="Control" parent="."]
+anchor_left = 0.5
+anchor_right = 0.5
+anchor_bottom = 1.0
+margin_left = -300.0
+margin_top = 144.0
+margin_right = 300.0
+margin_bottom = -51.0
+
+[node name="Fullscreen" type="CheckButton" parent="ScreenSettings"]
+margin_right = 279.0
+margin_bottom = 40.0
+custom_colors/font_color_disabled = Color( 1, 1, 1, 1 )
+custom_colors/font_color_focus = Color( 1, 1, 1, 1 )
+custom_colors/font_color_hover_pressed = Color( 1, 1, 1, 1 )
+custom_colors/font_color = Color( 1, 1, 1, 1 )
+custom_colors/font_color_hover = Color( 1, 1, 1, 1 )
+custom_colors/font_color_pressed = Color( 1, 1, 1, 1 )
+custom_fonts/font = SubResource( 111 )
+text = "Fullscreen"
+
+[node name="Borderless" type="CheckButton" parent="ScreenSettings"]
+margin_top = 40.0
+margin_right = 279.0
+margin_bottom = 80.0
+custom_colors/font_color_disabled = Color( 1, 1, 1, 1 )
+custom_colors/font_color_focus = Color( 1, 1, 1, 1 )
+custom_colors/font_color_hover_pressed = Color( 1, 1, 1, 1 )
+custom_colors/font_color = Color( 1, 1, 1, 1 )
+custom_colors/font_color_hover = Color( 1, 1, 1, 1 )
+custom_colors/font_color_pressed = Color( 1, 1, 1, 1 )
+custom_fonts/font = SubResource( 111 )
+text = "Borderless"
+
+[node name="Vsync" type="CheckButton" parent="ScreenSettings"]
+margin_top = 80.0
+margin_right = 279.0
+margin_bottom = 120.0
+custom_colors/font_color_disabled = Color( 1, 1, 1, 1 )
+custom_colors/font_color_focus = Color( 1, 1, 1, 1 )
+custom_colors/font_color_hover_pressed = Color( 1, 1, 1, 1 )
+custom_colors/font_color = Color( 1, 1, 1, 1 )
+custom_colors/font_color_hover = Color( 1, 1, 1, 1 )
+custom_colors/font_color_pressed = Color( 1, 1, 1, 1 )
+custom_fonts/font = SubResource( 111 )
+text = "Vsync"
+
+[node name="CompositorVsync" type="CheckButton" parent="ScreenSettings"]
+margin_top = 120.0
+margin_right = 279.0
+margin_bottom = 160.0
+custom_colors/font_color_disabled = Color( 1, 1, 1, 1 )
+custom_colors/font_color_focus = Color( 1, 1, 1, 1 )
+custom_colors/font_color_hover_pressed = Color( 1, 1, 1, 1 )
+custom_colors/font_color = Color( 1, 1, 1, 1 )
+custom_colors/font_color_hover = Color( 1, 1, 1, 1 )
+custom_colors/font_color_pressed = Color( 1, 1, 1, 1 )
+custom_fonts/font = SubResource( 111 )
+text = "Compositor Vsync"
+
+[node name="Framerate" type="OptionButton" parent="ScreenSettings"]
+margin_top = 160.0
+margin_right = 279.0
+margin_bottom = 200.0
+custom_colors/font_color_disabled = Color( 1, 1, 1, 1 )
+custom_colors/font_color_focus = Color( 1, 1, 1, 1 )
+custom_colors/font_color = Color( 1, 1, 1, 1 )
+custom_colors/font_color_hover = Color( 1, 1, 1, 1 )
+custom_colors/font_color_pressed = Color( 1, 1, 1, 1 )
+custom_fonts/font = SubResource( 111 )
+text = "Framerate"
+flat = true
+
+[node name="HiDPI" type="CheckButton" parent="ScreenSettings"]
+margin_top = 200.0
+margin_right = 279.0
+margin_bottom = 240.0
+custom_colors/font_color_disabled = Color( 1, 1, 1, 1 )
+custom_colors/font_color_focus = Color( 1, 1, 1, 1 )
+custom_colors/font_color_hover_pressed = Color( 1, 1, 1, 1 )
+custom_colors/font_color = Color( 1, 1, 1, 1 )
+custom_colors/font_color_hover = Color( 1, 1, 1, 1 )
+custom_colors/font_color_pressed = Color( 1, 1, 1, 1 )
+custom_fonts/font = SubResource( 111 )
+text = "HiDPI Support"
+
+[node name="DisplaySettings" type="Control" parent="."]
+visible = false
+anchor_left = 0.5
+anchor_right = 0.5
+anchor_bottom = 1.0
+margin_left = -300.0
+margin_top = 144.0
+margin_right = 300.0
+margin_bottom = -51.0
+
+[node name="OptionName1" type="Label" parent="DisplaySettings"]
+margin_left = 7.0
+margin_top = 8.0
+margin_right = 279.0
+margin_bottom = 32.0
+custom_fonts/font = SubResource( 111 )
+text = "Text Window Opacity"
+valign = 1
+
+[node name="WindowOpacity" type="HSlider" parent="DisplaySettings"]
+margin_left = 7.0
+margin_top = 32.0
+margin_right = 279.0
+margin_bottom = 72.0
+value = 75.0
+tick_count = 5
+ticks_on_borders = true
+
+[node name="OptionName2" type="Label" parent="DisplaySettings"]
+margin_left = 7.0
+margin_top = 72.0
+margin_right = 279.0
+margin_bottom = 96.0
+custom_fonts/font = SubResource( 111 )
+text = "Text Typein Speed"
+valign = 1
+
+[node name="TextSpeed" type="HSlider" parent="DisplaySettings"]
+margin_left = 7.0
+margin_top = 96.0
+margin_right = 279.0
+margin_bottom = 136.0
+step = 5.0
+value = 50.0
+tick_count = 5
+ticks_on_borders = true
+
+[node name="TextOutline" type="CheckButton" parent="DisplaySettings"]
+margin_top = 136.0
+margin_right = 279.0
+margin_bottom = 176.0
+custom_colors/font_color_disabled = Color( 1, 1, 1, 1 )
+custom_colors/font_color_focus = Color( 1, 1, 1, 1 )
+custom_colors/font_color_hover_pressed = Color( 1, 1, 1, 1 )
+custom_colors/font_color = Color( 1, 1, 1, 1 )
+custom_colors/font_color_hover = Color( 1, 1, 1, 1 )
+custom_colors/font_color_pressed = Color( 1, 1, 1, 1 )
+custom_fonts/font = SubResource( 111 )
+pressed = true
+text = "Text Outline"
+
+[node name="TextShadow" type="CheckButton" parent="DisplaySettings"]
+margin_top = 176.0
+margin_right = 279.0
+margin_bottom = 216.0
+custom_colors/font_color_disabled = Color( 1, 1, 1, 1 )
+custom_colors/font_color_focus = Color( 1, 1, 1, 1 )
+custom_colors/font_color_hover_pressed = Color( 1, 1, 1, 1 )
+custom_colors/font_color = Color( 1, 1, 1, 1 )
+custom_colors/font_color_hover = Color( 1, 1, 1, 1 )
+custom_colors/font_color_pressed = Color( 1, 1, 1, 1 )
+custom_fonts/font = SubResource( 111 )
+pressed = true
+text = "Text Shadow"
+
+[node name="Textbox" type="Control" parent="DisplaySettings"]
+margin_left = 20.0
+margin_top = 301.0
+margin_right = 528.0
+margin_bottom = 525.0
+mouse_filter = 2
+__meta__ = {
+"_edit_group_": true
+}
+
+[node name="Panel" type="Panel" parent="DisplaySettings/Textbox"]
+show_behind_parent = true
+anchor_right = 1.0
+anchor_bottom = 1.0
+custom_styles/panel = SubResource( 119 )
+
+[node name="BG" type="TextureRect" parent="DisplaySettings/Textbox"]
+show_behind_parent = true
+anchor_right = 1.0
+anchor_bottom = 1.0
+rect_clip_content = true
+texture = ExtResource( 11 )
+expand = true
+stretch_mode = 7
+
+[node name="ADV" type="TextureRect" parent="DisplaySettings/Textbox"]
+modulate = Color( 1, 1, 1, 0.752941 )
+show_behind_parent = true
+material = SubResource( 113 )
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_top = 31.0
+texture = ExtResource( 10 )
+expand = true
+stretch_mode = 1
+
+[node name="Label" type="RichTextLabel" parent="DisplaySettings/Textbox"]
+material = SubResource( 114 )
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = 20.0
+margin_top = 71.0
+margin_right = -32.0
+margin_bottom = -14.0
+rect_clip_content = false
+mouse_filter = 1
+custom_colors/font_color_shadow = Color( 0, 0, 0, 0.501961 )
+custom_constants/shadow_offset_x = 2
+custom_constants/shadow_offset_y = 2
+custom_constants/line_separation = 2
+custom_fonts/bold_italics_font = SubResource( 115 )
+custom_fonts/italics_font = SubResource( 116 )
+custom_fonts/bold_font = SubResource( 117 )
+custom_fonts/normal_font = SubResource( 118 )
+bbcode_enabled = true
+bbcode_text = "Text window display test. Customize things and see how they show up here. This text will continually re-display. [b]Bold[/b] [i]Italic[/i] [b][i]Bold Italic[/i][/b]"
+text = "Text window display test. Customize things and see how they show up here. This text will continually re-display. Bold Italic Bold Italic"
+
+[node name="AudioSettings" type="Control" parent="."]
+visible = false
+anchor_left = 0.5
+anchor_right = 0.5
+anchor_bottom = 1.0
+margin_left = -300.0
+margin_top = 144.0
+margin_right = 300.0
+margin_bottom = -51.0
+
+[node name="OptionName1" type="Label" parent="AudioSettings"]
+margin_left = 7.0
+margin_top = 8.0
+margin_right = 279.0
+margin_bottom = 32.0
+custom_fonts/font = SubResource( 111 )
+text = "Sound Effects Volume"
+valign = 1
+
+[node name="SFXVolume" type="HSlider" parent="AudioSettings"]
+margin_left = 7.0
+margin_top = 32.0
+margin_right = 279.0
+margin_bottom = 72.0
+value = 80.0
+tick_count = 6
+ticks_on_borders = true
+
+[node name="OptionName2" type="Label" parent="AudioSettings"]
+margin_left = 7.0
+margin_top = 72.0
+margin_right = 279.0
+margin_bottom = 96.0
+custom_fonts/font = SubResource( 111 )
+text = "Background Music Volume"
+valign = 1
+
+[node name="BGMVolume" type="HSlider" parent="AudioSettings"]
+margin_left = 7.0
+margin_top = 96.0
+margin_right = 279.0
+margin_bottom = 136.0
+value = 40.0
+tick_count = 6
+ticks_on_borders = true
+
+[node name="OptionName3" type="Label" parent="AudioSettings"]
+margin_left = 7.0
+margin_top = 136.0
+margin_right = 279.0
+margin_bottom = 160.0
+custom_fonts/font = SubResource( 111 )
+text = "Master Volume"
+valign = 1
+
+[node name="MasterVolume" type="HSlider" parent="AudioSettings"]
+margin_left = 7.0
+margin_top = 160.0
+margin_right = 279.0
+margin_bottom = 200.0
+value = 100.0
+tick_count = 5
+ticks_on_borders = true
+
+[node name="BgMute" type="CheckButton" parent="AudioSettings"]
+margin_top = 200.0
+margin_right = 279.0
+margin_bottom = 240.0
+custom_colors/font_color_disabled = Color( 1, 1, 1, 1 )
+custom_colors/font_color_focus = Color( 1, 1, 1, 1 )
+custom_colors/font_color_hover_pressed = Color( 1, 1, 1, 1 )
+custom_colors/font_color = Color( 1, 1, 1, 1 )
+custom_colors/font_color_hover = Color( 1, 1, 1, 1 )
+custom_colors/font_color_pressed = Color( 1, 1, 1, 1 )
+custom_fonts/font = SubResource( 111 )
+pressed = true
+text = "Mute In Background"

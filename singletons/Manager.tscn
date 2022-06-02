@@ -71,7 +71,7 @@ tracks/1/keys = {
 
 [sub_resource type="CanvasItemMaterial" id=30]
 
-[sub_resource type="Shader" id=40]
+[sub_resource type="Shader" id=43]
 code = "// NOTE: Shader automatically converted from Godot Engine 3.4.4.stable's CanvasItemMaterial.
 
 shader_type canvas_item;
@@ -93,7 +93,7 @@ void fragment(){
 */"
 
 [sub_resource type="ShaderMaterial" id=41]
-shader = SubResource( 40 )
+shader = SubResource( 43 )
 
 [sub_resource type="DynamicFont" id=16]
 size = 25
@@ -197,8 +197,8 @@ font_data = ExtResource( 20 )
 [sub_resource type="DynamicFont" id=38]
 size = 14
 use_filter = true
-extra_spacing_top = -1
-extra_spacing_bottom = 1
+extra_spacing_top = -5
+extra_spacing_bottom = -3
 font_data = ExtResource( 28 )
 
 [sub_resource type="CanvasItemMaterial" id=27]
@@ -256,7 +256,7 @@ fade_invert = true
 normal_strength = Vector2( 0.038, 0.095 )
 normal_scale = Vector2( 0.241, 0.308 )
 normal_timescale = Vector2( 0.008, 0 )
-normal_offset = Vector2( 0.6336, 0.26384 )
+normal_offset = Vector2( 0.791584, 0.26384 )
 texture2 = ExtResource( 25 )
 fadeamount = 0.882
 
@@ -302,6 +302,7 @@ __meta__ = {
 }
 
 [node name="ADV" type="TextureRect" parent="Textbox"]
+modulate = Color( 1, 1, 1, 0.752941 )
 show_behind_parent = true
 material = SubResource( 30 )
 anchor_right = 1.0
@@ -380,7 +381,7 @@ margin_bottom = -121.0
 position = Vector2( 756, 110 )
 frames = SubResource( 15 )
 animation = "done"
-frame = 1
+frame = 5
 playing = true
 
 [node name="Name" type="RichTextLabel" parent="Textbox"]
@@ -410,6 +411,28 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 margin_top = -67.0
 mouse_filter = 2
+
+[node name="Settings" type="Button" parent="Buttons"]
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = -536.0
+margin_top = -24.0
+margin_right = -436.0
+theme = ExtResource( 27 )
+__meta__ = {
+"_edit_group_": true
+}
+
+[node name="Label" type="Label" parent="Buttons/Settings"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+custom_colors/font_color_shadow = Color( 0, 0, 0, 1 )
+custom_fonts/font = SubResource( 38 )
+text = "Settings"
+align = 1
+valign = 1
 __meta__ = {
 "_edit_use_anchors_": false
 }
@@ -419,11 +442,12 @@ anchor_left = 1.0
 anchor_top = 1.0
 anchor_right = 1.0
 anchor_bottom = 1.0
-margin_left = -512.0
+margin_left = -436.0
 margin_top = -24.0
-margin_right = -393.0
+margin_right = -336.0
 theme = ExtResource( 27 )
 __meta__ = {
+"_edit_group_": true,
 "_edit_use_anchors_": false
 }
 
@@ -444,11 +468,12 @@ anchor_left = 1.0
 anchor_top = 1.0
 anchor_right = 1.0
 anchor_bottom = 1.0
-margin_left = -393.0
+margin_left = -336.0
 margin_top = -24.0
-margin_right = -274.0
+margin_right = -236.0
 theme = ExtResource( 27 )
 __meta__ = {
+"_edit_group_": true,
 "_edit_use_anchors_": false
 }
 
@@ -466,11 +491,14 @@ anchor_left = 1.0
 anchor_top = 1.0
 anchor_right = 1.0
 anchor_bottom = 1.0
-margin_left = -274.0
+margin_left = -236.0
 margin_top = -24.0
-margin_right = -155.0
+margin_right = -136.0
 theme = ExtResource( 27 )
 toggle_mode = true
+__meta__ = {
+"_edit_group_": true
+}
 
 [node name="Label" type="Label" parent="Buttons/Auto"]
 anchor_right = 1.0
@@ -486,11 +514,14 @@ anchor_left = 1.0
 anchor_top = 1.0
 anchor_right = 1.0
 anchor_bottom = 1.0
-margin_left = -155.0
+margin_left = -136.0
 margin_top = -24.0
 margin_right = -36.0
 theme = ExtResource( 27 )
 toggle_mode = true
+__meta__ = {
+"_edit_group_": true
+}
 
 [node name="Label" type="Label" parent="Skip"]
 anchor_right = 1.0

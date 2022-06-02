@@ -41,6 +41,8 @@ _global_script_class_icons={
 config/name="MirageVN"
 config/description="A VN engine."
 run/main_scene="res://scenes/cutscene/Splash.tscn"
+config/project_settings_override="user://project_settings.godot"
+run/delta_sync_after_draw=true
 boot_splash/image="res://art/ui/splashA.png"
 config/icon="res://icon.png"
 
@@ -50,6 +52,11 @@ EngineSettings="*res://singletons/EngineSettings.gd"
 Manager="*res://singletons/Manager.tscn"
 EmitterFactory="*res://singletons/EmitterFactory.tscn"
 Helpers="*res://singletons/Helpers.gd"
+UserSettings="*res://singletons/UserSettings.gd"
+
+[debug]
+
+settings/fps/force_fps=144
 
 [display]
 
