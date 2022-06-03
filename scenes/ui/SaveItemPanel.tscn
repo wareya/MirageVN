@@ -1,9 +1,10 @@
-[gd_scene load_steps=11 format=2]
+[gd_scene load_steps=15 format=2]
 
 [ext_resource path="res://fonts/Monda-Bold.ttf" type="DynamicFontData" id=1]
 [ext_resource path="res://art/cutscene/bg/hill bg.jpg" type="Texture" id=2]
 [ext_resource path="res://fonts/Galdeano-Regular.ttf" type="DynamicFontData" id=3]
 [ext_resource path="res://scenes/ui/SaveItemPanel.gd" type="Script" id=4]
+[ext_resource path="res://art/ui/lock icon.png" type="Texture" id=5]
 
 [sub_resource type="StyleBoxFlat" id=112]
 bg_color = Color( 0.870588, 0.882353, 0.92549, 1 )
@@ -57,6 +58,21 @@ use_mipmaps = true
 use_filter = true
 font_data = ExtResource( 3 )
 
+[sub_resource type="AtlasTexture" id=119]
+flags = 13
+atlas = ExtResource( 5 )
+region = Rect2( 16, 0, 16, 16 )
+
+[sub_resource type="AtlasTexture" id=120]
+flags = 13
+atlas = ExtResource( 5 )
+region = Rect2( 0, 0, 16, 16 )
+
+[sub_resource type="AtlasTexture" id=121]
+flags = 13
+atlas = ExtResource( 5 )
+region = Rect2( 32, 0, 16, 16 )
+
 [node name="SaveItemPanel" type="Panel"]
 margin_right = 194.0
 margin_bottom = 164.0
@@ -104,7 +120,7 @@ anchor_left = 1.0
 anchor_right = 1.0
 margin_left = -103.0
 margin_top = 3.0
-margin_right = -4.0
+margin_right = -18.0
 margin_bottom = 18.0
 custom_colors/font_color = Color( 0.176471, 0.239216, 0.427451, 1 )
 custom_fonts/font = SubResource( 118 )
@@ -161,3 +177,15 @@ bbcode_enabled = true
 bbcode_text = "\"So you think that, after all of this, they're just going to go and let us go? Just like that? Really now?\""
 text = "\"So you think that, after all of this, they're just going to go and let us go? Just like that? Really now?\""
 scroll_active = false
+
+[node name="LockIcon" type="TextureButton" parent="."]
+anchor_left = 1.0
+anchor_right = 1.0
+margin_left = -18.0
+margin_top = 1.0
+margin_right = -2.0
+margin_bottom = 17.0
+toggle_mode = true
+texture_normal = SubResource( 119 )
+texture_pressed = SubResource( 120 )
+texture_focused = SubResource( 121 )

@@ -20,6 +20,8 @@ But all of the truly "difficult" VN-specific functionality is there.
 - *Most* of the cutscene-scripting-related things you'd expect any VN engine to have
 - Everything Godot supports, including WYSIWYG editing for GUIs
 - Hot reloading mid-cutscene for rapid experimentation (note: you need to quicksave and quickload)
+- Built-in settings manager and save data manager
+- Quicksave backups
 
 Beware, though, that MirageVN is still experimental and immature, so a lot of creature comforts are missing. However, the difficult and fragile parts are all there.
 

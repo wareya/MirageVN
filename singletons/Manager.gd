@@ -372,8 +372,6 @@ func admit_read_line(load_only = false):
     save_sysdata(sysdata)
 
 func admit_latest_save(fname : String):
-    inform_success_save()
-    
     var sysdata = load_sysdata()
     
     var type = "save" if fname.find("_quicksave") < 0 else "quicksave"
@@ -398,6 +396,8 @@ func admit_latest_save(fname : String):
         i += 1
     
     save_sysdata(sysdata)
+    
+    inform_success_save()
 
 
 # mmm, auto

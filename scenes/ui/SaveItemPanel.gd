@@ -1,7 +1,15 @@
 extends Panel
 
+var fname
+signal lock_changed
+
+func lock_toggled(_locked : bool):
+    locked = _locked
+    emit_signal("lock_changed", _locked)
+
 func _ready():
     focus_mode = Control.FOCUS_ALL
+    $LockIcon.connect("toggled", self, "lock_toggled")
     pass
 
 var highlighted = false
@@ -35,15 +43,20 @@ func _gui_input(_event : InputEvent):
     elif _event.is_action_pressed("ui_accept"):
         emit_signal("pressed")
 
+var locked = false
+var data = {}
 func set_blank():
+    locked = false
+    data = {}
+    
     $Text.visible = false
     $DateTime.visible = false
     $Chapter.visible = false
     $Screenshot.visible = false
     $New.visible = false
-    data = {}
+    $LockIcon.visible = false
+    $LockIcon.pressed = false
 
-var data = {}
 func set_savedata(_data : Dictionary):
     # for GUI:
     #ret["last_displayed_line"] = last_displayed_line
@@ -53,7 +66,10 @@ func set_savedata(_data : Dictionary):
     #ret["scene_name"] = scene_name
     #ret["scene_number"] = scene_number
     #ret["screenshot"] = Marshalls.raw_to_base64(latest_screenshot.save_png_to_buffer())
+    
+    locked = false
     data = _data
+    
     if "screenshot" in data:
         var tex = ImageTexture.new()
         var img = Image.new()
@@ -79,6 +95,13 @@ func set_savedata(_data : Dictionary):
     $Text.bbcode_enabled = true
     $Text.bbcode_text = data["last_displayed_line"]
     $Text.visible = true
+    
+    $LockIcon.visible = false
+    $LockIcon.pressed = false
+
+func set_locked(whether : bool):
+    $LockIcon.visible = true
+    $LockIcon.pressed = whether
 
 var number = 1
 func set_number(i : int):

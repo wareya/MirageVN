@@ -5,10 +5,13 @@ var mode = "save"
 var save_disabled = false
 
 var latest_saves = []
+var locked_saves = []
 func update_latest_saves():
     var sysdata = Manager.load_sysdata()
     if "latest_saves" in sysdata:
         latest_saves = sysdata["latest_saves"]
+    if "locked_saves" in sysdata:
+        locked_saves = sysdata["locked_saves"]
 
 var pageflip_sound = preload("res://sfx/paper bag.wav")
 
@@ -23,6 +26,7 @@ func _ready():
             _unused = (button as BaseButton).connect("pressed", self, "pressed_page_button", [button])
     for panel in $Page.get_children():
         panel.connect("pressed", self, "pressed_panel", [panel])
+        panel.connect("lock_changed", self, "panel_lock_changed", [panel])
     
     if save_disabled:
         mode = "load"
@@ -113,9 +117,16 @@ func set_page(silent : bool = false):
             panel.set_number(i)
             
             var fname = "user://saves/%04d_%s.json" % [i, save_type]
+            panel.fname = fname
             panel.set_new(fname in latest_saves)
+            panel.set_locked(fname in locked_saves)
     else:
-        save_type = "quicksave"
+        if pagenum == -1:
+            save_type = "quicksave"
+        elif pagenum == -2:
+            save_type = "autosave"
+        else:
+            return
         for i in range(0, saves_per_page):
             var panel = panels[i]
             var data = load_data(i)
@@ -126,6 +137,7 @@ func set_page(silent : bool = false):
             panel.set_number(i)
             
             var fname = "user://saves/%04d_%s.json" % [i, save_type]
+            panel.fname = fname
             panel.set_new(fname in latest_saves)
         
 
@@ -136,11 +148,14 @@ func pressed_page_button(button : BaseButton):
             other.pressed = false
     button.pressed = true
     
-    if button.text != "Q":
+    if button.text != "Q" and button.text != "A":
         pagenum = int(button.text)
         set_page()
-    else:
+    elif button.text == "Q":
         pagenum = -1
+        set_page()
+    elif button.text == "A":
+        pagenum = -2
         set_page()
 
 func pressed_panel(panel):
@@ -149,12 +164,31 @@ func pressed_panel(panel):
             Manager.load_from_dict(panel.data)
             dying = true
     elif mode == "save":
+        if panel.fname in locked_saves:
+            EmitterFactory.emit(null, EngineSettings.save_failure_sound)
+            return
         var data = Manager.save_to_dict()
         data["date"] = OS.get_date()
         data["time"] = OS.get_time()
         save_data(panel.number, data, panel)
         panel.set_savedata(data)
         panel.set_new(true)
+        panel.set_locked(panel.fname in locked_saves)
+
+func panel_lock_changed(locked : bool, panel):
+    if not pagenum > 0:
+        return
+    
+    var sysdata = Manager.load_sysdata()
+    if "locked_saves" in sysdata:
+        locked_saves = sysdata["locked_saves"]
+    if locked and locked_saves.find(panel.fname) < 0:
+        locked_saves.push_back(panel.fname)
+    elif !locked and locked_saves.find(panel.fname) >= 0:
+        locked_saves.erase(panel.fname)
+    
+    sysdata["locked_saves"] = locked_saves
+    Manager.save_sysdata(sysdata)
 
 var dying = false
 var show_amount = 0.0

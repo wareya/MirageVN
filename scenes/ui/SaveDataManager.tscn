@@ -246,9 +246,9 @@ anchor_top = 1.0
 anchor_right = 0.5
 anchor_bottom = 1.0
 margin_left = -412.0
-margin_top = -48.0
+margin_top = -47.0
 margin_right = 416.0
-margin_bottom = -14.0
+margin_bottom = -13.0
 
 [node name="PageLabel" type="Label" parent="PageButtons"]
 margin_top = 3.0
@@ -362,10 +362,20 @@ text = "10"
 [node name="Separator" type="VSeparator" parent="PageButtons"]
 modulate = Color( 1, 1, 1, 0 )
 margin_left = 611.0
-margin_right = 776.0
+margin_right = 724.0
 margin_bottom = 34.0
 mouse_filter = 2
 size_flags_horizontal = 3
+
+[node name="PageA" type="Button" parent="PageButtons"]
+margin_left = 728.0
+margin_right = 776.0
+margin_bottom = 34.0
+rect_min_size = Vector2( 48, 0 )
+focus_neighbour_top = NodePath("../../Page/SaveItemPanel12")
+custom_fonts/font = SubResource( 111 )
+toggle_mode = true
+text = "A"
 
 [node name="PageQ" type="Button" parent="PageButtons"]
 margin_left = 780.0
