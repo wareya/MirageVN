@@ -34,3 +34,8 @@ const audio_sfx_default_volume = -1.0
 const audio_bgm_default_volume = -12.0
 const audio_master_default_volume = 0.0
 
+
+const load_failure_sound = preload("res://sfx/reconfirm.wav")
+const load_success_sound = preload("res://sfx/success.wav")
+const save_success_sound = preload("res://sfx/progress.wav")
+

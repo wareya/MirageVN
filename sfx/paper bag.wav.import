@@ -1,0 +1,21 @@
+[remap]
+
+importer="wav"
+type="AudioStreamSample"
+path="res://.import/paper bag.wav-066143f50559c65137bc29447ff30ff9.sample"
+
+[deps]
+
+source_file="res://sfx/paper bag.wav"
+dest_files=[ "res://.import/paper bag.wav-066143f50559c65137bc29447ff30ff9.sample" ]
+
+[params]
+
+force/8_bit=false
+force/mono=false
+force/max_rate=false
+force/max_rate_hz=44100
+edit/trim=false
+edit/normalize=false
+edit/loop=false
+compress/mode=0

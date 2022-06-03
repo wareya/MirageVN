@@ -201,8 +201,10 @@ func load_from_dict(data : Dictionary):
     custom_save_data = CUSTOM_SAVE_DATA_AT_SCENE_ENTRY.duplicate(true)
     SAVED_CHOICES = data["SAVED_CHOICES"]
     if SAVED_CUTSCENE == "":
+        inform_failed_load()
         return
     print("loading to: ", [LOAD_LINE, SAVED_CUTSCENE])
+    inform_success_load()
     play_bgm(null)
     cutscene_paused = false
     
@@ -241,6 +243,15 @@ func quicksave():
     
     Manager.admit_latest_save(fname)
 
+func inform_failed_load():
+    EmitterFactory.emit(null, EngineSettings.load_failure_sound)
+
+func inform_success_load():
+    EmitterFactory.emit(null, EngineSettings.load_success_sound)
+
+func inform_success_save():
+    EmitterFactory.emit(null, EngineSettings.save_success_sound)
+
 func quickload():
     $Skip.pressed = false
     var sysdata = load_sysdata()
@@ -258,11 +269,9 @@ func quickload():
             var data = result.result
             load_from_dict(data)
         else:
-            # TODO handle error
-            pass
+            inform_failed_load()
     else:
-        # TODO handle error in a user-visible way
-        pass
+        inform_failed_load()
     quicksave.close()
 
 func notify_load_finished():
@@ -363,6 +372,8 @@ func admit_read_line(load_only = false):
     save_sysdata(sysdata)
 
 func admit_latest_save(fname : String):
+    inform_success_save()
+    
     var sysdata = load_sysdata()
     
     var type = "save" if fname.find("_quicksave") < 0 else "quicksave"

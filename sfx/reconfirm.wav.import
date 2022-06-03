@@ -1,0 +1,21 @@
+[remap]
+
+importer="wav"
+type="AudioStreamSample"
+path="res://.import/reconfirm.wav-a8f912d19d0511483021e252bc983d9d.sample"
+
+[deps]
+
+source_file="res://sfx/reconfirm.wav"
+dest_files=[ "res://.import/reconfirm.wav-a8f912d19d0511483021e252bc983d9d.sample" ]
+
+[params]
+
+force/8_bit=false
+force/mono=false
+force/max_rate=false
+force/max_rate_hz=44100
+edit/trim=false
+edit/normalize=false
+edit/loop=false
+compress/mode=0

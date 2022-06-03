@@ -9,7 +9,8 @@ func update_latest_saves():
     var sysdata = Manager.load_sysdata()
     if "latest_saves" in sysdata:
         latest_saves = sysdata["latest_saves"]
-    
+
+var pageflip_sound = preload("res://sfx/paper bag.wav")
 
 func _ready():
     update_latest_saves()
@@ -37,7 +38,7 @@ func _ready():
         $Background.texture = preload("res://art/ui/menubg3.png")
     
     pagenum = 1
-    set_page()
+    set_page(true)
 
 func pressed_category_button(button : BaseButton):
     for other in $CategoryButtons.get_children():
@@ -93,7 +94,9 @@ func save_data(savenum : int, data : Dictionary, panel):
     panel.set_new(true)
 
 const saves_per_page = 12
-func set_page():
+func set_page(silent : bool = false):
+    if !silent:
+        EmitterFactory.emit(null, pageflip_sound)
     var panels = $Page.get_children()
     if pagenum > 0:
         save_type = "save"

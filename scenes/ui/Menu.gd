@@ -73,9 +73,11 @@ func continue_game():
     for f in sysdata["latest_saves"]:
         if dir.file_exists(f):
             var data = load_data(f)
-            Manager.load_from_dict(data)
-            yield(get_tree(), "idle_frame")
-            break
+            if data:
+                Manager.load_from_dict(data)
+                yield(get_tree(), "idle_frame")
+                return
+    Manager.inform_failed_load()
 
 func new_game():
     if block:
