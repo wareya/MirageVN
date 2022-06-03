@@ -227,11 +227,13 @@ func quicksave():
     var sysdata = load_sysdata()
     if not "next_quicksave_index" in sysdata:
         sysdata["next_quicksave_index"] = 0
-    var quicksave_index = int(sysdata["next_quicksave_index"]) % SaveDataManager.saves_per_page
-    sysdata["next_quicksave_index"] = (quicksave_index + 1) % SaveDataManager.saves_per_page
-    save_sysdata(sysdata)
     
+    var quicksave_index = int(sysdata["next_quicksave_index"]) % SaveDataManager.saves_per_page
     var fname = "user://saves/%04d_quicksave.json" % [quicksave_index]
+    
+    sysdata["next_quicksave_index"] = (quicksave_index + 1) % SaveDataManager.saves_per_page
+    sysdata["last_accessed_save"] = fname
+    save_sysdata(sysdata)
     
     $Skip.pressed = false
     var quicksave = File.new()
@@ -260,6 +262,7 @@ func quickload():
         if "_quicksave" in f:
             fname = f
             break
+    
     var quicksave = File.new()
     var err = quicksave.open(fname, File.READ)
     if err == OK:
@@ -268,11 +271,14 @@ func quickload():
         if result.error == OK:
             var data = result.result
             load_from_dict(data)
+            sysdata["last_accessed_save"] = fname
         else:
             inform_failed_load()
     else:
         inform_failed_load()
     quicksave.close()
+    
+    save_sysdata(sysdata)
 
 func notify_load_finished():
     LOAD_SKIP = false
@@ -374,7 +380,9 @@ func admit_read_line(load_only = false):
 func admit_latest_save(fname : String):
     var sysdata = load_sysdata()
     
-    var type = "save" if fname.find("_quicksave") < 0 else "quicksave"
+    var type = "save" if fname.find("_save.") < 0 else "quicksave" if fname.find("_quicksave.") < 0 else "autosave"
+    
+    sysdata["last_accessed_save"] = fname
     
     if not "latest_saves" in sysdata:
         sysdata["latest_saves"] = []

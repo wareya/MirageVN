@@ -1,7 +1,5 @@
 extends CanvasLayer
 
-signal done
-
 var sysdata
 func _ready():
     Manager.set_bg(preload("res://art/ui/title.png"), true)
@@ -12,14 +10,17 @@ func _ready():
     _unused = $"Buttons/New Game".connect("pressed", self, "new_game")
     
     var dir = Directory.new()
-    for f in sysdata["latest_saves"]:
-        if dir.file_exists(f):
-            var quicksave = File.new()
-            var err = quicksave.open("user://saves/0000_quicksave.json", File.READ)
-            if err == OK:
+    if "last_accessed_save" in sysdata:
+        if dir.file_exists(sysdata["last_accessed_save"]):
+            $"Buttons/Continue".disabled = false
+            _unused = $"Buttons/Continue".connect("pressed", self, "continue_game")
+            
+    if "latest_saves" in sysdata:
+        for f in sysdata["latest_saves"]:
+            if dir.file_exists(f):
                 $"Buttons/Continue".disabled = false
                 _unused = $"Buttons/Continue".connect("pressed", self, "continue_game")
-            break
+                break
     
     yield(get_tree(), "idle_frame")
     if Manager.fading:
@@ -66,17 +67,24 @@ func continue_game():
     if block:
         return
     block = true
-    print("!!!!!!!!loading game")
-    emit_signal("done")
     
     var dir = Directory.new()
-    for f in sysdata["latest_saves"]:
-        if dir.file_exists(f):
-            var data = load_data(f)
+    
+    if "last_accessed_save" in sysdata:
+        if dir.file_exists(sysdata["last_accessed_save"]):
+            var data = load_data(sysdata["last_accessed_save"])
             if data:
                 Manager.load_from_dict(data)
-                yield(get_tree(), "idle_frame")
                 return
+    
+    if "latest_saves" in sysdata:
+        for f in sysdata["latest_saves"]:
+            if dir.file_exists(f):
+                var data = load_data(f)
+                if data:
+                    Manager.load_from_dict(data)
+                    return
+    
     Manager.inform_failed_load()
 
 func new_game():
@@ -85,7 +93,6 @@ func new_game():
     block = true
     EmitterFactory.emit(null, "startgame", Vector2(), "OtherSFX")
     print("!!!!!!!!new game")
-    emit_signal("done")
     
     Manager.play_bgm(null, 3.0)
     yield(get_tree(), "idle_frame")

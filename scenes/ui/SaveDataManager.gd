@@ -162,6 +162,9 @@ func pressed_panel(panel):
     if mode == "load":
         if panel.data and panel.data.size() > 0:
             Manager.load_from_dict(panel.data)
+            var sysdata = Manager.load_sysdata()
+            sysdata["last_accessed_save"] = panel.fname
+            Manager.save_sysdata(sysdata)
             dying = true
     elif mode == "save":
         if panel.fname in locked_saves:
