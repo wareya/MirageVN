@@ -237,6 +237,11 @@ func set_zoom(zoom : float):
     zoom_nonce += 1
     var start_nonce = zoom_nonce
     
+    if Manager.LOAD_SKIP:
+        scale_factor_target = zoom
+        scale_factor = zoom
+        return
+    
     if !visible or modulate.a == 0.0:
         scale_factor_target = zoom
         scale_factor = zoom
@@ -273,6 +278,11 @@ func set_offset(arg_offset : Vector2):
     print("entering set_offset")
     offset_nonce += 1
     var start_nonce = offset_nonce
+    
+    if Manager.LOAD_SKIP:
+        offset_target = offset
+        offset = offset
+        return
     
     if !visible or modulate.a == 0.0:
         offset_target = offset

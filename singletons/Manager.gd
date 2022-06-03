@@ -468,7 +468,6 @@ var skip_pressed_during_read_text = false
 func skip_pressed():
     if is_line_read():
         skip_pressed_during_read_text = true
-        print("wheee")
 
 func volts_to_db(x):
     return log(x)/log(10)*10*2.0 # 2.0 to get voltage db instead of power db
@@ -923,10 +922,11 @@ func process_cutscene(delta):
     
     process_cutscene_timers(delta)
     
-    if realtime_skip() and typein_chars >= 0:
+    if realtime_skip():
+        if typein_chars >= 0:
+            delayed_emit_signal("cutscene_continue", 1/EngineSettings.cutscene_skip_rate)
         typein_chars = -1
         $Textbox/Label.visible_characters = -1
-        delayed_emit_signal("cutscene_continue", 1/EngineSettings.cutscene_skip_rate)
     elif !just_continued and !input_disabled and (Input.is_action_just_pressed("ui_accept") or m1_pressed or Input.is_action_just_pressed("skip") or Input.is_action_just_pressed("ui_down")):
         $Buttons/Auto.pressed = false
         $Skip.pressed = false
@@ -1388,6 +1388,7 @@ func call_cutscene(entity : Node, method : String):
     set_bg_transform_1(Vector2(), Vector2.ONE)
     set_bg_transform_2(Vector2(), Vector2.ONE)
     set_ADV_mode()
+    $Scene.offset = Vector2()
     
     taken_choices = []
     
@@ -1786,6 +1787,13 @@ var env_nonce = 0
 # Sets the environmental coloration for tachie (standing sprites).
 func set_env(saturation : float = 1.0, color : Color = Color(0.5, 0.5, 0.5), light : Color = Color(1.0, 1.0, 1.0)):
     env_nonce += 1
+    
+    if LOAD_SKIP:
+        env_saturation = saturation
+        env_color = color
+        env_light = light
+        return
+    
     var start_nonce = env_nonce
     var old_color = env_color
     var old_light = env_light
