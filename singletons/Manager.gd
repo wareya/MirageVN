@@ -243,8 +243,14 @@ func quicksave():
 
 func quickload():
     $Skip.pressed = false
+    var sysdata = load_sysdata()
+    var fname = ""
+    for f in sysdata["latest_saves"]:
+        if "_quicksave" in f:
+            fname = f
+            break
     var quicksave = File.new()
-    var err = quicksave.open("user://saves/0000_quicksave.json", File.READ)
+    var err = quicksave.open(fname, File.READ)
     if err == OK:
         var json = quicksave.get_as_text()
         var result = JSON.parse(json)
@@ -256,7 +262,7 @@ func quickload():
             pass
     else:
         # TODO handle error in a user-visible way
-        print("no quicksave exists")
+        pass
     quicksave.close()
 
 func notify_load_finished():

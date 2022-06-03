@@ -115,6 +115,7 @@ margin_right = 125.0
 margin_bottom = 32.0
 rect_min_size = Vector2( 125, 0 )
 rect_pivot_offset = Vector2( 92, 28 )
+focus_neighbour_bottom = NodePath("../../Page/SaveItemPanel")
 custom_fonts/font = SubResource( 111 )
 toggle_mode = true
 pressed = true
@@ -126,6 +127,7 @@ margin_right = 254.0
 margin_bottom = 32.0
 rect_min_size = Vector2( 125, 0 )
 rect_pivot_offset = Vector2( 92, 28 )
+focus_neighbour_bottom = NodePath("../../Page/SaveItemPanel")
 custom_fonts/font = SubResource( 111 )
 toggle_mode = true
 text = "Load"
@@ -144,6 +146,8 @@ margin_right = 896.0
 margin_bottom = 32.0
 rect_min_size = Vector2( 125, 0 )
 rect_pivot_offset = Vector2( 92, 28 )
+focus_neighbour_bottom = NodePath("../../Page/SaveItemPanel")
+focus_next = NodePath("../../Page/SaveItemPanel")
 custom_fonts/font = SubResource( 111 )
 toggle_mode = true
 text = "Return"
@@ -169,18 +173,23 @@ margin_bottom = -65.0
 columns = 4
 
 [node name="SaveItemPanel" parent="Page" instance=ExtResource( 6 )]
+focus_neighbour_top = NodePath("../../CategoryButtons/SaveButton")
+focus_previous = NodePath("../../CategoryButtons/SaveButton")
 
 [node name="SaveItemPanel2" parent="Page" instance=ExtResource( 6 )]
 margin_left = 198.0
 margin_right = 392.0
+focus_neighbour_top = NodePath("../../CategoryButtons/SaveButton")
 
 [node name="SaveItemPanel3" parent="Page" instance=ExtResource( 6 )]
 margin_left = 396.0
 margin_right = 590.0
+focus_neighbour_top = NodePath("../../CategoryButtons/SaveButton")
 
 [node name="SaveItemPanel4" parent="Page" instance=ExtResource( 6 )]
 margin_left = 594.0
 margin_right = 788.0
+focus_neighbour_top = NodePath("../../CategoryButtons/SaveButton")
 
 [node name="SaveItemPanel5" parent="Page" instance=ExtResource( 6 )]
 margin_top = 168.0
@@ -207,24 +216,29 @@ margin_bottom = 332.0
 [node name="SaveItemPanel9" parent="Page" instance=ExtResource( 6 )]
 margin_top = 336.0
 margin_bottom = 500.0
+focus_neighbour_bottom = NodePath("../../PageButtons/Page1")
 
 [node name="SaveItemPanel10" parent="Page" instance=ExtResource( 6 )]
 margin_left = 198.0
 margin_top = 336.0
 margin_right = 392.0
 margin_bottom = 500.0
+focus_neighbour_bottom = NodePath("../../PageButtons/Page1")
 
 [node name="SaveItemPanel11" parent="Page" instance=ExtResource( 6 )]
 margin_left = 396.0
 margin_top = 336.0
 margin_right = 590.0
 margin_bottom = 500.0
+focus_neighbour_bottom = NodePath("../../PageButtons/Page1")
 
 [node name="SaveItemPanel12" parent="Page" instance=ExtResource( 6 )]
 margin_left = 594.0
 margin_top = 336.0
 margin_right = 788.0
 margin_bottom = 500.0
+focus_neighbour_bottom = NodePath("../../PageButtons/Page1")
+focus_next = NodePath("../../PageButtons/Page1")
 
 [node name="PageButtons" type="HBoxContainer" parent="."]
 anchor_left = 0.5
@@ -248,6 +262,8 @@ margin_left = 91.0
 margin_right = 139.0
 margin_bottom = 34.0
 rect_min_size = Vector2( 48, 0 )
+focus_neighbour_top = NodePath("../../Page/SaveItemPanel12")
+focus_previous = NodePath("../../Page/SaveItemPanel12")
 custom_fonts/font = SubResource( 111 )
 toggle_mode = true
 pressed = true
@@ -258,6 +274,7 @@ margin_left = 143.0
 margin_right = 191.0
 margin_bottom = 34.0
 rect_min_size = Vector2( 48, 0 )
+focus_neighbour_top = NodePath("../../Page/SaveItemPanel12")
 custom_fonts/font = SubResource( 111 )
 toggle_mode = true
 text = "2"
@@ -267,6 +284,7 @@ margin_left = 195.0
 margin_right = 243.0
 margin_bottom = 34.0
 rect_min_size = Vector2( 48, 0 )
+focus_neighbour_top = NodePath("../../Page/SaveItemPanel12")
 custom_fonts/font = SubResource( 111 )
 toggle_mode = true
 text = "3"
@@ -276,6 +294,7 @@ margin_left = 247.0
 margin_right = 295.0
 margin_bottom = 34.0
 rect_min_size = Vector2( 48, 0 )
+focus_neighbour_top = NodePath("../../Page/SaveItemPanel12")
 custom_fonts/font = SubResource( 111 )
 toggle_mode = true
 text = "4"
@@ -285,6 +304,7 @@ margin_left = 299.0
 margin_right = 347.0
 margin_bottom = 34.0
 rect_min_size = Vector2( 48, 0 )
+focus_neighbour_top = NodePath("../../Page/SaveItemPanel12")
 custom_fonts/font = SubResource( 111 )
 toggle_mode = true
 text = "5"
@@ -294,6 +314,7 @@ margin_left = 351.0
 margin_right = 399.0
 margin_bottom = 34.0
 rect_min_size = Vector2( 48, 0 )
+focus_neighbour_top = NodePath("../../Page/SaveItemPanel12")
 custom_fonts/font = SubResource( 111 )
 toggle_mode = true
 text = "6"
@@ -303,6 +324,7 @@ margin_left = 403.0
 margin_right = 451.0
 margin_bottom = 34.0
 rect_min_size = Vector2( 48, 0 )
+focus_neighbour_top = NodePath("../../Page/SaveItemPanel12")
 custom_fonts/font = SubResource( 111 )
 toggle_mode = true
 text = "7"
@@ -312,6 +334,7 @@ margin_left = 455.0
 margin_right = 503.0
 margin_bottom = 34.0
 rect_min_size = Vector2( 48, 0 )
+focus_neighbour_top = NodePath("../../Page/SaveItemPanel12")
 custom_fonts/font = SubResource( 111 )
 toggle_mode = true
 text = "8"
@@ -321,6 +344,7 @@ margin_left = 507.0
 margin_right = 555.0
 margin_bottom = 34.0
 rect_min_size = Vector2( 48, 0 )
+focus_neighbour_top = NodePath("../../Page/SaveItemPanel12")
 custom_fonts/font = SubResource( 111 )
 toggle_mode = true
 text = "9"
@@ -330,6 +354,7 @@ margin_left = 559.0
 margin_right = 607.0
 margin_bottom = 34.0
 rect_min_size = Vector2( 48, 0 )
+focus_neighbour_top = NodePath("../../Page/SaveItemPanel12")
 custom_fonts/font = SubResource( 111 )
 toggle_mode = true
 text = "10"
@@ -347,6 +372,7 @@ margin_left = 780.0
 margin_right = 828.0
 margin_bottom = 34.0
 rect_min_size = Vector2( 48, 0 )
+focus_neighbour_top = NodePath("../../Page/SaveItemPanel12")
 custom_fonts/font = SubResource( 111 )
 toggle_mode = true
 text = "Q"

@@ -32,6 +32,8 @@ func _gui_input(_event : InputEvent):
                 pressed_down = false
                 if highlighted:
                     emit_signal("pressed")
+    elif _event.is_action_pressed("ui_accept"):
+        emit_signal("pressed")
 
 func set_blank():
     $Text.visible = false
@@ -69,7 +71,7 @@ func set_savedata(_data : Dictionary):
     $New.visible = false
     
     $DateTime.visible = true
-    $DateTime.text = "%04d-%02d-%02d %02d:%02d" % [date.year, date.month, date.day, time.hour, time.minute]
+    $DateTime.text = "%04d-%02d-%02d %02d:%02d:%02d" % [date.year, date.month, date.day, time.hour, time.minute, time.second]
     
     $Chapter.visible = true
     $Chapter.text = "%s-%s" % [data["chapter_number"], data["scene_number"]]
