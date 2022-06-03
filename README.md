@@ -21,12 +21,10 @@ But all of the truly "difficult" VN-specific functionality is there.
 - Everything Godot supports, including WYSIWYG editing for GUIs
 - Hot reloading mid-cutscene for rapid experimentation (note: you need to quicksave and quickload)
 
-Beware, though, that MirageVN is still experimental and immature, so a lot of creature comforts are missing, like a default save data manager, options screen, etc. However, the difficult and fragile parts are all there.
+Beware, though, that MirageVN is still experimental and immature, so a lot of creature comforts are missing. However, the difficult and fragile parts are all there.
 
 Useful features MirageVN does **NOT** currently have, and that you will need to build yourself if you need them:
 
-- Save data manager
-- Options screen
 - Gallery
 - Automatic voice playback (and related things like voice replay)
 - Rewinding via backlog
@@ -38,8 +36,9 @@ Known issues:
 
 - Godot doesn't support mixed-DPI setups 100%; I have a 1x DPI scale main monitor, and if I drag godot projects onto my 1.25x DPI scale monitor, they end up blurry
 - While window resizing results in sharp text and sprites, the project is not truly base-resolution-independent; changing the default window resolution away from 720p will slightly break how things are positioned
-- Certain things that should be project-wide shared settings are currently hardcoded, like tachie fading time etc.
-- Speaker face display on the textbox and in the backlog are a huge hack 
+- Speaker face display on the textbox and in the backlog are a huge hack and you will probably have to replace or heavily edit the relevant code if you make a complex game
+- Missing a "return to title" button in the settings screen
+- Missing a way to delete save data
 
 ## How to use
 
