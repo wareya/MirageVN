@@ -20,11 +20,21 @@ func _ready():
     Manager.play_bgm(preload("res://bgm/excited music.ogg"))
     
     _unused = $"Buttons/Settings".connect("pressed", Manager, "settings")
+    _unused = $"Buttons/Load Data".connect("pressed", self, "load_screen")
 
-
+func load_screen():
+    if get_tree().get_nodes_in_group("MenuScreen").size() > 0:
+        return
+    var screen = preload("res://scenes/ui/SaveDataManager.tscn").instance()
+    screen.mode = "load"
+    screen.save_disabled = true
+    get_tree().get_root().add_child(screen)
 
 func _process(_delta):
-    pass
+    if ($Buttons.get_focus_owner() == null
+    and get_tree().get_nodes_in_group("MenuScreen").size() == 0
+    and Input.is_action_just_pressed("ui_focus_next")):
+        $"Buttons/New Game".grab_focus()
 
 var block = false
 

@@ -126,50 +126,62 @@ extra_spacing_bottom = 1
 font_data = ExtResource( 20 )
 
 [sub_resource type="AtlasTexture" id=34]
+flags = 13
 atlas = ExtResource( 3 )
 region = Rect2( 144, 0, 48, 48 )
 
 [sub_resource type="AtlasTexture" id=7]
+flags = 13
 atlas = ExtResource( 3 )
 region = Rect2( 192, 0, 48, 48 )
 
 [sub_resource type="AtlasTexture" id=8]
+flags = 13
 atlas = ExtResource( 3 )
 region = Rect2( 240, 0, 48, 48 )
 
 [sub_resource type="AtlasTexture" id=3]
+flags = 13
 atlas = ExtResource( 3 )
 region = Rect2( 0, 0, 48, 48 )
 
 [sub_resource type="AtlasTexture" id=4]
+flags = 13
 atlas = ExtResource( 3 )
 region = Rect2( 48, 0, 48, 48 )
 
 [sub_resource type="AtlasTexture" id=5]
+flags = 13
 atlas = ExtResource( 3 )
 region = Rect2( 96, 0, 48, 48 )
 
 [sub_resource type="AtlasTexture" id=14]
+flags = 13
 atlas = ExtResource( 16 )
 region = Rect2( 240, 0, 48, 48 )
 
 [sub_resource type="AtlasTexture" id=9]
+flags = 13
 atlas = ExtResource( 16 )
 region = Rect2( 192, 0, 48, 48 )
 
 [sub_resource type="AtlasTexture" id=10]
+flags = 13
 atlas = ExtResource( 16 )
 region = Rect2( 0, 0, 48, 48 )
 
 [sub_resource type="AtlasTexture" id=11]
+flags = 13
 atlas = ExtResource( 16 )
 region = Rect2( 48, 0, 48, 48 )
 
 [sub_resource type="AtlasTexture" id=12]
+flags = 13
 atlas = ExtResource( 16 )
 region = Rect2( 96, 0, 48, 48 )
 
 [sub_resource type="AtlasTexture" id=13]
+flags = 13
 atlas = ExtResource( 16 )
 region = Rect2( 144, 0, 48, 48 )
 
@@ -256,7 +268,7 @@ fade_invert = true
 normal_strength = Vector2( 0.038, 0.095 )
 normal_scale = Vector2( 0.241, 0.308 )
 normal_timescale = Vector2( 0.008, 0 )
-normal_offset = Vector2( 0.791584, 0.26384 )
+normal_offset = Vector2( 0.178418, 0.26384 )
 texture2 = ExtResource( 25 )
 fadeamount = 0.882
 
@@ -381,7 +393,7 @@ margin_bottom = -121.0
 position = Vector2( 756, 110 )
 frames = SubResource( 15 )
 animation = "done"
-frame = 5
+frame = 10
 playing = true
 
 [node name="Name" type="RichTextLabel" parent="Textbox"]
@@ -412,25 +424,50 @@ anchor_bottom = 1.0
 margin_top = -67.0
 mouse_filter = 2
 
-[node name="Settings" type="Button" parent="Buttons"]
+[node name="Save" type="Button" parent="Buttons"]
 anchor_left = 1.0
 anchor_top = 1.0
 anchor_right = 1.0
 anchor_bottom = 1.0
-margin_left = -536.0
+margin_left = -736.0
 margin_top = -24.0
-margin_right = -436.0
+margin_right = -636.0
 theme = ExtResource( 27 )
 __meta__ = {
 "_edit_group_": true
 }
 
-[node name="Label" type="Label" parent="Buttons/Settings"]
+[node name="Label" type="Label" parent="Buttons/Save"]
 anchor_right = 1.0
 anchor_bottom = 1.0
 custom_colors/font_color_shadow = Color( 0, 0, 0, 1 )
 custom_fonts/font = SubResource( 38 )
-text = "Settings"
+text = "Save"
+align = 1
+valign = 1
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Load" type="Button" parent="Buttons"]
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = -636.0
+margin_top = -24.0
+margin_right = -536.0
+theme = ExtResource( 27 )
+__meta__ = {
+"_edit_group_": true
+}
+
+[node name="Label" type="Label" parent="Buttons/Load"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+custom_colors/font_color_shadow = Color( 0, 0, 0, 1 )
+custom_fonts/font = SubResource( 38 )
+text = "Load"
 align = 1
 valign = 1
 __meta__ = {
@@ -442,9 +479,9 @@ anchor_left = 1.0
 anchor_top = 1.0
 anchor_right = 1.0
 anchor_bottom = 1.0
-margin_left = -436.0
+margin_left = -536.0
 margin_top = -24.0
-margin_right = -336.0
+margin_right = -436.0
 theme = ExtResource( 27 )
 __meta__ = {
 "_edit_group_": true,
@@ -468,13 +505,12 @@ anchor_left = 1.0
 anchor_top = 1.0
 anchor_right = 1.0
 anchor_bottom = 1.0
-margin_left = -336.0
+margin_left = -436.0
 margin_top = -24.0
-margin_right = -236.0
+margin_right = -336.0
 theme = ExtResource( 27 )
 __meta__ = {
-"_edit_group_": true,
-"_edit_use_anchors_": false
+"_edit_group_": true
 }
 
 [node name="Label" type="Label" parent="Buttons/Quickload"]
@@ -485,6 +521,31 @@ custom_fonts/font = SubResource( 38 )
 text = "Quickload"
 align = 1
 valign = 1
+
+[node name="Settings" type="Button" parent="Buttons"]
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = -336.0
+margin_top = -24.0
+margin_right = -236.0
+theme = ExtResource( 27 )
+__meta__ = {
+"_edit_group_": true
+}
+
+[node name="Label" type="Label" parent="Buttons/Settings"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+custom_colors/font_color_shadow = Color( 0, 0, 0, 1 )
+custom_fonts/font = SubResource( 38 )
+text = "Settings"
+align = 1
+valign = 1
+__meta__ = {
+"_edit_use_anchors_": false
+}
 
 [node name="Auto" type="Button" parent="Buttons"]
 anchor_left = 1.0

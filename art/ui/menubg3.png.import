@@ -2,15 +2,15 @@
 
 importer="texture"
 type="StreamTexture"
-path="res://.import/notches.png-ab8df3db3c6092753dcb6afdee7e433c.stex"
+path="res://.import/menubg3.png-db590e4e47de53234f09f0f6631d4283.stex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://art/ui/notches.png"
-dest_files=[ "res://.import/notches.png-ab8df3db3c6092753dcb6afdee7e433c.stex" ]
+source_file="res://art/ui/menubg3.png"
+dest_files=[ "res://.import/menubg3.png-db590e4e47de53234f09f0f6631d4283.stex" ]
 
 [params]
 
@@ -19,7 +19,7 @@ compress/lossy_quality=0.7
 compress/hdr_mode=0
 compress/bptc_ldr=0
 compress/normal_map=0
-flags/repeat=0
+flags/repeat=1
 flags/filter=true
 flags/mipmaps=true
 flags/anisotropic=true

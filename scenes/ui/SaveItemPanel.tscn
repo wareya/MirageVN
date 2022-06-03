@@ -1,0 +1,163 @@
+[gd_scene load_steps=11 format=2]
+
+[ext_resource path="res://fonts/Monda-Bold.ttf" type="DynamicFontData" id=1]
+[ext_resource path="res://art/cutscene/bg/hill bg.jpg" type="Texture" id=2]
+[ext_resource path="res://fonts/Galdeano-Regular.ttf" type="DynamicFontData" id=3]
+[ext_resource path="res://scenes/ui/SaveItemPanel.gd" type="Script" id=4]
+
+[sub_resource type="StyleBoxFlat" id=112]
+bg_color = Color( 0.870588, 0.882353, 0.92549, 1 )
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color( 1, 1, 1, 1 )
+corner_radius_top_left = 2
+corner_radius_top_right = 2
+corner_radius_bottom_right = 2
+corner_radius_bottom_left = 2
+
+[sub_resource type="DynamicFont" id=116]
+size = 32
+outline_color = Color( 0, 0, 0, 1 )
+use_mipmaps = true
+use_filter = true
+font_data = ExtResource( 3 )
+
+[sub_resource type="DynamicFont" id=118]
+size = 10
+outline_color = Color( 1, 1, 1, 0.752941 )
+use_mipmaps = true
+use_filter = true
+extra_spacing_top = -3
+font_data = ExtResource( 1 )
+
+[sub_resource type="DynamicFont" id=117]
+size = 15
+outline_size = 3
+outline_color = Color( 0.313726, 0.486275, 1, 1 )
+use_mipmaps = true
+use_filter = true
+extra_spacing_top = -3
+extra_spacing_bottom = -3
+font_data = ExtResource( 1 )
+
+[sub_resource type="DynamicFont" id=113]
+size = 10
+outline_size = 1
+outline_color = Color( 0, 0, 0, 0.752941 )
+use_mipmaps = true
+use_filter = true
+extra_spacing_top = -3
+font_data = ExtResource( 1 )
+
+[sub_resource type="DynamicFont" id=114]
+outline_color = Color( 0, 0, 0, 1 )
+use_mipmaps = true
+use_filter = true
+font_data = ExtResource( 3 )
+
+[node name="SaveItemPanel" type="Panel"]
+margin_right = 194.0
+margin_bottom = 164.0
+rect_min_size = Vector2( 194, 164 )
+custom_styles/panel = SubResource( 112 )
+script = ExtResource( 4 )
+
+[node name="NoDataRect" type="ColorRect" parent="."]
+anchor_right = 1.0
+margin_left = 4.0
+margin_top = 18.0
+margin_right = -4.0
+margin_bottom = 122.0
+mouse_filter = 2
+color = Color( 0, 0, 0, 0.364706 )
+
+[node name="NoDataLabel" type="RichTextLabel" parent="NoDataRect"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+mouse_filter = 2
+custom_colors/default_color = Color( 1, 1, 1, 1 )
+custom_colors/font_color_shadow = Color( 0.219608, 0.290196, 0.458824, 1 )
+custom_constants/shadow_as_outline = 1
+custom_fonts/normal_font = SubResource( 116 )
+bbcode_enabled = true
+bbcode_text = "
+[center]No Data[/center]"
+text = "
+No Data"
+scroll_active = false
+
+[node name="Screenshot" type="TextureRect" parent="."]
+anchor_right = 1.0
+margin_left = 4.0
+margin_top = 18.0
+margin_right = -4.0
+margin_bottom = 122.0
+mouse_filter = 2
+texture = ExtResource( 2 )
+expand = true
+stretch_mode = 7
+
+[node name="Number" type="Label" parent="."]
+anchor_left = 1.0
+anchor_right = 1.0
+margin_left = -103.0
+margin_top = 3.0
+margin_right = -4.0
+margin_bottom = 18.0
+custom_colors/font_color = Color( 0.176471, 0.239216, 0.427451, 1 )
+custom_fonts/font = SubResource( 118 )
+text = "No. 0001"
+align = 2
+
+[node name="New" type="Label" parent="."]
+margin_left = 5.0
+margin_top = -1.0
+margin_right = 102.0
+margin_bottom = 21.0
+custom_colors/font_color = Color( 1, 1, 1, 1 )
+custom_fonts/font = SubResource( 117 )
+text = "NEW"
+
+[node name="DateTime" type="Label" parent="."]
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = 5.0
+margin_top = -54.0
+margin_right = -58.0
+margin_bottom = -39.0
+custom_fonts/font = SubResource( 113 )
+text = "2022-02-14 - 14:24"
+
+[node name="Chapter" type="Label" parent="."]
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = 102.0
+margin_top = -54.0
+margin_right = -6.0
+margin_bottom = -39.0
+custom_fonts/font = SubResource( 113 )
+text = "1-5"
+align = 2
+valign = 2
+
+[node name="Text" type="RichTextLabel" parent="."]
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = 5.0
+margin_top = -41.0
+margin_right = -5.0
+margin_bottom = -2.0
+mouse_filter = 2
+custom_colors/default_color = Color( 0, 0, 0, 1 )
+custom_constants/shadow_offset_x = 0
+custom_constants/shadow_offset_y = 0
+custom_fonts/normal_font = SubResource( 114 )
+bbcode_enabled = true
+bbcode_text = "\"So you think that, after all of this, they're just going to go and let us go? Just like that? Really now?\""
+text = "\"So you think that, after all of this, they're just going to go and let us go? Just like that? Really now?\""
+scroll_active = false

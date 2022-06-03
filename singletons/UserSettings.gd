@@ -38,6 +38,8 @@ var want_to_save = -1
 func do_save(instant = true):
     if want_to_save < 0:
         want_to_save = 0.0
+    if instant:
+        check_save(1.0)
     
 func check_save(delta):
     if want_to_save >= 0:
@@ -70,7 +72,7 @@ func _process(delta):
     AudioServer.set_bus_volume_db(AudioServer.get_bus_index("BGM"), audio_bgm_volume)
     AudioServer.set_bus_volume_db(0, audio_master_volume)
 
-func _notification(what: int) -> void:
+func _notification(what : int) -> void:
     match what:
         NOTIFICATION_WM_FOCUS_OUT:
             AudioServer.set_bus_mute(0, audio_muted_unfocused)

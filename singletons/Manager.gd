@@ -161,6 +161,14 @@ func get_savable_scene_name():
     else:
         return "res://cutscenes/Dummy.gd"
 
+var latest_screenshot : Image = null
+
+func update_latest_screenshot():
+    latest_screenshot = get_viewport().get_texture().get_data()
+    latest_screenshot.resize(372/2, 208/2, Image.INTERPOLATE_LANCZOS)
+    latest_screenshot.flip_y()
+    pass
+
 # Copies save-related data into a dictionary.
 func save_to_dict() -> Dictionary:
     var ret = {}
@@ -172,11 +180,14 @@ func save_to_dict() -> Dictionary:
     ret["SAVED_CUSTOM_SAVE_DATA_AT_SCENE_ENTRY"] = CUSTOM_SAVE_DATA_AT_SCENE_ENTRY.duplicate(true)
     # for GUI:
     ret["last_displayed_line"] = last_displayed_line
+    ret["date"] = OS.get_date()
     ret["time"] = OS.get_time()
     ret["chapter_name"] = chapter_name
     ret["chapter_number"] = chapter_number
     ret["scene_name"] = scene_name
     ret["scene_number"] = scene_number
+    if latest_screenshot:
+        ret["screenshot"] = Marshalls.raw_to_base64(latest_screenshot.save_png_to_buffer())
     return ret
 
 # Loads save-related data out from a dictionary and then forcibly changes the scene
@@ -204,18 +215,31 @@ func load_from_dict(data : Dictionary):
     textbox_show()
 
 func quicksave():
+    update_latest_screenshot()
+    
     var dir : Directory = Directory.new()
     var _unused = dir.open("user://")
     if !dir.dir_exists("saves"):
         _unused = dir.make_dir("saves")
     
+    var sysdata = load_sysdata()
+    if not "next_quicksave_index" in sysdata:
+        sysdata["next_quicksave_index"] = 0
+    var quicksave_index = int(sysdata["next_quicksave_index"]) % SaveDataManager.saves_per_page
+    sysdata["next_quicksave_index"] = (quicksave_index + 1) % SaveDataManager.saves_per_page
+    save_sysdata(sysdata)
+    
+    var fname = "user://saves/%04d_quicksave.json" % [quicksave_index]
+    
     $Skip.pressed = false
     var quicksave = File.new()
-    quicksave.open("user://saves/0000_quicksave.json", File.WRITE)
+    quicksave.open(fname, File.WRITE)
     var json = JSON.print(save_to_dict(), " ")
     quicksave.store_string(json)
     quicksave.flush()
     quicksave.close()
+    
+    Manager.admit_latest_save(fname)
 
 func quickload():
     $Skip.pressed = false
@@ -271,15 +295,11 @@ func set_load_line(new):
     custom_save_data_shuttle = custom_save_data.duplicate(true)
     LOAD_LINE = new
 
-func admit_read_line(load_only = false):
-    if !text_has_been_added_since_loadline_update and !load_only:
-        return
-    text_has_been_added_since_loadline_update = false
+func load_sysdata():
     ensure_valid_sys_file()
     var sysfile = File.new()
     var err = sysfile.open("user://saves/0000_system.json", File.READ)
     var sysdata = {}
-    print(sysdata)
     if err == OK:
         var json = sysfile.get_as_text()
         var result = JSON.parse(json)
@@ -291,9 +311,25 @@ func admit_read_line(load_only = false):
     else:
         # TODO handle error
         return
+    sysfile.close()
+    return sysdata
+
+func save_sysdata(sysdata):
+    # write back to file
+    var sysfile = File.new()
+    var err = sysfile.open("user://saves/0000_system.json", File.WRITE)
+    if err == OK:
+        var json = JSON.print(sysdata, " ")
+        sysfile.store_string(json)
+    sysfile.flush()
+    sysfile.close()
+
+func admit_read_line(load_only = false):
+    if !text_has_been_added_since_loadline_update and !load_only:
+        return
+    text_has_been_added_since_loadline_update = false
+    var sysdata = load_sysdata()
     
-    # FIXME make this read and write an array not a dict
-    # merge in-memory and on-disk read_lines sets
     var read_lines = {}
     if "read_lines" in sysdata:
         read_lines = sysdata["read_lines"]
@@ -315,18 +351,36 @@ func admit_read_line(load_only = false):
     for scene in sysdata["read_lines"]:
         sysdata["read_lines"][scene] = sysdata["read_lines"][scene].keys()
     
-    sysfile.close()
-    
     if load_only:
         return
     
-    # write back to file
-    err = sysfile.open("user://saves/0000_system.json", File.WRITE)
-    if err == OK:
-        var json = JSON.print(sysdata, " ")
-        sysfile.store_string(json)
-    sysfile.flush()
-    sysfile.close()
+    save_sysdata(sysdata)
+
+func admit_latest_save(fname : String):
+    var sysdata = load_sysdata()
+    
+    var type = "save" if fname.find("_quicksave") < 0 else "quicksave"
+    
+    if not "latest_saves" in sysdata:
+        sysdata["latest_saves"] = []
+    
+    if sysdata["latest_saves"].find(fname) >= 0:
+        sysdata["latest_saves"].erase(fname)
+    sysdata["latest_saves"].push_front(fname)
+    
+    var found_so_far = 0
+    var found_max = 1 if type == "quicksave" else 4
+    var i = 0
+    var suffix = "_%s" % [type]
+    while i < sysdata["latest_saves"].size():
+        if sysdata["latest_saves"][i].find(suffix) >= 0:
+            found_so_far += 1
+            if found_so_far > found_max:
+                sysdata["latest_saves"].remove(i)
+                continue
+        i += 1
+    
+    save_sysdata(sysdata)
 
 
 # mmm, auto
@@ -375,6 +429,8 @@ func _ready():
     background.connect("transform_2_finished", self, "emit_signal", ["bg_transform_2_finished"])
     background.connect("transform_finished", self, "emit_signal", ["bg_transform_finished"])
     
+    _unused = $Buttons/Save.connect("pressed", self, "save_screen")
+    _unused = $Buttons/Load.connect("pressed", self, "load_screen")
     _unused = $Buttons/Settings.connect("pressed", self, "settings")
     _unused = $Buttons/Quicksave.connect("pressed", self, "quicksave")
     _unused = $Buttons/Quickload.connect("pressed", self, "quickload")
@@ -382,7 +438,25 @@ func _ready():
     _unused = $Skip.connect("pressed", self, "skip_pressed")
 
 func settings():
+    if get_tree().get_nodes_in_group("MenuScreen").size() > 0:
+        return
     get_tree().get_root().add_child(preload("res://scenes/ui/OptionsManager.tscn").instance())
+
+func save_screen():
+    if get_tree().get_nodes_in_group("MenuScreen").size() > 0:
+        return
+    update_latest_screenshot()
+    var screen = preload("res://scenes/ui/SaveDataManager.tscn").instance()
+    screen.mode = "save"
+    get_tree().get_root().add_child(screen)
+
+func load_screen():
+    if get_tree().get_nodes_in_group("MenuScreen").size() > 0:
+        return
+    update_latest_screenshot()
+    var screen = preload("res://scenes/ui/SaveDataManager.tscn").instance()
+    screen.mode = "load"
+    get_tree().get_root().add_child(screen)
 
 var skip_pressed_during_read_text = false
 func skip_pressed():
@@ -822,7 +896,7 @@ func process_cutscene(delta):
     
     $Textbox/ADV.modulate.a = UserSettings.textbox_opacity
     
-    
+    # check for whether we want to hide the textbox
     if !input_disabled and (Input.is_action_just_pressed("m2") or Input.is_action_just_pressed("x")) and !suppress_textbox_toggle:
         if $Skip.pressed:
             $Skip.pressed = false
@@ -860,7 +934,7 @@ func process_cutscene(delta):
         else:
             typein_chars = -1
             $Textbox/Label.visible_characters = -1
-    elif textbox_visibility_intent and (typein_chars < 0 or $Textbox/Label.visible_characters == char_limit) and $Buttons/Auto.pressed:
+    elif !input_disabled and textbox_visibility_intent and (typein_chars < 0 or $Textbox/Label.visible_characters == char_limit) and $Buttons/Auto.pressed:
         var actual_delay_amount = auto_delay_amount + auto_delay_per_character * last_displayed_line.length()
         if auto_delay_timer < actual_delay_amount:
             auto_delay_timer = clamp(auto_delay_timer, 0, actual_delay_amount)
@@ -873,28 +947,26 @@ func process_cutscene(delta):
     
     if typein_chars >= 0 and typein_chars < char_limit:
         auto_delay_timer = 0.0
-        if $Textbox/Name.visible or $Textbox/Face.texture != null:
-            if $BleepPlayer.stream:
-                if !$BleepPlayer.playing:
-                    $BleepPlayer.playing = true
-                var stream : AudioStreamSample = $BleepPlayer.stream
-                stream.loop_mode = AudioStreamSample.LOOP_FORWARD
-        else:
-            if $BleepPlayer.stream:
-                var stream : AudioStreamSample = $BleepPlayer.stream
-                stream.loop_mode = AudioStreamSample.LOOP_DISABLED
-        
-        if $Textbox.modulate.a == 1.0 and !just_continued:
-            typein_chars += delta*chars_per_sec*UserSettings.text_speed
-        $Textbox/Label.visible_characters = floor(typein_chars)
-        $Textbox/NextAnimHolder/NextAnim.hide()
+        if !input_disabled:
+            if $Textbox/Name.visible or $Textbox/Face.texture != null:
+                if $BleepPlayer.stream:
+                    if !$BleepPlayer.playing:
+                        $BleepPlayer.playing = true
+                    var stream : AudioStreamSample = $BleepPlayer.stream
+                    stream.loop_mode = AudioStreamSample.LOOP_FORWARD
+            else:
+                if $BleepPlayer.stream:
+                    var stream : AudioStreamSample = $BleepPlayer.stream
+                    stream.loop_mode = AudioStreamSample.LOOP_DISABLED
+            
+            if $Textbox.modulate.a == 1.0 and !just_continued:
+                typein_chars += delta*chars_per_sec*UserSettings.text_speed
+            $Textbox/Label.visible_characters = floor(typein_chars)
+            $Textbox/NextAnimHolder/NextAnim.hide()
     else:
-        #if just_continued:
-            #print("in else")
         if $BleepPlayer.stream:
             var stream : AudioStreamSample = $BleepPlayer.stream
             stream.loop_mode = AudioStreamSample.LOOP_DISABLED
-        
         if char_limit > 0:
             if !$Textbox/NextAnimHolder/NextAnim.visible:
                 $Textbox/NextAnimHolder/NextAnim.frame = 0
@@ -1309,6 +1381,7 @@ func call_cutscene(entity : Node, method : String):
     configure_bg_distortion(0)
     set_bg_transform_1(Vector2(), Vector2.ONE)
     set_bg_transform_2(Vector2(), Vector2.ONE)
+    set_ADV_mode()
     
     taken_choices = []
     

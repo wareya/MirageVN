@@ -1,6 +1,14 @@
 extends CanvasLayer
 
-const saved_settings = [
+onready var bgs = [
+    preload("res://art/cutscene/bg/desert bg.jpg"),
+    preload("res://art/cutscene/bg/dusk bg.jpg"),
+    preload("res://art/cutscene/bg/hill bg.jpg"),
+    preload("res://art/cutscene/bg/night bg.jpg"),
+    preload("res://art/cutscene/bg/grass bg.jpg"),
+]
+
+const saved_project_settings = [
   "display/window/size/fullscreen",
   "display/window/size/borderless",
   "display/window/vsync/use_vsync",
@@ -9,7 +17,7 @@ const saved_settings = [
   "debug/settings/fps/force_fps",
 ]
 
-func save_project_settings(list : Array = saved_settings):
+func save_project_settings(list : Array = saved_project_settings):
     # ProjectSettings.save_custom() saves too much crap and causes a lot of trouble
     var file = File.new()
     #print(ProjectSettings.get_setting("application/config/project_settings_override"))
@@ -71,6 +79,7 @@ func _ready():
     $AudioSettings/BGMVolume.value = $AudioSettings/BGMVolume.max_value * sqrt(Manager.db_to_volts(UserSettings.audio_bgm_volume)) * 4.0 / 5.0
     $AudioSettings/MasterVolume.value = $AudioSettings/MasterVolume.max_value * sqrt(Manager.db_to_volts(UserSettings.audio_master_volume))
     
+    var _unused
     
     for input in $ScreenSettings.get_children() + $DisplaySettings.get_children() + $AudioSettings.get_children():
         if input is CheckButton:
@@ -89,7 +98,7 @@ func _ready():
             break
     
     for button in $CategoryButtons.get_children():
-        (button as BaseButton).connect("pressed", self, "pressed_category_button", [button])
+        _unused = (button as BaseButton).connect("pressed", self, "pressed_category_button", [button])
     
     $CategoryButtons/ScreenButton.grab_focus()
 
@@ -199,14 +208,6 @@ func pressed_category_button(button : BaseButton):
     if button == $CategoryButtons/ReturnButton:
         dying = true
 
-onready var bgs = [
-    preload("res://art/cutscene/bg/desert bg.jpg"),
-    preload("res://art/cutscene/bg/dusk bg.jpg"),
-    preload("res://art/cutscene/bg/hill bg.jpg"),
-    preload("res://art/cutscene/bg/night bg.jpg"),
-    preload("res://art/cutscene/bg/grass bg.jpg"),
-]
-
 func text_demo_reset():
     text_demo_visible_wait = 0
     text_demo_visible = 0
@@ -223,6 +224,9 @@ var dying = false
 var show_amount = 0.0
 
 func _process(delta):
+    if Input.is_action_just_pressed("m2"):
+        dying = true
+    
     if dying:
         show_amount -= delta*4.0
         if show_amount <= 0.0:

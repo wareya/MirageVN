@@ -1,0 +1,352 @@
+[gd_scene load_steps=11 format=2]
+
+[ext_resource path="res://fonts/Monda-Regular.ttf" type="DynamicFontData" id=1]
+[ext_resource path="res://scenes/ui/SaveDataManager.gd" type="Script" id=2]
+[ext_resource path="res://art/ui/menubg2.png" type="Texture" id=3]
+[ext_resource path="res://fonts/Galdeano-Regular.ttf" type="DynamicFontData" id=4]
+[ext_resource path="res://art/ui/line_test.png" type="Texture" id=5]
+[ext_resource path="res://scenes/ui/SaveItemPanel.tscn" type="PackedScene" id=6]
+
+[sub_resource type="DynamicFont" id=1]
+size = 64
+use_mipmaps = true
+use_filter = true
+font_data = ExtResource( 4 )
+
+[sub_resource type="DynamicFont" id=111]
+size = 19
+use_mipmaps = true
+use_filter = true
+extra_spacing_top = -5
+extra_spacing_bottom = -3
+font_data = ExtResource( 1 )
+
+[sub_resource type="StyleBoxFlat" id=115]
+bg_color = Color( 0.133333, 0.152941, 0.192157, 0.443137 )
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+
+[sub_resource type="DynamicFont" id=116]
+size = 24
+extra_spacing_top = -8
+extra_spacing_bottom = -4
+font_data = ExtResource( 1 )
+
+[node name="SaveDataManager" type="CanvasLayer" groups=["MenuScreen"]]
+layer = 64
+script = ExtResource( 2 )
+
+[node name="Background" type="NinePatchRect" parent="."]
+anchor_right = 1.0
+anchor_bottom = 1.0
+texture = ExtResource( 3 )
+region_rect = Rect2( 0, 0, 960, 720 )
+axis_stretch_horizontal = 1
+
+[node name="FillRect" type="ColorRect" parent="."]
+anchor_right = 1.0
+anchor_bottom = 1.0
+rect_pivot_offset = Vector2( 1481, -122 )
+color = Color( 0, 0, 0, 0.243137 )
+
+[node name="safe-rect-43" type="ColorRect" parent="."]
+visible = false
+anchor_left = 0.5
+anchor_right = 0.5
+anchor_bottom = 1.0
+margin_left = -450.0
+margin_right = 450.0
+rect_pivot_offset = Vector2( 1481, -122 )
+color = Color( 0, 0, 0, 0.243137 )
+
+[node name="NinePatchRect" type="NinePatchRect" parent="."]
+anchor_right = 1.014
+anchor_bottom = 1.0
+margin_top = 126.0
+margin_right = -34.92
+margin_bottom = -586.0
+texture = ExtResource( 5 )
+patch_margin_left = 4
+patch_margin_top = 4
+patch_margin_right = 4
+patch_margin_bottom = 4
+
+[node name="NinePatchRect" type="NinePatchRect" parent="NinePatchRect"]
+visible = false
+anchor_left = 0.49
+anchor_top = -15.125
+anchor_right = 0.49
+anchor_bottom = 1.0
+margin_left = -289.87
+margin_top = 129.0
+margin_right = -281.87
+margin_bottom = 566.0
+texture = ExtResource( 5 )
+patch_margin_left = 4
+patch_margin_top = 4
+patch_margin_right = 4
+patch_margin_bottom = 4
+
+[node name="Title" type="Label" parent="."]
+anchor_left = 0.5
+anchor_right = 0.5
+margin_left = -156.0
+margin_top = 21.0
+margin_right = 104.0
+margin_bottom = 89.0
+custom_fonts/font = SubResource( 1 )
+text = "Save"
+align = 1
+valign = 1
+
+[node name="CategoryButtons" type="HBoxContainer" parent="."]
+anchor_left = 0.5
+anchor_right = 0.5
+anchor_bottom = 1.0
+margin_left = -446.0
+margin_top = 94.0
+margin_right = 450.0
+margin_bottom = -594.0
+
+[node name="SaveButton" type="Button" parent="CategoryButtons"]
+margin_right = 125.0
+margin_bottom = 32.0
+rect_min_size = Vector2( 125, 0 )
+rect_pivot_offset = Vector2( 92, 28 )
+custom_fonts/font = SubResource( 111 )
+toggle_mode = true
+pressed = true
+text = "Save"
+
+[node name="LoadButton" type="Button" parent="CategoryButtons"]
+margin_left = 129.0
+margin_right = 254.0
+margin_bottom = 32.0
+rect_min_size = Vector2( 125, 0 )
+rect_pivot_offset = Vector2( 92, 28 )
+custom_fonts/font = SubResource( 111 )
+toggle_mode = true
+text = "Load"
+
+[node name="VSeparator" type="VSeparator" parent="CategoryButtons"]
+modulate = Color( 1, 1, 1, 0 )
+margin_left = 258.0
+margin_right = 767.0
+margin_bottom = 32.0
+mouse_filter = 2
+size_flags_horizontal = 3
+
+[node name="ReturnButton" type="Button" parent="CategoryButtons"]
+margin_left = 771.0
+margin_right = 896.0
+margin_bottom = 32.0
+rect_min_size = Vector2( 125, 0 )
+rect_pivot_offset = Vector2( 92, 28 )
+custom_fonts/font = SubResource( 111 )
+toggle_mode = true
+text = "Return"
+
+[node name="ColorRect" type="Panel" parent="."]
+anchor_left = 0.5
+anchor_right = 0.5
+anchor_bottom = 1.0
+margin_left = -412.0
+margin_top = 134.0
+margin_right = 416.0
+margin_bottom = -48.0
+custom_styles/panel = SubResource( 115 )
+
+[node name="Page" type="GridContainer" parent="."]
+anchor_left = 0.5
+anchor_right = 0.5
+anchor_bottom = 1.0
+margin_left = -394.0
+margin_top = 151.0
+margin_right = 398.0
+margin_bottom = -65.0
+columns = 4
+
+[node name="SaveItemPanel" parent="Page" instance=ExtResource( 6 )]
+
+[node name="SaveItemPanel2" parent="Page" instance=ExtResource( 6 )]
+margin_left = 198.0
+margin_right = 392.0
+
+[node name="SaveItemPanel3" parent="Page" instance=ExtResource( 6 )]
+margin_left = 396.0
+margin_right = 590.0
+
+[node name="SaveItemPanel4" parent="Page" instance=ExtResource( 6 )]
+margin_left = 594.0
+margin_right = 788.0
+
+[node name="SaveItemPanel5" parent="Page" instance=ExtResource( 6 )]
+margin_top = 168.0
+margin_bottom = 332.0
+
+[node name="SaveItemPanel6" parent="Page" instance=ExtResource( 6 )]
+margin_left = 198.0
+margin_top = 168.0
+margin_right = 392.0
+margin_bottom = 332.0
+
+[node name="SaveItemPanel7" parent="Page" instance=ExtResource( 6 )]
+margin_left = 396.0
+margin_top = 168.0
+margin_right = 590.0
+margin_bottom = 332.0
+
+[node name="SaveItemPanel8" parent="Page" instance=ExtResource( 6 )]
+margin_left = 594.0
+margin_top = 168.0
+margin_right = 788.0
+margin_bottom = 332.0
+
+[node name="SaveItemPanel9" parent="Page" instance=ExtResource( 6 )]
+margin_top = 336.0
+margin_bottom = 500.0
+
+[node name="SaveItemPanel10" parent="Page" instance=ExtResource( 6 )]
+margin_left = 198.0
+margin_top = 336.0
+margin_right = 392.0
+margin_bottom = 500.0
+
+[node name="SaveItemPanel11" parent="Page" instance=ExtResource( 6 )]
+margin_left = 396.0
+margin_top = 336.0
+margin_right = 590.0
+margin_bottom = 500.0
+
+[node name="SaveItemPanel12" parent="Page" instance=ExtResource( 6 )]
+margin_left = 594.0
+margin_top = 336.0
+margin_right = 788.0
+margin_bottom = 500.0
+
+[node name="PageButtons" type="HBoxContainer" parent="."]
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+margin_left = -412.0
+margin_top = -48.0
+margin_right = 416.0
+margin_bottom = -14.0
+
+[node name="PageLabel" type="Label" parent="PageButtons"]
+margin_top = 3.0
+margin_right = 87.0
+margin_bottom = 31.0
+custom_fonts/font = SubResource( 116 )
+text = "   Page  "
+
+[node name="Page1" type="Button" parent="PageButtons"]
+margin_left = 91.0
+margin_right = 139.0
+margin_bottom = 34.0
+rect_min_size = Vector2( 48, 0 )
+custom_fonts/font = SubResource( 111 )
+toggle_mode = true
+pressed = true
+text = "1"
+
+[node name="Page2" type="Button" parent="PageButtons"]
+margin_left = 143.0
+margin_right = 191.0
+margin_bottom = 34.0
+rect_min_size = Vector2( 48, 0 )
+custom_fonts/font = SubResource( 111 )
+toggle_mode = true
+text = "2"
+
+[node name="Page3" type="Button" parent="PageButtons"]
+margin_left = 195.0
+margin_right = 243.0
+margin_bottom = 34.0
+rect_min_size = Vector2( 48, 0 )
+custom_fonts/font = SubResource( 111 )
+toggle_mode = true
+text = "3"
+
+[node name="Page4" type="Button" parent="PageButtons"]
+margin_left = 247.0
+margin_right = 295.0
+margin_bottom = 34.0
+rect_min_size = Vector2( 48, 0 )
+custom_fonts/font = SubResource( 111 )
+toggle_mode = true
+text = "4"
+
+[node name="Page5" type="Button" parent="PageButtons"]
+margin_left = 299.0
+margin_right = 347.0
+margin_bottom = 34.0
+rect_min_size = Vector2( 48, 0 )
+custom_fonts/font = SubResource( 111 )
+toggle_mode = true
+text = "5"
+
+[node name="Page6" type="Button" parent="PageButtons"]
+margin_left = 351.0
+margin_right = 399.0
+margin_bottom = 34.0
+rect_min_size = Vector2( 48, 0 )
+custom_fonts/font = SubResource( 111 )
+toggle_mode = true
+text = "6"
+
+[node name="Page7" type="Button" parent="PageButtons"]
+margin_left = 403.0
+margin_right = 451.0
+margin_bottom = 34.0
+rect_min_size = Vector2( 48, 0 )
+custom_fonts/font = SubResource( 111 )
+toggle_mode = true
+text = "7"
+
+[node name="Page8" type="Button" parent="PageButtons"]
+margin_left = 455.0
+margin_right = 503.0
+margin_bottom = 34.0
+rect_min_size = Vector2( 48, 0 )
+custom_fonts/font = SubResource( 111 )
+toggle_mode = true
+text = "8"
+
+[node name="Page9" type="Button" parent="PageButtons"]
+margin_left = 507.0
+margin_right = 555.0
+margin_bottom = 34.0
+rect_min_size = Vector2( 48, 0 )
+custom_fonts/font = SubResource( 111 )
+toggle_mode = true
+text = "9"
+
+[node name="Page10" type="Button" parent="PageButtons"]
+margin_left = 559.0
+margin_right = 607.0
+margin_bottom = 34.0
+rect_min_size = Vector2( 48, 0 )
+custom_fonts/font = SubResource( 111 )
+toggle_mode = true
+text = "10"
+
+[node name="Separator" type="VSeparator" parent="PageButtons"]
+modulate = Color( 1, 1, 1, 0 )
+margin_left = 611.0
+margin_right = 776.0
+margin_bottom = 34.0
+mouse_filter = 2
+size_flags_horizontal = 3
+
+[node name="PageQ" type="Button" parent="PageButtons"]
+margin_left = 780.0
+margin_right = 828.0
+margin_bottom = 34.0
+rect_min_size = Vector2( 48, 0 )
+custom_fonts/font = SubResource( 111 )
+toggle_mode = true
+text = "Q"

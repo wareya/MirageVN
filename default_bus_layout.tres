@@ -1,4 +1,4 @@
-[gd_resource type="AudioBusLayout" load_steps=7 format=2]
+[gd_resource type="AudioBusLayout" load_steps=6 format=2]
 
 [sub_resource type="AudioEffectCompressor" id=1]
 resource_name = "Compressor"
@@ -19,10 +19,6 @@ ratio = 48.0
 [sub_resource type="AudioEffectCompressor" id=9]
 resource_name = "Compressor"
 threshold = -8.0
-ratio = 48.0
-
-[sub_resource type="AudioEffectCompressor" id=10]
-resource_name = "Compressor"
 ratio = 48.0
 
 [resource]
@@ -55,5 +51,3 @@ bus/3/mute = false
 bus/3/bypass_fx = false
 bus/3/volume_db = -11.9576
 bus/3/send = "Master"
-bus/3/effect/0/effect = SubResource( 10 )
-bus/3/effect/0/enabled = true
