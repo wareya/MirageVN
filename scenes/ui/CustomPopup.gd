@@ -49,3 +49,5 @@ func _ready():
     
     button_ok    .connect("pressed", self, "emit_signal", ["pressed_ok"])
     button_cancel.connect("pressed", self, "emit_signal", ["pressed_cancel"])
+    
+    button_cancel.grab_focus()

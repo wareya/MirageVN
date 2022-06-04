@@ -171,6 +171,9 @@ func update_latest_screenshot():
 
 # Copies save-related data into a dictionary.
 func save_to_dict() -> Dictionary:
+    if block_saving:
+        return {}
+    
     var ret = {}
     # for loading:
     # FIXME this is technically wrong - should latch it to the most recent call to set_load_line()
@@ -224,7 +227,8 @@ func quicksave():
     fixed_save("quicksave")
 
 func fixed_save(type = "quicksave"):
-    update_latest_screenshot()
+    if block_saving:
+        return
     
     var dir : Directory = Directory.new()
     var _unused = dir.open("user://")
@@ -246,12 +250,12 @@ func fixed_save(type = "quicksave"):
     save_sysdata(sysdata)
     
     $Skip.pressed = false
-    var quicksave = File.new()
-    quicksave.open(fname, File.WRITE)
+    var save = File.new()
+    save.open(fname, File.WRITE)
     var json = JSON.print(save_to_dict(), " ")
-    quicksave.store_string(json)
-    quicksave.flush()
-    quicksave.close()
+    save.store_string(json)
+    save.flush()
+    save.close()
     
     Manager.admit_latest_save(fname, type == "autosave")
 
@@ -470,8 +474,8 @@ func _ready():
     _unused = $Buttons/Save.connect("pressed", self, "save_screen")
     _unused = $Buttons/Load.connect("pressed", self, "load_screen")
     _unused = $Buttons/Settings.connect("pressed", self, "settings")
-    _unused = $Buttons/Quicksave.connect("pressed", self, "quicksave")
-    _unused = $Buttons/Quickload.connect("pressed", self, "quickload")
+    _unused = $Buttons/Quicksave.connect("pressed", self, "attempt_quicksave")
+    _unused = $Buttons/Quickload.connect("pressed", self, "attempt_quickload")
     _unused = $Buttons/Auto.connect("pressed", self, "auto")
     _unused = $Skip.connect("pressed", self, "skip_pressed")
 
@@ -708,7 +712,7 @@ var delta_elapsed = 0.0
 func _process(delta):
     input_disabled = false
     $MouseCatcher.visible = true
-    for node in get_tree().get_nodes_in_group("MenuScreen"):
+    for node in get_tree().get_nodes_in_group("MenuScreen") + get_tree().get_nodes_in_group("CustomPopup"):
         $MouseCatcher.visible = false
         input_disabled = true
         $Buttons.hide()
@@ -1397,6 +1401,7 @@ func ambiance(sound : AudioStream):
 
 var override_mode_after_cutscene = null
 
+var block_saving = false
 signal kill_all_cutscenes
 # Move to a new cutscene.
 # Note: incorrect use of this function can cause memory leaks, crashes, save corruption, etc.
@@ -1421,6 +1426,7 @@ func call_cutscene(entity : Node, method : String):
     set_bg_transform_2(Vector2(), Vector2.ONE)
     set_ADV_mode()
     $Scene.offset = Vector2()
+    block_saving = false
     
     taken_choices = []
     
@@ -1925,34 +1931,97 @@ func spawn_effect(name : String):
         $Scene.add_child(ret)
         return ret
 
-var close_dialog = null
 
-func cancel_exit():
-    if close_dialog:
-        close_dialog.queue_free()
-        close_dialog = null
+class PopupHelper extends Node:
+    var target : Node = null
+    var target_method : String = ""
+    var title : String = ""
+    var text : String = ""
+    func _init(_target : Node, _target_method : String, _title : String, _text : String):
+        target = _target
+        target_method = _target_method
+        title = _title
+        text = _text
+    
+    var dialog = null
+    signal cleaned_up
+    func cleanup():
+        if dialog:
+            dialog.queue_free()
+            dialog = null
+        queue_free()
+        emit_signal("cleaned_up")
+    func confirm():
+        target.call(target_method)
+        cleanup()
+    func invoke(override = false):
+        if !dialog and (override or Manager.get_tree().get_nodes_in_group("CustomPopup").size() == 0):
+            dialog = preload("res://scenes/ui/CustomPopup.tscn").instance()
+            Manager.get_node("PopupTarget").add_child(dialog)
+            
+            dialog.set_title(title)
+            dialog.set_text(text)
+            dialog.set_closable()
+            dialog.connect("pressed_ok", self, "confirm")
+            dialog.connect("pressed_cancel", self, "cleanup")
+        return dialog
+
+func attempt_quicksave():
+    update_latest_screenshot()
+    var helper = PopupHelper.new(
+        self,
+        "quicksave",
+        "Confirm Quicksave",
+        "Quicksave?\nQuicksaves have backups, up to %s total quicksaves." % [SaveDataManager.saves_per_page]
+    )
+    add_child(helper)
+    helper.invoke()
+
+func attempt_quickload():
+    var helper = PopupHelper.new(
+        self,
+        "quickload",
+        "Confirm Quickload",
+        "Quickload?\nUnsaved progress will be lost."
+    )
+    add_child(helper)
+    helper.invoke()
 
 func can_autosave():
-    return input_mode == "cutscene"
+    return input_mode == "cutscene" and !block_saving
 
-func confirm_exit():
+func exit():
     if can_autosave():
         autosave()
     get_tree().quit()
 
+func cancel_attempt_exit():
+    already_exiting = false
+var already_exiting = false
+func attempt_exit():
+    if Manager.get_tree().get_nodes_in_group("CustomPopup").size() == 0:
+        already_exiting = false
+    if already_exiting:
+        return
+    update_latest_screenshot()
+    already_exiting = true
+    var text
+    if can_autosave():
+        text = "Quit game?\nAn autosave will be created."
+    else:
+        text = "Quit game?\nUnsaved progress will be lost."
+    var helper = PopupHelper.new(
+        self,
+        "exit",
+        "Confirm Game Exit",
+        text
+    )
+    yield(get_tree(), "idle_frame")
+    add_child(helper)
+    helper.connect("cleaned_up", self, "cancel_attempt_exit")
+    helper.invoke(true)
+
 func _notification(what):
     if what == MainLoop.NOTIFICATION_WM_QUIT_REQUEST:
-        if !close_dialog:
-            close_dialog = preload("res://scenes/ui/CustomPopup.tscn").instance()
-            $PopupTarget.add_child(close_dialog)
-            
-            close_dialog.set_title("Confirm Game Exit")
-            if can_autosave():
-                close_dialog.set_text("Quit game?\nAn autosave will be created.")
-            else:
-                close_dialog.set_text("Quit game?\nUnsaved progress will be lost.")
-            close_dialog.set_closable()
-            close_dialog.set_ok_text("Close Game")
-            close_dialog.connect("pressed_ok", self, "confirm_exit")
-            close_dialog.connect("pressed_cancel", self, "cancel_exit")
+        attempt_exit()
             

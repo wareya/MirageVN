@@ -83,10 +83,21 @@ void fragment() {
     float tex1_scale = 1.0/tex1_ratio/scale.y*mip_hint;
     if (flipx_1) uv.x  = 1.0 - uv.x;
     if (flipx_2) uv2.x = 1.0 - uv2.x;
-    vec4 colorA = textureLod(TEXTURE , uv, log2(tex1_ratio/scale.y/mip_hint) - 0.25);
+    
+    // GLSL3 version - sharper trilinear filtering by biasing towards the sharper mipmap
+    float tex1_mip = log2(tex1_ratio/scale.y/mip_hint);
+    float tex2_mip = log2(tex2_ratio/scale.y/mip_hint);
+    tex1_mip = floor(tex1_mip) + fract(tex1_mip)*fract(tex1_mip);
+    tex2_mip = floor(tex2_mip) + fract(tex2_mip)*fract(tex2_mip);
+    vec4 colorA = textureLod(TEXTURE , uv , tex1_mip);
+    vec4 colorB = textureLod(texture2, uv2, tex2_mip);
+    // GLSL2 version
+    //vec4 colorA = texture(TEXTURE , uv );
+    //vec4 colorB = texture(texture2, uv2);
+    //
+    
     if (uv.x < 0.0 || uv.x > 1.0 || uv.y < 0.0 || uv.y > 1.0)
         colorA = vec4(0.0, 0.0, 0.0, 0.0);
-    vec4 colorB = textureLod(texture2, uv2, log2(tex2_ratio/scale.y/mip_hint) - 0.25);
     if (uv2.x < 0.0 || uv2.x > 1.0 || uv2.y < 0.0 || uv2.y > 1.0)
         colorB = vec4(0.0, 0.0, 0.0, 0.0);
     colorA.rgb *= colorA.a;

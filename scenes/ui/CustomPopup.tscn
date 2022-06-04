@@ -39,7 +39,7 @@ region = Rect2( 24, 0, 24, 24 )
 extra_spacing_top = -2
 font_data = ExtResource( 2 )
 
-[node name="CustomPopup" type="Control"]
+[node name="CustomPopup" type="Control" groups=["CustomPopup"]]
 anchor_right = 1.0
 anchor_bottom = 1.0
 script = ExtResource( 1 )
@@ -66,6 +66,7 @@ anchor_left = 1.0
 anchor_right = 1.0
 margin_left = -24.0
 margin_bottom = 24.0
+focus_mode = 1
 texture_normal = SubResource( 3 )
 texture_pressed = SubResource( 4 )
 texture_hover = SubResource( 5 )

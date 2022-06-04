@@ -14,13 +14,14 @@ func _ready():
         if dir.file_exists(sysdata["last_accessed_save"]):
             $"Buttons/Continue".disabled = false
             _unused = $"Buttons/Continue".connect("pressed", self, "continue_game")
-            
-    if "latest_saves" in sysdata:
-        for f in sysdata["latest_saves"]:
-            if dir.file_exists(f):
-                $"Buttons/Continue".disabled = false
-                _unused = $"Buttons/Continue".connect("pressed", self, "continue_game")
-                break
+    
+    if $"Buttons/Continue".disabled:
+        if "latest_saves" in sysdata:
+            for f in sysdata["latest_saves"]:
+                if dir.file_exists(f):
+                    $"Buttons/Continue".disabled = false
+                    _unused = $"Buttons/Continue".connect("pressed", self, "continue_game")
+                    break
     
     yield(get_tree(), "idle_frame")
     if Manager.fading:
