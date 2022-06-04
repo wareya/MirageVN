@@ -1,5 +1,7 @@
 extends CanvasLayer
 
+# TODO: reset to default, auto speed, whether to save screenshots for saves, etc
+
 onready var bgs = [
     preload("res://art/cutscene/bg/desert bg.jpg"),
     preload("res://art/cutscene/bg/dusk bg.jpg"),

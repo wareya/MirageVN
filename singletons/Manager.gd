@@ -173,6 +173,7 @@ func update_latest_screenshot():
 func save_to_dict() -> Dictionary:
     var ret = {}
     # for loading:
+    # FIXME this is technically wrong - should latch it to the most recent call to set_load_line()
     ret["SAVED_CUTSCENE"] = get_savable_scene_name()
     ret["SAVED_LINE"] = LOAD_LINE
     ret["SAVED_CHOICES"] = taken_choices.duplicate(true)
@@ -216,7 +217,13 @@ func load_from_dict(data : Dictionary):
     $Choices.hide()
     textbox_show()
 
+func autosave():
+    fixed_save("autosave")
+
 func quicksave():
+    fixed_save("quicksave")
+
+func fixed_save(type = "quicksave"):
     update_latest_screenshot()
     
     var dir : Directory = Directory.new()
@@ -225,13 +232,16 @@ func quicksave():
         _unused = dir.make_dir("saves")
     
     var sysdata = load_sysdata()
-    if not "next_quicksave_index" in sysdata:
-        sysdata["next_quicksave_index"] = 0
     
-    var quicksave_index = int(sysdata["next_quicksave_index"]) % SaveDataManager.saves_per_page
-    var fname = "user://saves/%04d_quicksave.json" % [quicksave_index]
+    var next_key_name = "next_%s_index" % [type]
     
-    sysdata["next_quicksave_index"] = (quicksave_index + 1) % SaveDataManager.saves_per_page
+    if not next_key_name in sysdata:
+        sysdata[next_key_name] = 0
+    
+    var save_index = int(sysdata[next_key_name]) % SaveDataManager.saves_per_page
+    var fname = "user://saves/%04d_%s.json" % [save_index, type]
+    
+    sysdata[next_key_name] = (save_index + 1) % SaveDataManager.saves_per_page
     sysdata["last_accessed_save"] = fname
     save_sysdata(sysdata)
     
@@ -243,7 +253,7 @@ func quicksave():
     quicksave.flush()
     quicksave.close()
     
-    Manager.admit_latest_save(fname)
+    Manager.admit_latest_save(fname, type == "autosave")
 
 func inform_failed_load():
     EmitterFactory.emit(null, EngineSettings.load_failure_sound)
@@ -377,7 +387,7 @@ func admit_read_line(load_only = false):
     
     save_sysdata(sysdata)
 
-func admit_latest_save(fname : String):
+func admit_latest_save(fname : String, silent : bool = false):
     var sysdata = load_sysdata()
     
     var type = "save" if fname.find("_save.") < 0 else "quicksave" if fname.find("_quicksave.") < 0 else "autosave"
@@ -392,7 +402,7 @@ func admit_latest_save(fname : String):
     sysdata["latest_saves"].push_front(fname)
     
     var found_so_far = 0
-    var found_max = 1 if type == "quicksave" else 4
+    var found_max = 4 if type == "save" else 1
     var i = 0
     var suffix = "_%s" % [type]
     while i < sysdata["latest_saves"].size():
@@ -405,7 +415,8 @@ func admit_latest_save(fname : String):
     
     save_sysdata(sysdata)
     
-    inform_success_save()
+    if !silent:
+        inform_success_save()
 
 
 # mmm, auto
@@ -1911,3 +1922,9 @@ func spawn_effect(name : String):
         var ret = DummyEffect.new()
         $Scene.add_child(ret)
         return ret
+
+func _notification(what):
+    if what == MainLoop.NOTIFICATION_WM_QUIT_REQUEST:
+        if input_mode == "cutscene":
+            autosave()
+        get_tree().quit()

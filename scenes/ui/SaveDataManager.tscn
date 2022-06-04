@@ -362,13 +362,12 @@ text = "10"
 [node name="Separator" type="VSeparator" parent="PageButtons"]
 modulate = Color( 1, 1, 1, 0 )
 margin_left = 611.0
-margin_right = 776.0
+margin_right = 724.0
 margin_bottom = 34.0
 mouse_filter = 2
 size_flags_horizontal = 3
 
 [node name="PageA" type="Button" parent="PageButtons"]
-visible = false
 margin_left = 728.0
 margin_right = 776.0
 margin_bottom = 34.0

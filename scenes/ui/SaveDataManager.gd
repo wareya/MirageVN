@@ -4,6 +4,8 @@ class_name SaveDataManager
 var mode = "save"
 var save_disabled = false
 
+var latest_page = 1
+
 var latest_saves = []
 var locked_saves = []
 func update_latest_saves():
@@ -12,6 +14,8 @@ func update_latest_saves():
         latest_saves = sysdata["latest_saves"]
     if "locked_saves" in sysdata:
         locked_saves = sysdata["locked_saves"]
+    if "latest_page" in sysdata:
+        latest_page  = sysdata["latest_page"]
 
 var pageflip_sound = preload("res://sfx/paper bag.wav")
 
@@ -21,9 +25,14 @@ func _ready():
     for button in $CategoryButtons.get_children():
         if button is BaseButton:
             _unused = (button as BaseButton).connect("pressed", self, "pressed_category_button", [button])
+    
+    pagenum = latest_page
+    
     for button in $PageButtons.get_children():
         if button is BaseButton:
             _unused = (button as BaseButton).connect("pressed", self, "pressed_page_button", [button])
+            if button is Button:
+                button.pressed = button.text == "%d" % [latest_page]
     for panel in $Page.get_children():
         panel.connect("pressed", self, "pressed_panel", [panel])
         panel.connect("lock_changed", self, "panel_lock_changed", [panel])
@@ -41,7 +50,6 @@ func _ready():
         $CategoryButtons/LoadButton.grab_focus()
         $Background.texture = preload("res://art/ui/menubg3.png")
     
-    pagenum = 1
     set_page(true)
 
 func pressed_category_button(button : BaseButton):
@@ -103,6 +111,11 @@ func set_page(silent : bool = false):
         EmitterFactory.emit(null, pageflip_sound)
     var panels = $Page.get_children()
     if pagenum > 0:
+        latest_page = pagenum
+        var sysdata = Manager.load_sysdata()
+        sysdata["latest_page"] = latest_page
+        Manager.save_sysdata(sysdata)
+        
         save_type = "save"
         var first_save = 1 + (pagenum-1)*saves_per_page
         var last_save = first_save + saves_per_page - 1
