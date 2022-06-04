@@ -1,6 +1,10 @@
 extends CanvasLayer
 class_name SaveDataManager
 
+const saves_per_page = 12
+
+
+
 var mode = "save"
 var save_disabled = false
 
@@ -36,6 +40,7 @@ func _ready():
     for panel in $Page.get_children():
         panel.connect("pressed", self, "pressed_panel", [panel])
         panel.connect("lock_changed", self, "panel_lock_changed", [panel])
+        panel.connect("delete", self, "panel_delete", [panel])
     
     if save_disabled:
         mode = "load"
@@ -105,7 +110,6 @@ func save_data(savenum : int, data : Dictionary, panel):
     
     panel.set_new(true)
 
-const saves_per_page = 12
 func set_page(silent : bool = false):
     if !silent:
         EmitterFactory.emit(null, pageflip_sound)
@@ -205,6 +209,42 @@ func panel_lock_changed(locked : bool, panel):
     
     sysdata["locked_saves"] = locked_saves
     Manager.save_sysdata(sysdata)
+
+func panel_delete(panel):
+    if !panel.fname.begins_with("user://saves/"):
+        return
+    
+    if "move_to_trash" in OS:
+        # FIXME show modal confirmation dialogue
+        OS.move_to_trash(panel.fname)
+    else:
+        # FIXME show modal confirmation dialogue
+        var dir = Directory.new()
+        dir.remove(panel.fname)
+    
+    var sysdata = Manager.load_sysdata()
+    if "locked_saves" in sysdata:
+        locked_saves = sysdata["locked_saves"]
+    if "latest_saves" in sysdata:
+        latest_saves = sysdata["latest_saves"]
+    
+    if latest_saves.find(panel.fname) >= 0:
+        locked_saves.erase(panel.fname)
+    if locked_saves.find(panel.fname) >= 0:
+        locked_saves.erase(panel.fname)
+    
+    if "last_accessed_save" in sysdata:
+        sysdata["last_accessed_save"] = ""
+        if latest_saves.size() > 0:
+            sysdata["last_accessed_save"] = latest_saves[0]
+    
+    sysdata["locked_saves"] = locked_saves
+    sysdata["latest_saves"] = latest_saves
+    Manager.save_sysdata(sysdata)
+    
+    panel.set_blank()
+    panel.set_new(false)
+    panel.set_locked(false)
 
 var dying = false
 var show_amount = 0.0

@@ -1,4 +1,4 @@
-[gd_scene load_steps=11 format=2]
+[gd_scene load_steps=13 format=2]
 
 [ext_resource path="res://fonts/Monda-Regular.ttf" type="DynamicFontData" id=1]
 [ext_resource path="res://scenes/ui/SaveDataManager.gd" type="Script" id=2]
@@ -27,6 +27,23 @@ corner_radius_top_left = 8
 corner_radius_top_right = 8
 corner_radius_bottom_right = 8
 corner_radius_bottom_left = 8
+
+[sub_resource type="StyleBoxFlat" id=112]
+bg_color = Color( 0.870588, 0.882353, 0.92549, 1 )
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color( 1, 1, 1, 1 )
+corner_radius_top_left = 2
+corner_radius_top_right = 2
+corner_radius_bottom_right = 2
+corner_radius_bottom_left = 2
+
+[sub_resource type="DynamicFont" id=117]
+size = 20
+use_filter = true
+font_data = ExtResource( 4 )
 
 [sub_resource type="DynamicFont" id=116]
 size = 24
@@ -161,6 +178,31 @@ margin_top = 134.0
 margin_right = 416.0
 margin_bottom = -48.0
 custom_styles/panel = SubResource( 115 )
+
+[node name="Panel" type="Panel" parent="." groups=["SaveDeletePanel"]]
+anchor_left = 1.0
+anchor_right = 1.0
+margin_left = -158.0
+margin_top = 11.0
+margin_right = -12.0
+margin_bottom = 78.0
+custom_styles/panel = SubResource( 112 )
+__meta__ = {
+"_edit_group_": true
+}
+
+[node name="Label" type="Label" parent="Panel"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+custom_colors/font_color = Color( 0.54902, 0.54902, 0.54902, 1 )
+custom_colors/font_color_shadow = Color( 0.54902, 0.54902, 0.54902, 1 )
+custom_constants/shadow_offset_x = 1
+custom_constants/shadow_offset_y = 0
+custom_fonts/font = SubResource( 117 )
+text = "Drag & Drop
+Here To Delete"
+align = 1
+valign = 1
 
 [node name="Page" type="GridContainer" parent="."]
 anchor_left = 0.5

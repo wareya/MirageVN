@@ -28,6 +28,7 @@ func _notification(what : int) -> void:
             update()
 
 var pressed_down = false
+var trash_created = false
 
 signal pressed
 func _gui_input(_event : InputEvent):
@@ -37,9 +38,9 @@ func _gui_input(_event : InputEvent):
             if event.pressed:
                 pressed_down = true
             else:
-                pressed_down = false
-                if highlighted:
+                if highlighted and pressed_down:
                     emit_signal("pressed")
+                pressed_down = false
     elif _event.is_action_pressed("ui_accept"):
         emit_signal("pressed")
 
@@ -110,6 +111,55 @@ func set_number(i : int):
 
 func set_new(new : bool):
     $New.visible = new
+
+class Trash extends Sprite:
+    var panel : Control = null
+    func _init(_panel : Control):
+        texture = preload("res://art/ui/graphic design is my passion 2.png")
+        centered = true
+        panel = _panel
+    
+    var last_global_position = Vector2()
+    func _ready():
+        last_global_position = global_position
+    
+    func _process(delta):
+        last_global_position = global_position
+        global_position = get_global_mouse_position()
+        if last_global_position == Vector2():
+            last_global_position = global_position
+        
+        var motion = (global_position - last_global_position) / max(0.0001, delta)
+        
+        #rotation_degrees = move_toward(rotation_degrees, motion.x*0.04, delta*100)
+        rotation_degrees = lerp(rotation_degrees, motion.x*0.1, 1.0-pow(0.01, delta))
+        
+        Input.get_last_mouse_speed()
+        
+        if !Input.is_mouse_button_pressed(1):
+            for trash in get_tree().get_nodes_in_group("SaveDeletePanel"):
+                if trash.is_visible_in_tree() and trash.get_global_rect().has_point(global_position):
+                    panel.do_delete()
+            panel.trash_created = false
+            queue_free()
+
+signal delete
+func do_delete():
+    emit_signal("delete")
+
+func _process(_delta):
+    if !get_global_rect().has_point(get_global_mouse_position()):
+        if highlighted:
+            highlighted = false
+            update()
+        if !locked and pressed_down and !trash_created and data.size() > 0:
+            get_parent().get_parent().add_child(Trash.new(self))
+            trash_created = true
+            pressed_down = false
+    else:
+        if !highlighted:
+            highlighted = true
+            update()
 
 func _draw():
     if highlighted:

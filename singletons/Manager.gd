@@ -390,7 +390,7 @@ func admit_read_line(load_only = false):
 func admit_latest_save(fname : String, silent : bool = false):
     var sysdata = load_sysdata()
     
-    var type = "save" if fname.find("_save.") < 0 else "quicksave" if fname.find("_quicksave.") < 0 else "autosave"
+    var type = "save" if fname.find("_save.") >= 0 else "quicksave" if fname.find("_quicksave.") >= 0 else "autosave"
     
     sysdata["last_accessed_save"] = fname
     
