@@ -13,7 +13,7 @@ extra_spacing_top = 3
 extra_spacing_bottom = 1
 font_data = ExtResource( 3 )
 
-[node name="Menu" type="CanvasLayer"]
+[node name="Menu" type="CanvasLayer" groups=["MainMenu"]]
 layer = 63
 script = ExtResource( 2 )
 

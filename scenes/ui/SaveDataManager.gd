@@ -40,7 +40,7 @@ func _ready():
     for panel in $Page.get_children():
         panel.connect("pressed", self, "pressed_panel", [panel])
         panel.connect("lock_changed", self, "panel_lock_changed", [panel])
-        panel.connect("delete", self, "panel_delete", [panel])
+        panel.connect("delete", self, "attempt_panel_delete", [panel])
     
     if save_disabled:
         mode = "load"
@@ -175,25 +175,57 @@ func pressed_page_button(button : BaseButton):
         pagenum = -2
         set_page()
 
+func do_load_panel(panel):
+    if panel.data and panel.data.size() > 0:
+        Manager.load_from_dict(panel.data)
+        var sysdata = Manager.load_sysdata()
+        sysdata["last_accessed_save"] = panel.fname
+        Manager.save_sysdata(sysdata)
+        dying = true
+
+func do_panel_save(panel):
+    if panel.fname in locked_saves:
+        EmitterFactory.emit(null, EngineSettings.save_failure_sound)
+        return
+    var data = Manager.save_to_dict()
+    data["date"] = OS.get_date()
+    data["time"] = OS.get_time()
+    save_data(panel.number, data, panel)
+    panel.set_savedata(data)
+    panel.set_new(true)
+    panel.set_locked(panel.fname in locked_saves)
+
 func pressed_panel(panel):
     if mode == "load":
-        if panel.data and panel.data.size() > 0:
-            Manager.load_from_dict(panel.data)
-            var sysdata = Manager.load_sysdata()
-            sysdata["last_accessed_save"] = panel.fname
-            Manager.save_sysdata(sysdata)
-            dying = true
+        var helper = Manager.PopupHelper.new(
+            self,
+            "do_load_panel",
+            "Confirm Load",
+            ("Load game?\nUnsaved progress will be lost."
+             if get_tree().get_nodes_in_group("MainMenu").size() == 0 else
+             "Load game?"
+            ),
+            [panel]
+        )
+        add_child(helper)
+        helper.invoke()
     elif mode == "save":
         if panel.fname in locked_saves:
             EmitterFactory.emit(null, EngineSettings.save_failure_sound)
             return
-        var data = Manager.save_to_dict()
-        data["date"] = OS.get_date()
-        data["time"] = OS.get_time()
-        save_data(panel.number, data, panel)
-        panel.set_savedata(data)
-        panel.set_new(true)
-        panel.set_locked(panel.fname in locked_saves)
+        
+        var helper = Manager.PopupHelper.new(
+            self,
+            "do_panel_save",
+            "Confirm Save",
+            ("Save game?\nOverwritten data will not be backed up."
+             if panel.data.size() > 0 else
+             "Save game?"
+            ),
+            [panel]
+        )
+        add_child(helper)
+        helper.invoke()
 
 func panel_lock_changed(locked : bool, panel):
     if not pagenum > 0:
@@ -210,15 +242,32 @@ func panel_lock_changed(locked : bool, panel):
     sysdata["locked_saves"] = locked_saves
     Manager.save_sysdata(sysdata)
 
+func attempt_panel_delete(panel):
+    if !panel.fname.begins_with("user://saves/"):
+        return
+    
+    var helper = Manager.PopupHelper.new(
+        self,
+        "panel_delete",
+        "Confirm Delete",
+        ("Delete save file?\nIf possible, save data will be sent to your OS's trash, but deleted with no backup if not."
+         if "move_to_trash" in OS else
+         "Delete save file?\nSave data will be permanently deleted with no backup."
+        ),
+        [panel]
+    )
+    add_child(helper)
+    helper.invoke()
+
 func panel_delete(panel):
     if !panel.fname.begins_with("user://saves/"):
         return
     
+    EmitterFactory.emit(null, preload("res://sfx/savedelete.wav"))
+    
     if "move_to_trash" in OS:
-        # FIXME show modal confirmation dialogue
         OS.move_to_trash(panel.fname)
     else:
-        # FIXME show modal confirmation dialogue
         var dir = Directory.new()
         dir.remove(panel.fname)
     
@@ -229,7 +278,7 @@ func panel_delete(panel):
         latest_saves = sysdata["latest_saves"]
     
     if latest_saves.find(panel.fname) >= 0:
-        locked_saves.erase(panel.fname)
+        latest_saves.erase(panel.fname)
     if locked_saves.find(panel.fname) >= 0:
         locked_saves.erase(panel.fname)
     
@@ -261,7 +310,7 @@ func _process(delta):
         $CategoryButtons/LoadButton.pressed = true
         $Background.texture = preload("res://art/ui/menubg3.png")
     
-    if Input.is_action_just_pressed("m2"):
+    if get_tree().get_nodes_in_group("CustomPopup").size() == 0 and Input.is_action_just_pressed("m2"):
         dying = true
     
     if dying:

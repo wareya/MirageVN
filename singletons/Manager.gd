@@ -394,7 +394,7 @@ func admit_read_line(load_only = false):
 func admit_latest_save(fname : String, silent : bool = false):
     var sysdata = load_sysdata()
     
-    var type = "save" if fname.find("_save.") >= 0 else "quicksave" if fname.find("_quicksave.") >= 0 else "autosave"
+    var type = "save" if fname.find("_save.") >= 0 else ("quicksave" if fname.find("_quicksave.") >= 0 else "autosave")
     
     sysdata["last_accessed_save"] = fname
     
@@ -1402,6 +1402,7 @@ func ambiance(sound : AudioStream):
 var override_mode_after_cutscene = null
 
 var block_saving = false
+var is_splash
 signal kill_all_cutscenes
 # Move to a new cutscene.
 # Note: incorrect use of this function can cause memory leaks, crashes, save corruption, etc.
@@ -1427,6 +1428,7 @@ func call_cutscene(entity : Node, method : String):
     set_ADV_mode()
     $Scene.offset = Vector2()
     block_saving = false
+    is_splash = false
     
     taken_choices = []
     
@@ -1573,7 +1575,7 @@ func scroll_backlog_to_end():
     $Scrollback.scroll_vertical = $Scrollback/List.rect_size.y#+$Scrollback.rect_size.y
 
 func block_simulation():
-    return cutscene_paused or get_tree().get_nodes_in_group("MenuScreen").size() > 0
+    return cutscene_paused or get_tree().get_nodes_in_group("MenuScreen").size() > 0 or get_tree().get_nodes_in_group("CustomPopup").size() > 0
 
 var backlog_textbox_visibility_storage = false
 func backlog_hide():
@@ -1937,11 +1939,13 @@ class PopupHelper extends Node:
     var target_method : String = ""
     var title : String = ""
     var text : String = ""
-    func _init(_target : Node, _target_method : String, _title : String, _text : String):
+    var binds : Array = []
+    func _init(_target : Node, _target_method : String, _title : String, _text : String, _binds : Array = []):
         target = _target
         target_method = _target_method
         title = _title
         text = _text
+        binds = _binds
     
     var dialog = null
     signal cleaned_up
@@ -1952,7 +1956,7 @@ class PopupHelper extends Node:
         queue_free()
         emit_signal("cleaned_up")
     func confirm():
-        target.call(target_method)
+        target.callv(target_method, binds)
         cleanup()
     func invoke(override = false):
         if !dialog and (override or Manager.get_tree().get_nodes_in_group("CustomPopup").size() == 0):
@@ -2005,16 +2009,18 @@ func attempt_exit():
         return
     update_latest_screenshot()
     already_exiting = true
-    var text
-    if can_autosave():
-        text = "Quit game?\nAn autosave will be created."
-    else:
-        text = "Quit game?\nUnsaved progress will be lost."
+    
     var helper = PopupHelper.new(
         self,
         "exit",
         "Confirm Game Exit",
-        text
+        ("Quit game?"
+         if get_tree().get_nodes_in_group("MainMenu").size() > 0 or is_splash else
+         ("Quit game?\nAn autosave will be created."
+          if can_autosave() else
+          "Quit game?\nUnsaved progress will be lost."
+         )
+        )
     )
     yield(get_tree(), "idle_frame")
     add_child(helper)

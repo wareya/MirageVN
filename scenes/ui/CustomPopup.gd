@@ -13,7 +13,7 @@ func set_title(new : String):
     $Panel/Title.text = new
 
 func set_text(new : String):
-    $Panel/Label.text = new
+    $Panel/LabelScroller/LabelHolder/Label.bbcode_text = "[center]%s[/center]" % [new]
 
 func set_ok_text(new : String):
     button_ok.text = new
@@ -51,3 +51,7 @@ func _ready():
     button_cancel.connect("pressed", self, "emit_signal", ["pressed_cancel"])
     
     button_cancel.grab_focus()
+
+func _process(_delta):
+    if button_close.visible and Input.is_action_just_pressed("m2"):
+        button_close.emit_signal("pressed")
