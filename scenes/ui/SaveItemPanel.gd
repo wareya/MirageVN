@@ -157,7 +157,7 @@ func _process(_delta):
             trash_created = true
             pressed_down = false
     else:
-        if !highlighted:
+        if !highlighted and pressed_down:
             highlighted = true
             update()
 

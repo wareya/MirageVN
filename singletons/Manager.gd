@@ -437,6 +437,8 @@ signal bg_transform_2_finished
 signal bg_transform_finished
 
 func _ready():
+    get_tree().set_auto_accept_quit(false)
+    
     admit_read_line(true)
     
     var dir = Directory.new()
@@ -1923,8 +1925,34 @@ func spawn_effect(name : String):
         $Scene.add_child(ret)
         return ret
 
+var close_dialog = null
+
+func cancel_exit():
+    if close_dialog:
+        close_dialog.queue_free()
+        close_dialog = null
+
+func can_autosave():
+    return input_mode == "cutscene"
+
+func confirm_exit():
+    if can_autosave():
+        autosave()
+    get_tree().quit()
+
 func _notification(what):
     if what == MainLoop.NOTIFICATION_WM_QUIT_REQUEST:
-        if input_mode == "cutscene":
-            autosave()
-        get_tree().quit()
+        if !close_dialog:
+            close_dialog = preload("res://scenes/ui/CustomPopup.tscn").instance()
+            $PopupTarget.add_child(close_dialog)
+            
+            close_dialog.set_title("Confirm Game Exit")
+            if can_autosave():
+                close_dialog.set_text("Quit game?\nAn autosave will be created.")
+            else:
+                close_dialog.set_text("Quit game?\nUnsaved progress will be lost.")
+            close_dialog.set_closable()
+            close_dialog.set_ok_text("Close Game")
+            close_dialog.connect("pressed_ok", self, "confirm_exit")
+            close_dialog.connect("pressed_cancel", self, "cancel_exit")
+            
