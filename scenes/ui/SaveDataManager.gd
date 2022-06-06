@@ -135,7 +135,8 @@ func set_page(silent : bool = false):
             
             var fname = "user://saves/%04d_%s.json" % [i, save_type]
             panel.fname = fname
-            panel.set_new(fname in latest_saves)
+            if data:
+                panel.set_new(fname in latest_saves)
             panel.set_locked(fname in locked_saves)
     else:
         if pagenum == -1:
@@ -155,7 +156,8 @@ func set_page(silent : bool = false):
             
             var fname = "user://saves/%04d_%s.json" % [i, save_type]
             panel.fname = fname
-            panel.set_new(fname in latest_saves)
+            if data:
+                panel.set_new(fname in latest_saves)
         
 
 var pagenum = 1
