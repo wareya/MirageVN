@@ -1,11 +1,16 @@
-[gd_scene load_steps=13 format=2]
+[gd_scene load_steps=14 format=2]
 
 [ext_resource path="res://fonts/Monda-Regular.ttf" type="DynamicFontData" id=1]
 [ext_resource path="res://scenes/ui/SaveDataManager.gd" type="Script" id=2]
-[ext_resource path="res://art/ui/menubg2.png" type="Texture" id=3]
+[ext_resource path="res://art/ui/menubg.png" type="Texture" id=3]
 [ext_resource path="res://fonts/Galdeano-Regular.ttf" type="DynamicFontData" id=4]
 [ext_resource path="res://art/ui/line_test.png" type="Texture" id=5]
 [ext_resource path="res://scenes/ui/SaveItemPanel.tscn" type="PackedScene" id=6]
+
+[sub_resource type="AtlasTexture" id=120]
+flags = 15
+atlas = ExtResource( 3 )
+region = Rect2( 0, 0, 1280, 720 )
 
 [sub_resource type="DynamicFont" id=1]
 size = 64
@@ -55,12 +60,10 @@ font_data = ExtResource( 1 )
 layer = 64
 script = ExtResource( 2 )
 
-[node name="Background" type="NinePatchRect" parent="."]
+[node name="Background" type="TextureRect" parent="."]
 anchor_right = 1.0
 anchor_bottom = 1.0
-texture = ExtResource( 3 )
-region_rect = Rect2( 0, 0, 960, 720 )
-axis_stretch_horizontal = 1
+texture = SubResource( 120 )
 
 [node name="FillRect" type="ColorRect" parent="."]
 anchor_right = 1.0

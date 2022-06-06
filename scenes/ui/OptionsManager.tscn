@@ -1,4 +1,4 @@
-[gd_scene load_steps=23 format=2]
+[gd_scene load_steps=24 format=2]
 
 [ext_resource path="res://fonts/Monda-Regular.ttf" type="DynamicFontData" id=1]
 [ext_resource path="res://scenes/ui/OptionsManager.gd" type="Script" id=2]
@@ -11,6 +11,11 @@
 [ext_resource path="res://fonts/AndadaPro-Bold.ttf" type="DynamicFontData" id=9]
 [ext_resource path="res://art/ui/textbox2.png" type="Texture" id=10]
 [ext_resource path="res://art/cutscene/bg/grass bg.jpg" type="Texture" id=11]
+
+[sub_resource type="AtlasTexture" id=120]
+flags = 15
+atlas = ExtResource( 3 )
+region = Rect2( 0, 0, 1280, 720 )
 
 [sub_resource type="DynamicFont" id=1]
 size = 64
@@ -107,12 +112,10 @@ font_data = ExtResource( 7 )
 layer = 64
 script = ExtResource( 2 )
 
-[node name="Background" type="NinePatchRect" parent="."]
+[node name="Background" type="TextureRect" parent="."]
 anchor_right = 1.0
 anchor_bottom = 1.0
-texture = ExtResource( 3 )
-region_rect = Rect2( 0, 0, 960, 720 )
-axis_stretch_horizontal = 1
+texture = SubResource( 120 )
 
 [node name="FillRect" type="ColorRect" parent="."]
 anchor_right = 1.0
@@ -260,13 +263,26 @@ custom_fonts/font = SubResource( 111 )
 toggle_mode = true
 text = "Dialogs"
 
-[node name="ReturnButton" type="Button" parent="CategoryButtons"]
+[node name="SystemButton" type="Button" parent="CategoryButtons"]
 anchor_left = 1.0
 anchor_right = 1.0
 margin_left = -135.0
 margin_top = 160.0
 margin_right = -4.0
 margin_bottom = 192.0
+rect_pivot_offset = Vector2( 92, 28 )
+focus_neighbour_right = NodePath("../../SystemSettings/SaveScreenshots")
+custom_fonts/font = SubResource( 111 )
+toggle_mode = true
+text = "System"
+
+[node name="ReturnButton" type="Button" parent="CategoryButtons"]
+anchor_left = 1.0
+anchor_right = 1.0
+margin_left = -135.0
+margin_top = 200.0
+margin_right = -4.0
+margin_bottom = 232.0
 rect_pivot_offset = Vector2( 92, 28 )
 custom_fonts/font = SubResource( 111 )
 toggle_mode = true
@@ -283,7 +299,7 @@ margin_right = 300.0
 margin_bottom = -51.0
 
 [node name="Fullscreen" type="CheckButton" parent="ScreenSettings"]
-margin_right = 279.0
+margin_right = 325.0
 margin_bottom = 40.0
 custom_colors/font_color_disabled = Color( 1, 1, 1, 1 )
 custom_colors/font_color_focus = Color( 1, 1, 1, 1 )
@@ -296,7 +312,7 @@ text = "Fullscreen"
 
 [node name="Borderless" type="CheckButton" parent="ScreenSettings"]
 margin_top = 40.0
-margin_right = 279.0
+margin_right = 325.0
 margin_bottom = 80.0
 custom_colors/font_color_disabled = Color( 1, 1, 1, 1 )
 custom_colors/font_color_focus = Color( 1, 1, 1, 1 )
@@ -309,7 +325,7 @@ text = "Borderless"
 
 [node name="Vsync" type="CheckButton" parent="ScreenSettings"]
 margin_top = 80.0
-margin_right = 279.0
+margin_right = 325.0
 margin_bottom = 120.0
 custom_colors/font_color_disabled = Color( 1, 1, 1, 1 )
 custom_colors/font_color_focus = Color( 1, 1, 1, 1 )
@@ -322,7 +338,7 @@ text = "Vsync"
 
 [node name="CompositorVsync" type="CheckButton" parent="ScreenSettings"]
 margin_top = 120.0
-margin_right = 279.0
+margin_right = 325.0
 margin_bottom = 160.0
 custom_colors/font_color_disabled = Color( 1, 1, 1, 1 )
 custom_colors/font_color_focus = Color( 1, 1, 1, 1 )
@@ -333,10 +349,22 @@ custom_colors/font_color_pressed = Color( 1, 1, 1, 1 )
 custom_fonts/font = SubResource( 111 )
 text = "Compositor Vsync"
 
-[node name="Framerate" type="OptionButton" parent="ScreenSettings"]
+[node name="FpsLabel" type="Label" parent="ScreenSettings"]
+margin_left = 7.0
 margin_top = 160.0
-margin_right = 279.0
+margin_right = 325.0
 margin_bottom = 200.0
+focus_neighbour_left = NodePath("../../CategoryButtons/SystemButton")
+custom_colors/font_color = Color( 1, 1, 1, 1 )
+custom_fonts/font = SubResource( 111 )
+text = "Framerate:"
+valign = 1
+
+[node name="Framerate" type="OptionButton" parent="ScreenSettings"]
+margin_left = 20.0
+margin_top = 200.0
+margin_right = 325.0
+margin_bottom = 240.0
 custom_colors/font_color_disabled = Color( 1, 1, 1, 1 )
 custom_colors/font_color_focus = Color( 1, 1, 1, 1 )
 custom_colors/font_color = Color( 1, 1, 1, 1 )
@@ -347,9 +375,9 @@ text = "Framerate"
 flat = true
 
 [node name="HiDPI" type="CheckButton" parent="ScreenSettings"]
-margin_top = 200.0
-margin_right = 279.0
-margin_bottom = 240.0
+margin_top = 240.0
+margin_right = 325.0
+margin_bottom = 280.0
 custom_colors/font_color_disabled = Color( 1, 1, 1, 1 )
 custom_colors/font_color_focus = Color( 1, 1, 1, 1 )
 custom_colors/font_color_hover_pressed = Color( 1, 1, 1, 1 )
@@ -408,7 +436,7 @@ ticks_on_borders = true
 
 [node name="TextOutline" type="CheckButton" parent="DisplaySettings"]
 margin_top = 136.0
-margin_right = 279.0
+margin_right = 325.0
 margin_bottom = 176.0
 custom_colors/font_color_disabled = Color( 1, 1, 1, 1 )
 custom_colors/font_color_focus = Color( 1, 1, 1, 1 )
@@ -422,7 +450,7 @@ text = "Text Outline"
 
 [node name="TextShadow" type="CheckButton" parent="DisplaySettings"]
 margin_top = 176.0
-margin_right = 279.0
+margin_right = 325.0
 margin_bottom = 216.0
 custom_colors/font_color_disabled = Color( 1, 1, 1, 1 )
 custom_colors/font_color_focus = Color( 1, 1, 1, 1 )
@@ -558,7 +586,7 @@ ticks_on_borders = true
 
 [node name="BgMute" type="CheckButton" parent="AudioSettings"]
 margin_top = 200.0
-margin_right = 279.0
+margin_right = 325.0
 margin_bottom = 240.0
 custom_colors/font_color_disabled = Color( 1, 1, 1, 1 )
 custom_colors/font_color_focus = Color( 1, 1, 1, 1 )
@@ -571,6 +599,7 @@ pressed = true
 text = "Mute In Background"
 
 [node name="DialogSettings" type="Control" parent="."]
+visible = false
 anchor_left = 0.5
 anchor_right = 0.5
 anchor_bottom = 1.0
@@ -580,7 +609,7 @@ margin_right = 300.0
 margin_bottom = -51.0
 
 [node name="Quicksave" type="CheckButton" parent="DialogSettings"]
-margin_right = 279.0
+margin_right = 325.0
 margin_bottom = 40.0
 custom_colors/font_color_disabled = Color( 1, 1, 1, 1 )
 custom_colors/font_color_focus = Color( 1, 1, 1, 1 )
@@ -593,7 +622,7 @@ text = "Confirm Quicksave"
 
 [node name="Quickload" type="CheckButton" parent="DialogSettings"]
 margin_top = 40.0
-margin_right = 279.0
+margin_right = 325.0
 margin_bottom = 80.0
 custom_colors/font_color_disabled = Color( 1, 1, 1, 1 )
 custom_colors/font_color_focus = Color( 1, 1, 1, 1 )
@@ -606,7 +635,7 @@ text = "Confirm Quickload"
 
 [node name="Save" type="CheckButton" parent="DialogSettings"]
 margin_top = 80.0
-margin_right = 279.0
+margin_right = 325.0
 margin_bottom = 120.0
 custom_colors/font_color_disabled = Color( 1, 1, 1, 1 )
 custom_colors/font_color_focus = Color( 1, 1, 1, 1 )
@@ -619,7 +648,7 @@ text = "Confirm Fresh Save"
 
 [node name="SaveOverwrite" type="CheckButton" parent="DialogSettings"]
 margin_top = 120.0
-margin_right = 279.0
+margin_right = 325.0
 margin_bottom = 160.0
 custom_colors/font_color_disabled = Color( 1, 1, 1, 1 )
 custom_colors/font_color_focus = Color( 1, 1, 1, 1 )
@@ -632,7 +661,7 @@ text = "Confirm Overwrite"
 
 [node name="Load" type="CheckButton" parent="DialogSettings"]
 margin_top = 160.0
-margin_right = 279.0
+margin_right = 325.0
 margin_bottom = 200.0
 custom_colors/font_color_disabled = Color( 1, 1, 1, 1 )
 custom_colors/font_color_focus = Color( 1, 1, 1, 1 )
@@ -645,7 +674,7 @@ text = "Confirm Load"
 
 [node name="Delete" type="CheckButton" parent="DialogSettings"]
 margin_top = 200.0
-margin_right = 279.0
+margin_right = 325.0
 margin_bottom = 240.0
 custom_colors/font_color_disabled = Color( 1, 1, 1, 1 )
 custom_colors/font_color_focus = Color( 1, 1, 1, 1 )
@@ -658,7 +687,7 @@ text = "Confirm Delete Save"
 
 [node name="Quit" type="CheckButton" parent="DialogSettings"]
 margin_top = 240.0
-margin_right = 279.0
+margin_right = 325.0
 margin_bottom = 280.0
 custom_colors/font_color_disabled = Color( 1, 1, 1, 1 )
 custom_colors/font_color_focus = Color( 1, 1, 1, 1 )
@@ -668,3 +697,166 @@ custom_colors/font_color_hover = Color( 1, 1, 1, 1 )
 custom_colors/font_color_pressed = Color( 1, 1, 1, 1 )
 custom_fonts/font = SubResource( 111 )
 text = "Confirm Quit"
+
+[node name="SystemSettings" type="Control" parent="."]
+anchor_left = 0.5
+anchor_right = 0.5
+anchor_bottom = 1.0
+margin_left = -300.0
+margin_top = 144.0
+margin_right = 300.0
+margin_bottom = -51.0
+
+[node name="SaveScreenshots" type="CheckButton" parent="SystemSettings"]
+margin_right = 325.0
+margin_bottom = 40.0
+focus_neighbour_left = NodePath("../../CategoryButtons/SystemButton")
+custom_colors/font_color_disabled = Color( 1, 1, 1, 1 )
+custom_colors/font_color_focus = Color( 1, 1, 1, 1 )
+custom_colors/font_color_hover_pressed = Color( 1, 1, 1, 1 )
+custom_colors/font_color = Color( 1, 1, 1, 1 )
+custom_colors/font_color_hover = Color( 1, 1, 1, 1 )
+custom_colors/font_color_pressed = Color( 1, 1, 1, 1 )
+custom_fonts/font = SubResource( 111 )
+text = "Screenshots for Saves"
+
+[node name="AutoContinue" type="CheckButton" parent="SystemSettings"]
+margin_top = 40.0
+margin_right = 325.0
+margin_bottom = 80.0
+focus_neighbour_left = NodePath("../../CategoryButtons/SystemButton")
+custom_colors/font_color_disabled = Color( 1, 1, 1, 1 )
+custom_colors/font_color_focus = Color( 1, 1, 1, 1 )
+custom_colors/font_color_hover_pressed = Color( 1, 1, 1, 1 )
+custom_colors/font_color = Color( 1, 1, 1, 1 )
+custom_colors/font_color_hover = Color( 1, 1, 1, 1 )
+custom_colors/font_color_pressed = Color( 1, 1, 1, 1 )
+custom_fonts/font = SubResource( 111 )
+text = "Continue on Boot"
+
+[node name="SkipWake" type="CheckButton" parent="SystemSettings"]
+margin_top = 80.0
+margin_right = 325.0
+margin_bottom = 120.0
+focus_neighbour_left = NodePath("../../CategoryButtons/SystemButton")
+custom_colors/font_color_disabled = Color( 1, 1, 1, 1 )
+custom_colors/font_color_focus = Color( 1, 1, 1, 1 )
+custom_colors/font_color_hover_pressed = Color( 1, 1, 1, 1 )
+custom_colors/font_color = Color( 1, 1, 1, 1 )
+custom_colors/font_color_hover = Color( 1, 1, 1, 1 )
+custom_colors/font_color_pressed = Color( 1, 1, 1, 1 )
+custom_fonts/font = SubResource( 111 )
+text = "Stop Skipping at Unread"
+
+[node name="OptionName1" type="Label" parent="SystemSettings"]
+margin_left = 7.0
+margin_top = 120.0
+margin_right = 279.0
+margin_bottom = 160.0
+custom_fonts/font = SubResource( 111 )
+text = "When to Autosave:"
+valign = 1
+
+[node name="AutosaveFreq" type="OptionButton" parent="SystemSettings"]
+margin_left = 20.0
+margin_top = 160.0
+margin_right = 325.0
+margin_bottom = 200.0
+custom_colors/font_color_disabled = Color( 1, 1, 1, 1 )
+custom_colors/font_color_focus = Color( 1, 1, 1, 1 )
+custom_colors/font_color = Color( 1, 1, 1, 1 )
+custom_colors/font_color_hover = Color( 1, 1, 1, 1 )
+custom_colors/font_color_pressed = Color( 1, 1, 1, 1 )
+custom_fonts/font = SubResource( 111 )
+text = "When Quitting"
+flat = true
+
+[node name="OptionName2" type="Label" parent="SystemSettings"]
+margin_left = 7.0
+margin_top = 200.0
+margin_right = 279.0
+margin_bottom = 240.0
+custom_fonts/font = SubResource( 111 )
+text = "When to Store \"Read Text\":"
+valign = 1
+
+[node name="ReadTextSaveFreq" type="OptionButton" parent="SystemSettings"]
+margin_left = 20.0
+margin_top = 240.0
+margin_right = 325.0
+margin_bottom = 280.0
+custom_colors/font_color_disabled = Color( 1, 1, 1, 1 )
+custom_colors/font_color_focus = Color( 1, 1, 1, 1 )
+custom_colors/font_color = Color( 1, 1, 1, 1 )
+custom_colors/font_color_hover = Color( 1, 1, 1, 1 )
+custom_colors/font_color_pressed = Color( 1, 1, 1, 1 )
+custom_fonts/font = SubResource( 111 )
+text = "While Reading"
+flat = true
+
+[node name="AutoLabel" type="Label" parent="SystemSettings"]
+margin_left = 7.0
+margin_top = 280.0
+margin_right = 325.0
+margin_bottom = 320.0
+focus_neighbour_left = NodePath("../../CategoryButtons/SystemButton")
+custom_colors/font_color = Color( 1, 1, 1, 1 )
+custom_fonts/font = SubResource( 111 )
+text = "Auto Mode Chars Per Second"
+valign = 1
+
+[node name="AutoCPSLabel" type="Label" parent="SystemSettings"]
+margin_left = 7.0
+margin_top = 312.0
+margin_right = 325.0
+margin_bottom = 352.0
+focus_neighbour_left = NodePath("../../CategoryButtons/SystemButton")
+custom_colors/font_color = Color( 1, 1, 1, 1 )
+custom_fonts/font = SubResource( 111 )
+text = "60.0"
+align = 2
+valign = 1
+
+[node name="AutoCPS" type="HSlider" parent="SystemSettings"]
+margin_left = 7.0
+margin_top = 312.0
+margin_right = 257.0
+margin_bottom = 352.0
+min_value = 1.0
+max_value = 60.0
+value = 15.0
+tick_count = 5
+ticks_on_borders = true
+
+[node name="AutoLabel3" type="Label" parent="SystemSettings"]
+margin_left = 7.0
+margin_top = 352.0
+margin_right = 325.0
+margin_bottom = 392.0
+focus_neighbour_left = NodePath("../../CategoryButtons/SystemButton")
+custom_colors/font_color = Color( 1, 1, 1, 1 )
+custom_fonts/font = SubResource( 111 )
+text = "Auto Mode Extra Delay Seconds"
+valign = 1
+
+[node name="AutoPauseLabel" type="Label" parent="SystemSettings"]
+margin_left = 7.0
+margin_top = 384.0
+margin_right = 325.0
+margin_bottom = 424.0
+focus_neighbour_left = NodePath("../../CategoryButtons/SystemButton")
+custom_colors/font_color = Color( 1, 1, 1, 1 )
+custom_fonts/font = SubResource( 111 )
+text = "1.5"
+align = 2
+valign = 1
+
+[node name="AutoPause" type="HSlider" parent="SystemSettings"]
+margin_left = 7.0
+margin_top = 384.0
+margin_right = 257.0
+margin_bottom = 424.0
+max_value = 60.0
+value = 15.0
+tick_count = 5
+ticks_on_borders = true

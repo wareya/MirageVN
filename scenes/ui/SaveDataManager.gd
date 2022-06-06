@@ -49,11 +49,11 @@ func _ready():
     if mode == "save":
         $Title.text = "Save"
         $CategoryButtons/SaveButton.grab_focus()
-        $Background.texture = preload("res://art/ui/menubg2.png")
+        $Background.texture.atlas = preload("res://art/ui/menubg2.png")
     else:
         $Title.text = "Load"
         $CategoryButtons/LoadButton.grab_focus()
-        $Background.texture = preload("res://art/ui/menubg3.png")
+        $Background.texture.atlas = preload("res://art/ui/menubg3.png")
     
     set_page(true)
 
@@ -223,7 +223,6 @@ func pressed_panel(panel):
         if !will_overwrite and !UserSettings.dialog_save_dialog:
             do_panel_save(panel)
             return
-        
         if will_overwrite and !UserSettings.dialog_save_overwrite_dialog:
             do_panel_save(panel)
             return
@@ -321,12 +320,12 @@ func _process(delta):
         $Title.text = "Save"
         $CategoryButtons/SaveButton.pressed = true
         $CategoryButtons/LoadButton.pressed = false
-        $Background.texture = preload("res://art/ui/menubg2.png")
+        $Background.texture.atlas = preload("res://art/ui/menubg2.png")
     else:
         $Title.text = "Load"
         $CategoryButtons/SaveButton.pressed = false
         $CategoryButtons/LoadButton.pressed = true
-        $Background.texture = preload("res://art/ui/menubg3.png")
+        $Background.texture.atlas = preload("res://art/ui/menubg3.png")
     
     if get_tree().get_nodes_in_group("CustomPopup").size() == 0 and Input.is_action_just_pressed("m2"):
         dying = true
@@ -346,6 +345,7 @@ func _process(delta):
     $Background.modulate.a = show_amount
     $FillRect.modulate.a = show_amount
     
-    $Background.region_rect.position.x -= delta * 16.0
+    $Background.texture.region.position.x += delta * 16.0
+    $Background.texture.region.position.x = fmod($Background.texture.region.position.x, $Background.texture.atlas.get_size().x)
     
 

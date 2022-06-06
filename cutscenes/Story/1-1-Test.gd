@@ -34,9 +34,11 @@ func cutscene():
     
     # now wait for the room change fader to finish before continuing the cutscene
     if Manager.changing_room:
+        print("doing mode A")
         Manager.set_bg(preload("res://art/cutscene/bg/grass bg.jpg"), true) # true in second argument = instant
         yield(Manager, "room_change_complete")
     else:
+        print("doing mode B")
         Manager.set_bg(preload("res://art/cutscene/bg/grass bg.jpg"))
         yield(Manager, "bg_transition_done")
     
@@ -246,6 +248,35 @@ func cutscene():
     "If you have edited this script while playing it, quicksave and quickload here to avoid hitting a Godot bug when the scene finishes. Then don't edit it until it finishes."
     "End of tutorial. This scene will loop back into itself."
     
+    "assadfkawef"
+    
+    "dfgiareigawre"
+    "xcvnbmre"
+    "kyttrsdfh"
+    "figrwe8u"
+    "824tdsgk"
+    "dfgiareigawre"
+    "xcvnbmre"
+    "figrwe8u"
+    "824tdsgk"
+    "dfgiareigawre"
+    "xcvnbmre"
+    "824tdsgk"
+    "dfgiareigawre"
+    "xcvnbmre"
+    "figrwe8u"
+    "824tdsgk"
+    "dfgiareigawre"
+    "xcvnbmre"
+    "dfgiareigawre"
+    "xcvnbmre"
+    "824tdsgk"
+    "dfgiareigawre"
+    "xcvnbmre"
+    "figrwe8u"
+    "824tdsgk"
+    "dfgiareigawre"
+    "xcvnbmre"
     
     # come back to this scene
     Manager.next_scene = "res://cutscenes/Story/1-1-Test.gd"

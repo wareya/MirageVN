@@ -5,14 +5,11 @@ var text_speed_max = 10.0
 var text_speed = 1.0
 var text_shadow = true
 var text_outline = true
-# TODO: auto delay configuration
-# TODO: configure whether to wake from skip when reaching unread text
 
 var audio_sfx_volume = EngineSettings.audio_sfx_default_volume
 var audio_bgm_volume = EngineSettings.audio_bgm_default_volume
 var audio_master_volume = EngineSettings.audio_master_default_volume
 var audio_muted_unfocused = false
-
 
 var dialog_quickload_dialog = true
 var dialog_quicksave_dialog = true
@@ -23,8 +20,12 @@ var dialog_delete_dialog = true
 var dialog_quit_dialog = true
 
 var system_save_screenshots = true
-# TODO: settings for when to autosave (on quit, at choices, at scene changes, at every text update, etc)
 var system_autocontinue_on_boot = false
+var system_skip_wake_on_unread = true
+var system_autosave_when = 0 # 0: on exit only. 1: also at choices. 2: also when changing scenes.
+var system_read_lines_write_on_save_only = false # unimplemented
+var system_auto_chars_per_second = round(10.0/EngineSettings.auto_delay_per_character)/10.0
+var system_auto_additional_pause_seconds = EngineSettings.auto_delay_amount
 
 func _init():
     do_load()
@@ -35,10 +36,27 @@ func to_dict():
         text_speed = text_speed,
         text_shadow = text_shadow,
         text_outline = text_outline,
+        
         audio_sfx_volume = audio_sfx_volume,
         audio_bgm_volume = audio_bgm_volume,
         audio_master_volume = audio_master_volume,
         audio_muted_unfocused = audio_muted_unfocused,
+        
+        dialog_quickload_dialog = dialog_quickload_dialog,
+        dialog_quicksave_dialog = dialog_quicksave_dialog,
+        dialog_load_dialog = dialog_load_dialog,
+        dialog_save_dialog = dialog_save_dialog,
+        dialog_save_overwrite_dialog = dialog_save_overwrite_dialog,
+        dialog_delete_dialog = dialog_delete_dialog,
+        dialog_quit_dialog = dialog_quit_dialog,
+
+        system_save_screenshots = system_save_screenshots,
+        system_autocontinue_on_boot = system_autocontinue_on_boot,
+        system_skip_wake_on_unread = system_skip_wake_on_unread,
+        system_autosave_when = system_autosave_when,
+        system_read_lines_write_on_save_only = system_read_lines_write_on_save_only,
+        system_auto_chars_per_second = system_auto_chars_per_second,
+        system_auto_additional_pause_seconds = system_auto_additional_pause_seconds,
     }
     return dict
 

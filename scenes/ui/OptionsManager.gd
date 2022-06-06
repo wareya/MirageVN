@@ -65,6 +65,14 @@ func _ready():
     for val in [24, 30, 48, 50, 60, 75, 80, 120, 144, 240, 300]:
         $ScreenSettings/Framerate.add_item("%sfps" % [val])
     
+    $SystemSettings/AutosaveFreq.add_item("On Quit")
+    $SystemSettings/AutosaveFreq.add_item("Also At Choices")
+    $SystemSettings/AutosaveFreq.add_item("Also At Scene Changes")
+    
+    $SystemSettings/ReadTextSaveFreq.add_item("While Reading")
+    $SystemSettings/ReadTextSaveFreq.add_item("Occasionally")
+    
+    
     $ScreenSettings/Fullscreen.pressed = ProjectSettings.get_setting("display/window/size/fullscreen")
     $ScreenSettings/Borderless.pressed = ProjectSettings.get_setting("display/window/size/borderless")
     $ScreenSettings/Vsync.pressed = ProjectSettings.get_setting("display/window/vsync/use_vsync")
@@ -89,9 +97,20 @@ func _ready():
     $DialogSettings/Delete.pressed = UserSettings.dialog_delete_dialog
     $DialogSettings/Quit.pressed = UserSettings.dialog_quit_dialog
     
+    $SystemSettings/SaveScreenshots.pressed = UserSettings.system_save_screenshots
+    $SystemSettings/AutoContinue.pressed = UserSettings.system_autocontinue_on_boot
+    $SystemSettings/SkipWake.pressed = UserSettings.system_skip_wake_on_unread
+    $SystemSettings/AutosaveFreq.selected = UserSettings.system_autosave_when
+    $SystemSettings/ReadTextSaveFreq.selected = !!UserSettings.system_read_lines_write_on_save_only
+    $SystemSettings/AutoCPS.value = UserSettings.system_auto_chars_per_second
+    $SystemSettings/AutoPause.value = UserSettings.system_auto_additional_pause_seconds*10.0
+
+    $SystemSettings/AutoCPSLabel.text = str(UserSettings.system_auto_chars_per_second)
+    $SystemSettings/AutoPauseLabel.text = "%1.1f" % [UserSettings.system_auto_additional_pause_seconds]
+        
     var _unused
     
-    for input in $ScreenSettings.get_children() + $DisplaySettings.get_children() + $AudioSettings.get_children() + $DialogSettings.get_children():
+    for input in $ScreenSettings.get_children() + $DisplaySettings.get_children() + $AudioSettings.get_children() + $DialogSettings.get_children() + $SystemSettings.get_children():
         if input is CheckButton:
             input.connect("toggled", self, "button_toggled", [input])
         elif input is OptionButton:
@@ -129,8 +148,8 @@ func button_toggled(button_pressed : bool, button : BaseButton):
         ProjectSettings.set_setting("display/window/vsync/vsync_via_compositor", button_pressed)
         OS.vsync_via_compositor = button_pressed
     elif button == $ScreenSettings/HiDPI:
-    
         ProjectSettings.set_setting("display/window/dpi/allow_hidpi", button_pressed)
+    
     elif button == $DisplaySettings/TextOutline:
         UserSettings.text_outline = button_pressed
     elif button == $DisplaySettings/TextShadow:
@@ -160,6 +179,13 @@ func button_toggled(button_pressed : bool, button : BaseButton):
     elif button == $DialogSettings/Quit:
         UserSettings.dialog_quit_dialog = button_pressed
     
+    elif button == $SystemSettings/SaveScreenshots:
+        UserSettings.system_save_screenshots = button_pressed
+    elif button == $SystemSettings/AutoContinue:
+        UserSettings.system_autocontinue_on_boot = button_pressed
+    elif button == $SystemSettings/SkipWake:
+        UserSettings.system_skip_wake_on_unread = button_pressed
+    
     if $ScreenSettings.is_a_parent_of(button):
         save_project_settings()
     elif $DisplaySettings.is_a_parent_of(button):
@@ -167,6 +193,8 @@ func button_toggled(button_pressed : bool, button : BaseButton):
     elif $AudioSettings.is_a_parent_of(button):
         UserSettings.do_save()
     elif $DialogSettings.is_a_parent_of(button):
+        UserSettings.do_save()
+    elif $SystemSettings.is_a_parent_of(button):
         UserSettings.do_save()
 
 func button_option_picked(option : int, button : OptionButton):
@@ -181,6 +209,11 @@ func button_option_picked(option : int, button : OptionButton):
                 ProjectSettings.set_setting("debug/settings/fps/force_fps", fps)
                 Engine.target_fps = fps
     
+    elif button == $SystemSettings/AutosaveFreq:
+        UserSettings.system_autosave_when = option
+    elif button == $SystemSettings/ReadTextSaveFreq:
+        UserSettings.system_read_lines_write_on_save_only = option
+    
     if $ScreenSettings.is_a_parent_of(button):
         save_project_settings()
     elif $DisplaySettings.is_a_parent_of(button):
@@ -189,8 +222,11 @@ func button_option_picked(option : int, button : OptionButton):
         UserSettings.do_save()
     elif $DialogSettings.is_a_parent_of(button):
         UserSettings.do_save()
+    elif $SystemSettings.is_a_parent_of(button):
+        UserSettings.do_save()
 
 func slider_changed(value : float, slider : Range):
+    var raw_value = value
     value = value/float(slider.max_value)
     if slider == $DisplaySettings/WindowOpacity:
         UserSettings.textbox_opacity = value
@@ -208,6 +244,13 @@ func slider_changed(value : float, slider : Range):
         var db = Manager.volts_to_db(value*value)
         UserSettings.audio_master_volume = db
     
+    elif slider == $SystemSettings/AutoCPS:
+        UserSettings.system_auto_chars_per_second = raw_value
+        $SystemSettings/AutoCPSLabel.text = str(raw_value)
+    elif slider == $SystemSettings/AutoPause:
+        UserSettings.system_auto_additional_pause_seconds = raw_value/10.0
+        $SystemSettings/AutoPauseLabel.text = "%1.1f" % [raw_value/10.0]
+    
     if $ScreenSettings.is_a_parent_of(slider):
         save_project_settings()
     elif $DisplaySettings.is_a_parent_of(slider):
@@ -215,6 +258,8 @@ func slider_changed(value : float, slider : Range):
     elif $AudioSettings.is_a_parent_of(slider):
         UserSettings.do_save()
     elif $DialogSettings.is_a_parent_of(slider):
+        UserSettings.do_save()
+    elif $SystemSettings.is_a_parent_of(slider):
         UserSettings.do_save()
 
 func slider_gui_input(event : InputEvent, slider : Range):
@@ -227,7 +272,7 @@ func pressed_category_button(button : BaseButton):
         if button != other:
             other.pressed = false
     button.pressed = true
-    for panel in [$ScreenSettings, $DisplaySettings, $AudioSettings, $DialogSettings]:
+    for panel in [$ScreenSettings, $DisplaySettings, $AudioSettings, $DialogSettings, $SystemSettings]:
         panel.hide()
     if button == $CategoryButtons/ScreenButton:
         $ScreenSettings.show()
@@ -246,6 +291,9 @@ func pressed_category_button(button : BaseButton):
     
     if button == $CategoryButtons/DialogButton:
         $DialogSettings.show()
+    
+    if button == $CategoryButtons/SystemButton:
+        $SystemSettings.show()
     
     if button == $CategoryButtons/ReturnButton:
         dying = true
@@ -284,7 +332,8 @@ func _process(delta):
     $Background.modulate.a = show_amount
     $FillRect.modulate.a = show_amount
     
-    $Background.region_rect.position.x += delta * 16.0
+    $Background.texture.region.position.x += delta * 16.0
+    $Background.texture.region.position.x = fmod($Background.texture.region.position.x, $Background.texture.atlas.get_size().x)
     
     $FPSDisplay.text = "Current framerate: %s" % [round(1.0/max(0.0001, delta)*100.0)/100.0]
     

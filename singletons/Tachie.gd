@@ -343,10 +343,10 @@ var anim_current_name = ""
 func play_animation(anim : String, next_texture : Texture = null):
     force_finish_anim()
     
-    print("!!playing anim... ", anim)
+    #print("!!playing anim... ", anim)
     
     if not anim in special_anims:
-        print("--- overriding animation memory")
+        #print("--- overriding animation memory")
         anim_memory = anim
     anim_current_name = anim
     

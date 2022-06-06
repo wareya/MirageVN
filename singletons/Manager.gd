@@ -26,15 +26,17 @@ var fade_nonce = 0
 func do_fade_anim(invert = false, fadein = false, fade_time = EngineSettings.scene_fade_time):
     # Use a coroutine to handle the fade overlay. Use a nonce to exit out early if necessary.
     fading = true
-    var start_time = get_sec()
     var progress = 0.0
     fade_nonce += 1
     var start_nonce = fade_nonce
     while progress < 1.0:
         yield(get_tree(), "idle_frame")
+        while block_simulation():
+            yield(get_tree(), "idle_frame")
         if start_nonce != fade_nonce: # another fade started
             return
-        progress = (get_sec() - start_time)/fade_time
+        
+        progress += get_process_delta_time()/fade_time
         if do_timer_skip(): progress = 1.0
         
         $FadeLayer/ScreenFader.invert = invert
@@ -141,7 +143,7 @@ var taken_choices = []
 var _LOAD_CHOICE = 0
 var SAVED_CHOICES = []
 var LOAD_SKIP = false
-var LOAD_LINE = 0
+var LOAD_LINE = -1
 var SAVED_LINE = 0
 var SAVED_CUTSCENE = ""
 var last_displayed_line = ""
@@ -164,6 +166,9 @@ func get_savable_scene_name():
 var latest_screenshot : Image = null
 
 func update_latest_screenshot():
+    # FIXME currently breaks things if you turn it on then quit and get an autosave
+    #if !UserSettings.system_save_screenshots:
+    #    return
     latest_screenshot = get_viewport().get_texture().get_data()
     latest_screenshot.resize(372/2, 208/2, Image.INTERPOLATE_LANCZOS)
     latest_screenshot.flip_y()
@@ -190,13 +195,16 @@ func save_to_dict() -> Dictionary:
     ret["chapter_number"] = chapter_number
     ret["scene_name"] = scene_name
     ret["scene_number"] = scene_number
-    if latest_screenshot:
+    if UserSettings.system_save_screenshots and latest_screenshot:
         ret["screenshot"] = Marshalls.raw_to_base64(latest_screenshot.save_png_to_buffer())
     return ret
 
 # Loads save-related data out from a dictionary and then forcibly changes the scene
 # to that save's cutscene script and fast-forwards (in a single frame) to where the user saved.
 func load_from_dict(data : Dictionary):
+    $Buttons/Auto.pressed = false
+    $Skip.pressed = false
+    
     SAVED_CUTSCENE = data["SAVED_CUTSCENE"]
     SAVED_LINE = data["SAVED_LINE"]
     SAVED_CUSTOM_SAVE_DATA = data["SAVED_CUSTOM_SAVE_DATA"]
@@ -218,7 +226,9 @@ func load_from_dict(data : Dictionary):
     _LOAD_CHOICE = 0
     
     $Choices.hide()
-    textbox_show()
+    
+    if SAVED_LINE < 0:
+        notify_load_finished()
 
 func autosave():
     fixed_save("autosave")
@@ -249,6 +259,7 @@ func fixed_save(type = "quicksave"):
     sysdata["last_accessed_save"] = fname
     save_sysdata(sysdata)
     
+    $Buttons/Auto.pressed = false
     $Skip.pressed = false
     var save = File.new()
     save.open(fname, File.WRITE)
@@ -269,6 +280,7 @@ func inform_success_save():
     EmitterFactory.emit(null, EngineSettings.save_success_sound)
 
 func quickload():
+    $Buttons/Auto.pressed = false
     $Skip.pressed = false
     var sysdata = load_sysdata()
     var fname = ""
@@ -425,9 +437,6 @@ func admit_latest_save(fname : String, silent : bool = false):
 
 # mmm, auto
 
-var auto_delay_amount = EngineSettings.auto_delay_amount
-var auto_delay_per_character = EngineSettings.auto_delay_per_character
-
 var auto_delay_timer = -1.0
 func auto():
     $Skip.pressed = false
@@ -454,8 +463,12 @@ func _ready():
     process_priority = -100
     $Textbox/Face.hide()
     $Textbox/Name.hide()
+    
     $Textbox.hide()
     textbox_visibility_intent = false
+    textbox_show_nonce += 1
+    textbox_hide_nonce += 1
+    
     $Scene/Background.hide()
     backlog_hide()
     $Scene/Tachie1.hide()
@@ -482,12 +495,20 @@ func _ready():
 func settings():
     if get_tree().get_nodes_in_group("MenuScreen").size() > 0:
         return
+    
+    $Buttons/Auto.pressed = false
+    $Skip.pressed = false
+    
     update_latest_screenshot()
     get_tree().get_root().add_child(preload("res://scenes/ui/OptionsManager.tscn").instance())
 
 func save_screen():
     if get_tree().get_nodes_in_group("MenuScreen").size() > 0:
         return
+    
+    $Buttons/Auto.pressed = false
+    $Skip.pressed = false
+    
     update_latest_screenshot()
     var screen = preload("res://scenes/ui/SaveDataManager.tscn").instance()
     screen.mode = "save"
@@ -711,6 +732,9 @@ func check_window_size_stuff():
 
 var delta_elapsed = 0.0
 func _process(delta):
+    if Input.is_action_just_pressed("skip") and is_line_read():
+        skip_pressed_during_read_text = true
+    
     input_disabled = false
     $MouseCatcher.visible = true
     for node in get_tree().get_nodes_in_group("MenuScreen") + get_tree().get_nodes_in_group("CustomPopup"):
@@ -727,7 +751,7 @@ func _process(delta):
     delta_elapsed += delta
     $DebugText.text = ""
     
-    if !$Skip.pressed:
+    if !$Skip.pressed and !Input.is_action_pressed("skip"):
         skip_pressed_during_read_text = false
     
     process_cutscene(delta)
@@ -951,7 +975,7 @@ func process_cutscene(delta):
             textbox_show()
             manually_hidden = false
     if !input_disabled and (Input.is_action_just_pressed("m1") or Input.is_action_just_pressed("ui_accept") or Input.is_action_just_pressed("ui_down")):
-        if !textbox_visibility_intent and manually_hidden:
+        if manually_hidden and !textbox_visibility_intent:
             $Buttons/Auto.pressed = false
             textbox_show()
             manually_hidden = false
@@ -959,9 +983,12 @@ func process_cutscene(delta):
     
     process_cutscene_timers(delta)
     
+    var auto_delay_amount = UserSettings.system_auto_additional_pause_seconds
+    var auto_delay_per_character = 1.0/UserSettings.system_auto_chars_per_second
+    
     if realtime_skip():
         if typein_chars >= 0:
-            delayed_emit_signal("cutscene_continue", 1/EngineSettings.cutscene_skip_rate)
+            delayed_emit_signal("cutscene_continue", 1.0/EngineSettings.cutscene_skip_rate)
         typein_chars = -1
         $Textbox/Label.visible_characters = -1
     elif !just_continued and !input_disabled and (Input.is_action_just_pressed("ui_accept") or m1_pressed or Input.is_action_just_pressed("skip") or Input.is_action_just_pressed("ui_down")):
@@ -977,7 +1004,7 @@ func process_cutscene(delta):
         else:
             typein_chars = -1
             $Textbox/Label.visible_characters = -1
-    elif !input_disabled and textbox_visibility_intent and (typein_chars < 0 or $Textbox/Label.visible_characters == char_limit) and $Buttons/Auto.pressed:
+    elif !input_disabled and textbox_visibility_intent and (typein_chars < 0 or $Textbox/Label.visible_characters >= char_limit) and $Buttons/Auto.pressed:
         var actual_delay_amount = auto_delay_amount + auto_delay_per_character * last_displayed_line.length()
         if auto_delay_timer < actual_delay_amount:
             auto_delay_timer = clamp(auto_delay_timer, 0, actual_delay_amount)
@@ -986,7 +1013,7 @@ func process_cutscene(delta):
             auto_delay_timer = 0.0
             typein_chars = -1
             $Textbox/Label.visible_characters = -1
-            delayed_emit_signal("cutscene_continue", 1/20.0)
+            delayed_emit_signal("cutscene_continue", 1.0/20.0)
     
     if typein_chars >= 0 and typein_chars < char_limit:
         auto_delay_timer = 0.0
@@ -1055,20 +1082,23 @@ func set_bg(bg : Texture = null, instant : bool = false, no_textbox_hide = false
         last_set_bg = bg
     if !bg:
         bg = __transparent
+    
+    bg_nonce += 1
+    var start_nonce = bg_nonce
+    
     if LOAD_SKIP:
         background.texture = bg
         background.texture2 = __transparent
         background.fadeamount = 0.0
         background.cycle_transform()
         return
-    bg_nonce += 1
-    var start_nonce = bg_nonce
-    if !no_textbox_hide:
-        if textbox_visibility_intent:
-            yield(Manager, textbox_hide())
-        elif $Textbox.visible:
-            yield(Manager, "textbox_hidden")
+    
     if instant:
+        $Textbox.hide()
+        textbox_visibility_intent = false
+        textbox_hide_nonce += 1
+        textbox_show_nonce += 1
+        
         background.show()
         background.texture = bg
         background.texture2 = __transparent
@@ -1079,6 +1109,9 @@ func set_bg(bg : Texture = null, instant : bool = false, no_textbox_hide = false
             yield(get_tree(), "idle_frame")
         emit_signal("bg_transition_done")
     else:
+        if !no_textbox_hide:
+            if textbox_visibility_intent:
+                yield(Manager, textbox_hide())
         if background.visible and background.texture:
             if background.fadeamount > 0.0:
                 background.texture = background.texture2
@@ -1303,22 +1336,33 @@ func do_timer_skip():
 
 var input_disabled = false
 
+var textbox_show_nonce = 0
+
 signal textbox_shown
 func _textbox_show():
-    print("showing")
     $Textbox.show()
     textbox_visibility_intent = true
+    
     manually_hidden = false
     $Textbox.modulate.a = 0.0
     var fade_time = EngineSettings.textbox_fade_time
+    
+    textbox_show_nonce += 1
+    var start_nonce = textbox_show_nonce
+    
+    if LOAD_SKIP:
+        $Textbox.modulate.a = 1.0
+        return
+    
     var i = 0.0
     while i < 1.0:
         yield(get_tree(), "idle_frame")
         if block_simulation():
             continue
+        if textbox_show_nonce != start_nonce:
+            break
         if !textbox_visibility_intent:
-            emit_signal("textbox_shown")
-            return
+            break
         var delta = get_process_delta_time()
         i += delta / fade_time
         i = clamp(i, 0.0, 1.0)
@@ -1332,9 +1376,9 @@ func textbox_show():
     _textbox_show()
     return "textbox_shown"
 
+var textbox_hide_nonce = 0
 signal textbox_hidden
 func _textbox_hide(no_clear = false):
-    print("hiding")
     $Textbox.show()
     textbox_visibility_intent = false
     
@@ -1346,14 +1390,24 @@ func _textbox_hide(no_clear = false):
     
     $Textbox.modulate.a = 1.0
     var fade_time = EngineSettings.textbox_fade_time
+    
+    textbox_hide_nonce += 1
+    var start_nonce = textbox_hide_nonce
+    
+    if LOAD_SKIP:
+        $Textbox.modulate.a = 0.0
+        $Textbox.hide()
+        return
+    
     var i = 0.0
     while i < 1.0:
         yield(get_tree(), "idle_frame")
         if block_simulation():
             continue
+        if textbox_hide_nonce != start_nonce:
+            break
         if textbox_visibility_intent:
-            emit_signal("textbox_hidden")
-            return
+            break
         var delta = get_process_delta_time()
         i += delta / fade_time
         i = clamp(i, 0.0, 1.0)
@@ -1418,6 +1472,15 @@ func call_cutscene(entity : Node, method : String):
         if i > 0:
             set_tachie(i, null, "", true, 0.0)
             set_tachie_next_flipped(i, false)
+    
+    $Textbox/Face.hide()
+    $Textbox/Name.hide()
+    
+    $Textbox.hide()
+    textbox_visibility_intent = false
+    textbox_show_nonce += 1
+    textbox_hide_nonce += 1
+    
     $Textbox/Name.text = ""
     $Textbox/Name.bbcode_text = ""
     $Textbox/Label.text = ""
@@ -1431,6 +1494,7 @@ func call_cutscene(entity : Node, method : String):
     block_saving = false
     is_splash = false
     
+    LOAD_LINE = -1
     taken_choices = []
     
     env_color = Color(0.5, 0.5, 0.5)
@@ -1532,7 +1596,7 @@ func textbox_set_identity(name : String = "<<NARRATOR>>", icon : Texture = null,
             for i in len(tachie_owners):
                 if tachie_owners[i] == name:
                     $Textbox/Face.texture = tachie_slots[i].get_next_texture()
-                    print("face texture: ", $Textbox/Face.texture)
+                    #print("face texture: ", $Textbox/Face.texture)
                     $Textbox/Face.show()
                     break
             #$Textbox/Label.margin_left = 50
@@ -1760,8 +1824,9 @@ var force_text_added_not_replaced = false
 func textbox_set_bbcode(bbcode : String):
     text_has_been_added_since_loadline_update = true
     last_displayed_line = bbcode
-    if skip_pressed_during_read_text and !is_line_read():
+    if skip_pressed_during_read_text and !is_line_read() and UserSettings.system_skip_wake_on_unread:
         $Skip.pressed = false
+        Input.action_release("skip")
     
     backlog_add(bbcode, current_line_is_narration)
     
