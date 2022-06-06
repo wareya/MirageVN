@@ -283,6 +283,7 @@ func load_from_dict(data : Dictionary):
     if input_mode == "cutscene":
         end_cutscene()
     change_to(SAVED_CUTSCENE)
+    
     yield(self, "fade_completed")
     LOAD_SKIP = true
     _LOAD_CHOICE = 0
@@ -908,10 +909,6 @@ func choice(choices):
         taken_choices.push_back(which)
         return which
     
-    if UserSettings.system_autosave_when >= 1:
-        if can_autosave():
-            autosave()
-    
     backlog_hide()
     $Textbox/NextAnimHolder/NextAnim.hide()
     block_scrollback = true
@@ -932,6 +929,11 @@ func choice(choices):
         if first:
             button.grab_focus()
             first = false
+    
+    if UserSettings.system_autosave_when >= 1:
+        update_latest_screenshot()
+        if can_autosave():
+            autosave()
     
     return null
 
@@ -1535,7 +1537,7 @@ var block_saving = false
 var is_splash
 signal kill_all_cutscenes
 # Move to a new cutscene.
-# Note: incorrect use of this function can cause memory leaks, crashes, save corruption, etc.
+# Note: incorrect use of this function can cause memory leaks, crashes, broken saves, etc.
 # Try to instead change scenes the same way the template does, with Manager.next_scene
 func call_cutscene(entity : Node, method : String):
     if !entity.has_method(method):
@@ -1571,23 +1573,30 @@ func call_cutscene(entity : Node, method : String):
     
     admit_read_line(false, true)
     
-    LOAD_LINE = -1
-    taken_choices = []
-    latched_scene_name = next_scene
-    
     env_color = Color(0.5, 0.5, 0.5)
     env_light = Color(1.0, 1.0, 1.0)
     env_saturation = 1.0
+    
+    LOAD_LINE = -1
+    taken_choices = []
+    latched_scene_name = get_savable_scene_name()
+    
+    var is_loading = LOAD_SKIP
     
     emit_signal("kill_all_cutscenes")
     if entity.has_method("kill"):
         var _unused = connect("kill_all_cutscenes", entity, "kill")
     add_child(entity)
     var other_ret = entity.call(method)
+    
+    if !is_loading and !is_splash and UserSettings.system_autosave_when >= 2:
+        update_latest_screenshot()
+        if can_autosave():
+            autosave()
+    
     if other_ret is GDScriptFunctionState:
         yield(other_ret, "completed")
-    #if is_instance_valid(entity):
-    #    print("!!!!!! still valid")
+    
     end_cutscene()
     
     if next_scene:
