@@ -219,6 +219,41 @@ func save_to_dict() -> Dictionary:
         ret["screenshot"] = Marshalls.raw_to_base64(latest_screenshot.save_png_to_buffer())
     return ret
 
+func load_data(fname : String):
+    var save = File.new()
+    var err = save.open(fname, File.READ)
+    var data = null
+    if err == OK:
+        var json = save.get_as_text()
+        var result = JSON.parse(json)
+        if result.error == OK:
+            data = result.result
+        else:
+            pass
+    else:
+        pass
+    save.close()
+    
+    return data
+
+func attempt_continue():
+    var sysdata = Manager.load_sysdata()
+    var dir = Directory.new()
+    if "last_accessed_save" in sysdata:
+        if dir.file_exists(sysdata["last_accessed_save"]):
+            var data = Manager.load_data(sysdata["last_accessed_save"])
+            if data:
+                Manager.load_from_dict(data)
+                return true
+    if "latest_saves" in sysdata:
+        for f in sysdata["latest_saves"]:
+            if dir.file_exists(f):
+                var data = Manager.load_data(f)
+                if data:
+                    Manager.load_from_dict(data)
+                    return true
+    return false
+
 # Loads save-related data out from a dictionary and then forcibly changes the scene
 # to that save's cutscene script and fast-forwards (in a single frame) to where the user saved.
 func load_from_dict(data : Dictionary):
@@ -295,7 +330,8 @@ func inform_failed_load():
     EmitterFactory.emit(null, EngineSettings.load_failure_sound)
 
 func inform_success_load():
-    EmitterFactory.emit(null, EngineSettings.load_success_sound)
+    if !is_splash:
+        EmitterFactory.emit(null, EngineSettings.load_success_sound)
 
 func inform_success_save():
     EmitterFactory.emit(null, EngineSettings.save_success_sound)
@@ -1538,7 +1574,8 @@ func call_cutscene(entity : Node, method : String):
         var _unused = connect("kill_all_cutscenes", entity, "kill")
     add_child(entity)
     var other_ret = entity.call(method)
-    yield(other_ret, "completed")
+    if other_ret is GDScriptFunctionState:
+        yield(other_ret, "completed")
     #if is_instance_valid(entity):
     #    print("!!!!!! still valid")
     end_cutscene()

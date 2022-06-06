@@ -47,23 +47,6 @@ func _process(_delta):
 
 var block = false
 
-func load_data(fname : String):
-    var save = File.new()
-    var err = save.open(fname, File.READ)
-    var data = null
-    if err == OK:
-        var json = save.get_as_text()
-        var result = JSON.parse(json)
-        if result.error == OK:
-            data = result.result
-        else:
-            pass
-    else:
-        pass
-    save.close()
-    
-    return data
-
 func continue_game():
     if block:
         return
@@ -73,7 +56,7 @@ func continue_game():
     
     if "last_accessed_save" in sysdata:
         if dir.file_exists(sysdata["last_accessed_save"]):
-            var data = load_data(sysdata["last_accessed_save"])
+            var data = Manager.load_data(sysdata["last_accessed_save"])
             if data:
                 Manager.load_from_dict(data)
                 return
@@ -81,7 +64,7 @@ func continue_game():
     if "latest_saves" in sysdata:
         for f in sysdata["latest_saves"]:
             if dir.file_exists(f):
-                var data = load_data(f)
+                var data = Manager.load_data(f)
                 if data:
                     Manager.load_from_dict(data)
                     return
