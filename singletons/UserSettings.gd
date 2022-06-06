@@ -13,6 +13,19 @@ var audio_bgm_volume = EngineSettings.audio_bgm_default_volume
 var audio_master_volume = EngineSettings.audio_master_default_volume
 var audio_muted_unfocused = false
 
+
+var dialog_quickload_dialog = true
+var dialog_quicksave_dialog = true
+var dialog_load_dialog = true
+var dialog_save_dialog = true
+var dialog_save_overwrite_dialog = true
+var dialog_delete_dialog = true
+var dialog_quit_dialog = true
+
+var system_save_screenshots = true
+# TODO: settings for when to autosave (on quit, at choices, at scene changes, at every text update, etc)
+var system_autocontinue_on_boot = false
+
 func _init():
     do_load()
 

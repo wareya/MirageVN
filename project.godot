@@ -63,6 +63,7 @@ UserSettings="*res://singletons/UserSettings.gd"
 [debug]
 
 settings/fps/force_fps=144
+settings/fps/force_fps.release=144
 
 [display]
 
@@ -72,6 +73,11 @@ window/dpi/allow_hidpi=true
 window/energy_saving/keep_screen_on=false
 window/stretch/mode="2d"
 window/stretch/aspect="keep"
+window/size/fullscreen.release=false
+window/size/borderless.release=false
+window/vsync/use_vsync.release=true
+window/vsync/vsync_via_compositor.release=false
+window/dpi/allow_hidpi.release=true
 
 [gui]
 

@@ -482,6 +482,7 @@ func _ready():
 func settings():
     if get_tree().get_nodes_in_group("MenuScreen").size() > 0:
         return
+    update_latest_screenshot()
     get_tree().get_root().add_child(preload("res://scenes/ui/OptionsManager.tscn").instance())
 
 func save_screen():
@@ -1972,6 +1973,11 @@ class PopupHelper extends Node:
 
 func attempt_quicksave():
     update_latest_screenshot()
+    
+    if !UserSettings.dialog_quicksave_dialog:
+        quicksave()
+        return
+    
     var helper = PopupHelper.new(
         self,
         "quicksave",
@@ -1982,6 +1988,10 @@ func attempt_quicksave():
     helper.invoke()
 
 func attempt_quickload():
+    if !UserSettings.dialog_quickload_dialog:
+        quickload()
+        return
+    
     var helper = PopupHelper.new(
         self,
         "quickload",
@@ -2007,7 +2017,15 @@ func attempt_exit():
         already_exiting = false
     if already_exiting:
         return
-    update_latest_screenshot()
+    
+    if (Manager.get_tree().get_nodes_in_group("CustomPopup").size() == 0 and 
+        Manager.get_tree().get_nodes_in_group("MenuScreen").size() == 0):
+        update_latest_screenshot()
+    
+    if !UserSettings.dialog_quit_dialog:
+        exit()
+        return
+    
     already_exiting = true
     
     var helper = PopupHelper.new(

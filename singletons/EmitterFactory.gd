@@ -4,6 +4,9 @@ extends Node
 var sounds = {
 # add EmitterFactory sounds here. for example:
 "startgame": preload("res://sfx/startbleep.wav"),
+# You can also just pass in audio stream resources to emit() directly.
+# You don't need to pass in strings. The string way of doing it was designed for "gameplay games"
+# with lots and lots and LOTS of sound effects, where changing every usage of one would be painful.
 }
 
 

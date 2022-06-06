@@ -248,7 +248,7 @@ custom_fonts/font = SubResource( 111 )
 toggle_mode = true
 text = "Audio"
 
-[node name="ReturnButton" type="Button" parent="CategoryButtons"]
+[node name="DialogButton" type="Button" parent="CategoryButtons"]
 anchor_left = 1.0
 anchor_right = 1.0
 margin_left = -135.0
@@ -258,9 +258,22 @@ margin_bottom = 152.0
 rect_pivot_offset = Vector2( 92, 28 )
 custom_fonts/font = SubResource( 111 )
 toggle_mode = true
+text = "Dialogs"
+
+[node name="ReturnButton" type="Button" parent="CategoryButtons"]
+anchor_left = 1.0
+anchor_right = 1.0
+margin_left = -135.0
+margin_top = 160.0
+margin_right = -4.0
+margin_bottom = 192.0
+rect_pivot_offset = Vector2( 92, 28 )
+custom_fonts/font = SubResource( 111 )
+toggle_mode = true
 text = "Return"
 
 [node name="ScreenSettings" type="Control" parent="."]
+visible = false
 anchor_left = 0.5
 anchor_right = 0.5
 anchor_bottom = 1.0
@@ -556,3 +569,102 @@ custom_colors/font_color_pressed = Color( 1, 1, 1, 1 )
 custom_fonts/font = SubResource( 111 )
 pressed = true
 text = "Mute In Background"
+
+[node name="DialogSettings" type="Control" parent="."]
+anchor_left = 0.5
+anchor_right = 0.5
+anchor_bottom = 1.0
+margin_left = -300.0
+margin_top = 144.0
+margin_right = 300.0
+margin_bottom = -51.0
+
+[node name="Quicksave" type="CheckButton" parent="DialogSettings"]
+margin_right = 279.0
+margin_bottom = 40.0
+custom_colors/font_color_disabled = Color( 1, 1, 1, 1 )
+custom_colors/font_color_focus = Color( 1, 1, 1, 1 )
+custom_colors/font_color_hover_pressed = Color( 1, 1, 1, 1 )
+custom_colors/font_color = Color( 1, 1, 1, 1 )
+custom_colors/font_color_hover = Color( 1, 1, 1, 1 )
+custom_colors/font_color_pressed = Color( 1, 1, 1, 1 )
+custom_fonts/font = SubResource( 111 )
+text = "Confirm Quicksave"
+
+[node name="Quickload" type="CheckButton" parent="DialogSettings"]
+margin_top = 40.0
+margin_right = 279.0
+margin_bottom = 80.0
+custom_colors/font_color_disabled = Color( 1, 1, 1, 1 )
+custom_colors/font_color_focus = Color( 1, 1, 1, 1 )
+custom_colors/font_color_hover_pressed = Color( 1, 1, 1, 1 )
+custom_colors/font_color = Color( 1, 1, 1, 1 )
+custom_colors/font_color_hover = Color( 1, 1, 1, 1 )
+custom_colors/font_color_pressed = Color( 1, 1, 1, 1 )
+custom_fonts/font = SubResource( 111 )
+text = "Confirm Quickload"
+
+[node name="Save" type="CheckButton" parent="DialogSettings"]
+margin_top = 80.0
+margin_right = 279.0
+margin_bottom = 120.0
+custom_colors/font_color_disabled = Color( 1, 1, 1, 1 )
+custom_colors/font_color_focus = Color( 1, 1, 1, 1 )
+custom_colors/font_color_hover_pressed = Color( 1, 1, 1, 1 )
+custom_colors/font_color = Color( 1, 1, 1, 1 )
+custom_colors/font_color_hover = Color( 1, 1, 1, 1 )
+custom_colors/font_color_pressed = Color( 1, 1, 1, 1 )
+custom_fonts/font = SubResource( 111 )
+text = "Confirm Fresh Save"
+
+[node name="SaveOverwrite" type="CheckButton" parent="DialogSettings"]
+margin_top = 120.0
+margin_right = 279.0
+margin_bottom = 160.0
+custom_colors/font_color_disabled = Color( 1, 1, 1, 1 )
+custom_colors/font_color_focus = Color( 1, 1, 1, 1 )
+custom_colors/font_color_hover_pressed = Color( 1, 1, 1, 1 )
+custom_colors/font_color = Color( 1, 1, 1, 1 )
+custom_colors/font_color_hover = Color( 1, 1, 1, 1 )
+custom_colors/font_color_pressed = Color( 1, 1, 1, 1 )
+custom_fonts/font = SubResource( 111 )
+text = "Confirm Overwrite"
+
+[node name="Load" type="CheckButton" parent="DialogSettings"]
+margin_top = 160.0
+margin_right = 279.0
+margin_bottom = 200.0
+custom_colors/font_color_disabled = Color( 1, 1, 1, 1 )
+custom_colors/font_color_focus = Color( 1, 1, 1, 1 )
+custom_colors/font_color_hover_pressed = Color( 1, 1, 1, 1 )
+custom_colors/font_color = Color( 1, 1, 1, 1 )
+custom_colors/font_color_hover = Color( 1, 1, 1, 1 )
+custom_colors/font_color_pressed = Color( 1, 1, 1, 1 )
+custom_fonts/font = SubResource( 111 )
+text = "Confirm Load"
+
+[node name="Delete" type="CheckButton" parent="DialogSettings"]
+margin_top = 200.0
+margin_right = 279.0
+margin_bottom = 240.0
+custom_colors/font_color_disabled = Color( 1, 1, 1, 1 )
+custom_colors/font_color_focus = Color( 1, 1, 1, 1 )
+custom_colors/font_color_hover_pressed = Color( 1, 1, 1, 1 )
+custom_colors/font_color = Color( 1, 1, 1, 1 )
+custom_colors/font_color_hover = Color( 1, 1, 1, 1 )
+custom_colors/font_color_pressed = Color( 1, 1, 1, 1 )
+custom_fonts/font = SubResource( 111 )
+text = "Confirm Delete Save"
+
+[node name="Quit" type="CheckButton" parent="DialogSettings"]
+margin_top = 240.0
+margin_right = 279.0
+margin_bottom = 280.0
+custom_colors/font_color_disabled = Color( 1, 1, 1, 1 )
+custom_colors/font_color_focus = Color( 1, 1, 1, 1 )
+custom_colors/font_color_hover_pressed = Color( 1, 1, 1, 1 )
+custom_colors/font_color = Color( 1, 1, 1, 1 )
+custom_colors/font_color_hover = Color( 1, 1, 1, 1 )
+custom_colors/font_color_pressed = Color( 1, 1, 1, 1 )
+custom_fonts/font = SubResource( 111 )
+text = "Confirm Quit"

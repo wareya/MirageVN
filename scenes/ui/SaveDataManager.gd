@@ -1,15 +1,15 @@
 extends CanvasLayer
 class_name SaveDataManager
 
-const saves_per_page = 12
 
+const saves_per_page = 12
 
 
 var mode = "save"
 var save_disabled = false
 
-var latest_page = 1
 
+var latest_page = 1
 var latest_saves = []
 var locked_saves = []
 func update_latest_saves():
@@ -135,8 +135,7 @@ func set_page(silent : bool = false):
             
             var fname = "user://saves/%04d_%s.json" % [i, save_type]
             panel.fname = fname
-            if data:
-                panel.set_new(fname in latest_saves)
+            panel.set_new(fname in latest_saves and data)
             panel.set_locked(fname in locked_saves)
     else:
         if pagenum == -1:
@@ -156,8 +155,7 @@ func set_page(silent : bool = false):
             
             var fname = "user://saves/%04d_%s.json" % [i, save_type]
             panel.fname = fname
-            if data:
-                panel.set_new(fname in latest_saves)
+            panel.set_new(fname in latest_saves and data)
         
 
 var pagenum = 1
@@ -177,7 +175,7 @@ func pressed_page_button(button : BaseButton):
         pagenum = -2
         set_page()
 
-func do_load_panel(panel):
+func do_panel_load(panel):
     if panel.data and panel.data.size() > 0:
         Manager.load_from_dict(panel.data)
         var sysdata = Manager.load_sysdata()
@@ -199,9 +197,13 @@ func do_panel_save(panel):
 
 func pressed_panel(panel):
     if mode == "load":
+        if !UserSettings.dialog_load_dialog:
+            do_panel_load(panel)
+            return
+        
         var helper = Manager.PopupHelper.new(
             self,
-            "do_load_panel",
+            "do_panel_load",
             "Confirm Load",
             ("Load game?\nUnsaved progress will be lost."
              if get_tree().get_nodes_in_group("MainMenu").size() == 0 else
@@ -216,12 +218,22 @@ func pressed_panel(panel):
             EmitterFactory.emit(null, EngineSettings.save_failure_sound)
             return
         
+        var will_overwrite = panel.data.size() > 0
+        
+        if !will_overwrite and !UserSettings.dialog_save_dialog:
+            do_panel_save(panel)
+            return
+        
+        if will_overwrite and !UserSettings.dialog_save_overwrite_dialog:
+            do_panel_save(panel)
+            return
+        
         var helper = Manager.PopupHelper.new(
             self,
             "do_panel_save",
             "Confirm Save",
             ("Save game?\nOverwritten data will not be backed up."
-             if panel.data.size() > 0 else
+             if will_overwrite else
              "Save game?"
             ),
             [panel]
@@ -248,6 +260,10 @@ func attempt_panel_delete(panel):
     if !panel.fname.begins_with("user://saves/"):
         return
     
+    if !UserSettings.dialog_delete_dialog:
+        panel_delete(panel)
+        return
+
     var helper = Manager.PopupHelper.new(
         self,
         "panel_delete",

@@ -215,7 +215,7 @@ font_data = ExtResource( 28 )
 
 [sub_resource type="CanvasItemMaterial" id=27]
 
-[sub_resource type="ShaderMaterial" id=42]
+[sub_resource type="ShaderMaterial" id=44]
 shader = ExtResource( 18 )
 shader_param/fadeamount = 0.0
 shader_param/invert = false
@@ -628,7 +628,7 @@ layer = 128
 
 [node name="ScreenFader" type="TextureRect" parent="FadeLayer"]
 modulate = Color( 0, 0, 0, 1 )
-material = SubResource( 42 )
+material = SubResource( 44 )
 anchor_right = 1.0
 anchor_bottom = 1.0
 mouse_filter = 2

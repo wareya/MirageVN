@@ -81,9 +81,17 @@ func _ready():
     $AudioSettings/BGMVolume.value = $AudioSettings/BGMVolume.max_value * sqrt(Manager.db_to_volts(UserSettings.audio_bgm_volume)) * 4.0 / 5.0
     $AudioSettings/MasterVolume.value = $AudioSettings/MasterVolume.max_value * sqrt(Manager.db_to_volts(UserSettings.audio_master_volume))
     
+    $DialogSettings/Quicksave.pressed = UserSettings.dialog_quicksave_dialog
+    $DialogSettings/Quickload.pressed = UserSettings.dialog_quickload_dialog
+    $DialogSettings/Save.pressed = UserSettings.dialog_save_dialog
+    $DialogSettings/SaveOverwrite.pressed = UserSettings.dialog_save_overwrite_dialog
+    $DialogSettings/Load.pressed = UserSettings.dialog_load_dialog
+    $DialogSettings/Delete.pressed = UserSettings.dialog_delete_dialog
+    $DialogSettings/Quit.pressed = UserSettings.dialog_quit_dialog
+    
     var _unused
     
-    for input in $ScreenSettings.get_children() + $DisplaySettings.get_children() + $AudioSettings.get_children():
+    for input in $ScreenSettings.get_children() + $DisplaySettings.get_children() + $AudioSettings.get_children() + $DialogSettings.get_children():
         if input is CheckButton:
             input.connect("toggled", self, "button_toggled", [input])
         elif input is OptionButton:
@@ -121,19 +129,44 @@ func button_toggled(button_pressed : bool, button : BaseButton):
         ProjectSettings.set_setting("display/window/vsync/vsync_via_compositor", button_pressed)
         OS.vsync_via_compositor = button_pressed
     elif button == $ScreenSettings/HiDPI:
+    
         ProjectSettings.set_setting("display/window/dpi/allow_hidpi", button_pressed)
     elif button == $DisplaySettings/TextOutline:
         UserSettings.text_outline = button_pressed
     elif button == $DisplaySettings/TextShadow:
         UserSettings.text_shadow = button_pressed
+    
     elif button == $AudioSettings/BgMute:
         UserSettings.audio_muted_unfocused = button_pressed
+    
+    elif button == $DialogSettings/Quicksave:
+        UserSettings.dialog_quicksave_dialog = button_pressed
+    elif button == $DialogSettings/Quickload:
+        UserSettings.dialog_quickload_dialog = button_pressed
+    elif button == $DialogSettings/Save:
+        UserSettings.dialog_save_dialog = button_pressed
+        if button_pressed:
+            UserSettings.dialog_save_overwrite_dialog = true
+            $DialogSettings/SaveOverwrite.pressed = true
+    elif button == $DialogSettings/SaveOverwrite:
+        UserSettings.dialog_save_overwrite_dialog = button_pressed
+        if !button_pressed:
+            UserSettings.dialog_save_dialog = false
+            $DialogSettings/Save.pressed = false
+    elif button == $DialogSettings/Load:
+        UserSettings.dialog_load_dialog = button_pressed
+    elif button == $DialogSettings/Delete:
+        UserSettings.dialog_delete_dialog = button_pressed
+    elif button == $DialogSettings/Quit:
+        UserSettings.dialog_quit_dialog = button_pressed
     
     if $ScreenSettings.is_a_parent_of(button):
         save_project_settings()
     elif $DisplaySettings.is_a_parent_of(button):
         UserSettings.do_save()
     elif $AudioSettings.is_a_parent_of(button):
+        UserSettings.do_save()
+    elif $DialogSettings.is_a_parent_of(button):
         UserSettings.do_save()
 
 func button_option_picked(option : int, button : OptionButton):
@@ -153,6 +186,8 @@ func button_option_picked(option : int, button : OptionButton):
     elif $DisplaySettings.is_a_parent_of(button):
         UserSettings.do_save()
     elif $AudioSettings.is_a_parent_of(button):
+        UserSettings.do_save()
+    elif $DialogSettings.is_a_parent_of(button):
         UserSettings.do_save()
 
 func slider_changed(value : float, slider : Range):
@@ -179,6 +214,8 @@ func slider_changed(value : float, slider : Range):
         UserSettings.do_save()
     elif $AudioSettings.is_a_parent_of(slider):
         UserSettings.do_save()
+    elif $DialogSettings.is_a_parent_of(slider):
+        UserSettings.do_save()
 
 func slider_gui_input(event : InputEvent, slider : Range):
     if event is InputEventMouseButton and event.pressed == false and event.button_index == 1:
@@ -190,7 +227,7 @@ func pressed_category_button(button : BaseButton):
         if button != other:
             other.pressed = false
     button.pressed = true
-    for panel in [$ScreenSettings, $DisplaySettings, $AudioSettings]:
+    for panel in [$ScreenSettings, $DisplaySettings, $AudioSettings, $DialogSettings]:
         panel.hide()
     if button == $CategoryButtons/ScreenButton:
         $ScreenSettings.show()
@@ -206,6 +243,9 @@ func pressed_category_button(button : BaseButton):
     else:
         if !existing_bgm:
             Manager.play_bgm(null)
+    
+    if button == $CategoryButtons/DialogButton:
+        $DialogSettings.show()
     
     if button == $CategoryButtons/ReturnButton:
         dying = true
@@ -226,7 +266,7 @@ var dying = false
 var show_amount = 0.0
 
 func _process(delta):
-    if Input.is_action_just_pressed("m2"):
+    if get_tree().get_nodes_in_group("CustomPopup").size() == 0 and Input.is_action_just_pressed("m2"):
         dying = true
     
     if dying:
