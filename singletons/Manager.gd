@@ -96,10 +96,14 @@ func change_to(target_level : String, flat_fade : bool = false):
         
         #call_deferred("_change_to", scene, target_node) # wrong (at least in 3.3.x)
         yield(get_tree(), "idle_frame")
+        
         _change_to(scene)
         changing_room_out = false
         yield(get_tree(), "idle_frame")
         
+        if transition_input_mode_to_pop != "":
+            pop_input_mode(transition_input_mode_to_pop)
+            transition_input_mode_to_pop = ""
         
         emit_signal("room_changed")
         
@@ -276,6 +280,8 @@ func load_from_dict(data : Dictionary):
     play_bgm(null)
     cutscene_paused = false
     
+    if input_mode == "cutscene":
+        end_cutscene()
     change_to(SAVED_CUTSCENE)
     yield(self, "fade_completed")
     LOAD_SKIP = true
@@ -901,6 +907,10 @@ func choice(choices):
         var which = SAVED_CHOICES[_LOAD_CHOICE-1]
         taken_choices.push_back(which)
         return which
+    
+    if UserSettings.system_autosave_when >= 1:
+        if can_autosave():
+            autosave()
     
     backlog_hide()
     $Textbox/NextAnimHolder/NextAnim.hide()
@@ -1587,11 +1597,11 @@ func call_cutscene(entity : Node, method : String):
         print("!!!! NOWHERE TO GO TO")
 
 var next_scene = null
-
+var transition_input_mode_to_pop = ""
 func end_cutscene():
-    pop_input_mode("cutscene")
     if $Textbox.visible:
         textbox_hide()
+    transition_input_mode_to_pop = "cutscene"
 
 var name_first_person_whitelist = ["Me"]
 
@@ -2137,7 +2147,7 @@ func attempt_quickload():
     helper.invoke()
 
 func can_autosave():
-    return input_mode == "cutscene" and !block_saving
+    return (input_mode == "cutscene" or input_mode_stack.find("cutscene") >= 0) and !block_saving
 
 func exit():
     admit_read_line(false, true)
