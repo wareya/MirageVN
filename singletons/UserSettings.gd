@@ -23,7 +23,7 @@ var system_save_screenshots = true
 var system_autocontinue_on_boot = false
 var system_skip_wake_on_unread = true
 var system_autosave_when = 0 # 0: on exit only. 1: also at choices. 2: also when changing scenes.
-var system_read_lines_write_on_save_only = false # unimplemented
+var system_read_lines_write_on_save_only = false
 var system_auto_chars_per_second = round(10.0/EngineSettings.auto_delay_per_character)/10.0
 var system_auto_additional_pause_seconds = EngineSettings.auto_delay_amount
 

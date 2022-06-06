@@ -337,7 +337,7 @@ var READ_LINES = {}
 # do-not-touch warning is now over
 
 func is_line_read():
-    var current_scene = get_savable_scene_name()
+    var current_scene = latched_scene_name
     if current_scene in READ_LINES:
         if LOAD_LINE in READ_LINES[current_scene]:
             return true
@@ -393,39 +393,46 @@ func save_sysdata(sysdata):
     sysfile.flush()
     sysfile.close()
 
-func admit_read_line(load_only = false):
+func admit_read_line(load_only = false, force_write = false):
     if !text_has_been_added_since_loadline_update and !load_only:
         return
     text_has_been_added_since_loadline_update = false
-    var sysdata = load_sysdata()
+    var sysdata
     
-    var read_lines = {}
-    if "read_lines" in sysdata:
-        read_lines = sysdata["read_lines"]
-    for scene in read_lines:
-        if not scene in READ_LINES:
-            READ_LINES[scene] = {}
-        for line in read_lines[scene]:
-            line = int(line)
-            READ_LINES[scene][line] = null # godot doesn't have a "set" type so we use dicts instead
+    if load_only or force_write or !UserSettings.system_read_lines_write_on_save_only:
+        sysdata = load_sysdata()
+    
+        var read_lines = {}
+        if "read_lines" in sysdata:
+            read_lines = sysdata["read_lines"]
+        for scene in read_lines:
+            if not scene in READ_LINES:
+                READ_LINES[scene] = {}
+            for line in read_lines[scene]:
+                line = int(line)
+                READ_LINES[scene][line] = null # godot doesn't have a "set" type so we use dicts instead
     
     # set current line as read
-    var current_scene = get_savable_scene_name()
+    var current_scene = latched_scene_name
     if not current_scene in READ_LINES:
         READ_LINES[current_scene] = {}
-    READ_LINES[current_scene][LOAD_LINE] = null
-    
-    # write back to sysdata in memory
-    sysdata["read_lines"] = READ_LINES.duplicate(true)
-    for scene in sysdata["read_lines"]:
-        sysdata["read_lines"][scene] = sysdata["read_lines"][scene].keys()
+    if LOAD_LINE >= 0:
+        READ_LINES[current_scene][LOAD_LINE] = null
     
     if load_only:
         return
     
-    save_sysdata(sysdata)
+    if force_write or !UserSettings.system_read_lines_write_on_save_only:
+        # write back to sysdata
+        sysdata["read_lines"] = READ_LINES.duplicate(true)
+        for scene in sysdata["read_lines"]:
+            sysdata["read_lines"][scene] = sysdata["read_lines"][scene].keys()
+        
+        save_sysdata(sysdata)
 
 func admit_latest_save(fname : String, silent : bool = false):
+    admit_read_line(false, true)
+    
     var sysdata = load_sysdata()
     
     var type = "save" if fname.find("_save.") >= 0 else ("quicksave" if fname.find("_quicksave.") >= 0 else "autosave")
@@ -1516,6 +1523,8 @@ func call_cutscene(entity : Node, method : String):
     block_saving = false
     is_splash = false
     
+    admit_read_line(false, true)
+    
     LOAD_LINE = -1
     taken_choices = []
     latched_scene_name = next_scene
@@ -2094,6 +2103,7 @@ func can_autosave():
     return input_mode == "cutscene" and !block_saving
 
 func exit():
+    admit_read_line(false, true)
     if can_autosave():
         autosave()
     get_tree().quit()
