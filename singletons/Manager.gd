@@ -459,7 +459,8 @@ func admit_read_line(load_only = false, force_write = false):
     var current_scene = latched_scene_name
     if not current_scene in READ_LINES:
         READ_LINES[current_scene] = {}
-    if LOAD_LINE >= 0:
+    
+    if !force_write and LOAD_LINE >= 0:
         READ_LINES[current_scene][LOAD_LINE] = null
     
     if load_only:
