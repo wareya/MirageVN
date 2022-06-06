@@ -110,10 +110,28 @@ func change_to(target_level : String, flat_fade : bool = false):
         emit_signal("room_change_complete")
 
 func _change_to(scene):
+    var old_scene = null
     if get_tree().current_scene and is_instance_valid(get_tree().current_scene):
+        old_scene = get_tree().current_scene
+        if is_connected("kill_all_cutscenes", old_scene, "kill"):
+            disconnect("kill_all_cutscenes", old_scene, "kill")
         get_tree().current_scene.free()
+        
     get_tree().get_root().add_child(scene)
     get_tree().current_scene = scene
+    
+    cleanup_loose_signals()
+
+func cleanup_loose_signals():
+    yield(get_tree(), "idle_frame")
+    for _signal in get_signal_list():
+        var signame = _signal.name
+        for connection in get_signal_connection_list(signame):
+            var _target = connection.target
+            if _target is GDScriptFunctionState:
+                var target : GDScriptFunctionState = _target
+                if !target.is_valid(true):
+                    disconnect(signame, target, connection.method)
 
 func parse_cutscene(script : GDScript):
     if script == null:
@@ -174,6 +192,8 @@ func update_latest_screenshot():
     latest_screenshot.flip_y()
     pass
 
+onready var latched_scene_name = get_savable_scene_name()
+
 # Copies save-related data into a dictionary.
 func save_to_dict() -> Dictionary:
     if block_saving:
@@ -182,7 +202,7 @@ func save_to_dict() -> Dictionary:
     var ret = {}
     # for loading:
     # FIXME this is technically wrong - should latch it to the most recent call to set_load_line()
-    ret["SAVED_CUTSCENE"] = get_savable_scene_name()
+    ret["SAVED_CUTSCENE"] = latched_scene_name
     ret["SAVED_LINE"] = LOAD_LINE
     ret["SAVED_CHOICES"] = taken_choices.duplicate(true)
     ret["SAVED_CUSTOM_SAVE_DATA"] = custom_save_data_shuttle.duplicate(true)
@@ -206,6 +226,7 @@ func load_from_dict(data : Dictionary):
     $Skip.pressed = false
     
     SAVED_CUTSCENE = data["SAVED_CUTSCENE"]
+    latched_scene_name = SAVED_CUTSCENE
     SAVED_LINE = data["SAVED_LINE"]
     SAVED_CUSTOM_SAVE_DATA = data["SAVED_CUSTOM_SAVE_DATA"]
     CUSTOM_SAVE_DATA_AT_SCENE_ENTRY = data["SAVED_CUSTOM_SAVE_DATA_AT_SCENE_ENTRY"]
@@ -339,6 +360,7 @@ func ensure_valid_sys_file():
 var text_has_been_added_since_loadline_update = false
 func set_load_line(new):
     text_has_been_added_since_loadline_update = false
+    latched_scene_name = get_savable_scene_name()
     custom_save_data_shuttle = custom_save_data.duplicate(true)
     LOAD_LINE = new
 
@@ -1496,13 +1518,15 @@ func call_cutscene(entity : Node, method : String):
     
     LOAD_LINE = -1
     taken_choices = []
+    latched_scene_name = next_scene
     
     env_color = Color(0.5, 0.5, 0.5)
     env_light = Color(1.0, 1.0, 1.0)
     env_saturation = 1.0
     
     emit_signal("kill_all_cutscenes")
-    var _unused = connect("kill_all_cutscenes", entity, "kill")
+    if entity.has_method("kill"):
+        var _unused = connect("kill_all_cutscenes", entity, "kill")
     add_child(entity)
     var other_ret = entity.call(method)
     yield(other_ret, "completed")
