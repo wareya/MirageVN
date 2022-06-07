@@ -9,7 +9,7 @@ func lock_toggled(_locked : bool):
 
 func _ready():
     focus_mode = Control.FOCUS_ALL
-    $LockIcon.connect("toggled", self, "lock_toggled")
+    var _unused = $LockIcon.connect("toggled", self, "lock_toggled")
     pass
 
 var highlighted = false
@@ -94,7 +94,10 @@ func set_savedata(_data : Dictionary):
     $Chapter.text = "%s-%s" % [data["chapter_number"], data["scene_number"]]
     
     $Text.bbcode_enabled = true
-    $Text.bbcode_text = data["last_displayed_line"]
+    if "memo" in data and data["memo"].strip_edges() != "":
+        $Text.bbcode_text = "[color=#04C]%s[/color]" % [data["memo"]]
+    else:
+        $Text.bbcode_text = data["last_displayed_line"]
     $Text.visible = true
     
     $LockIcon.visible = false
@@ -134,7 +137,7 @@ class Trash extends Sprite:
         #rotation_degrees = move_toward(rotation_degrees, motion.x*0.04, delta*100)
         rotation_degrees = lerp(rotation_degrees, motion.x*0.1, 1.0-pow(0.01, delta))
         
-        Input.get_last_mouse_speed()
+        #Input.get_last_mouse_speed()
         
         if !Input.is_mouse_button_pressed(1):
             for trash in get_tree().get_nodes_in_group("SaveDeletePanel"):

@@ -318,6 +318,20 @@ var show_amount = 0.0
 
 var prev_focus_owner = null
 
+var memo_panel = null
+func memo_apply(memo_text):
+    memo_panel.data["memo"] = memo_text
+    save_data(memo_panel.number, memo_panel.data, memo_panel)
+    memo_panel.set_savedata(memo_panel.data)
+    memo_panel = null
+    pass
+func do_memo_panel(panel):
+    memo_panel = panel
+    if !$MemoInputPanel.is_connected("pressed_ok", self, "memo_apply"):
+        var _unused = $MemoInputPanel.connect("pressed_ok", self, "memo_apply")
+    $MemoInputPanel.open(panel)
+    pass
+
 func _process(delta):
     if mode == "save":
         $Title.text = "Save"
@@ -330,8 +344,18 @@ func _process(delta):
         $CategoryButtons/LoadButton.pressed = true
         $Background.texture.atlas = preload("res://art/ui/menubg3.png")
     
-    if get_tree().get_nodes_in_group("CustomPopup").size() == 0 and Input.is_action_just_pressed("m2"):
-        dying = true
+    if get_tree().get_nodes_in_group("CustomPopup").size() == 0 and !$MemoInputPanel.visible and Input.is_action_just_pressed("m2"):
+        var found_save_item = null
+        var mouse_pos = $Page.get_global_mouse_position()
+        for panel in $Page.get_children():
+            if panel.get_global_rect().has_point(mouse_pos):
+                found_save_item = panel
+                break
+        if found_save_item:
+            do_memo_panel(found_save_item)
+            pass
+        else:
+            dying = true
     
     var focus_holder = $Page.get_focus_owner()
     if Input.is_action_just_pressed("delete") and focus_holder and $Page.is_a_parent_of(focus_holder):

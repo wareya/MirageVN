@@ -5,8 +5,10 @@ var button_ok = null
 var button_cancel = null
 var button_close = null
 
+# warning-ignore:unused_signal
 signal pressed_ok
 signal pressed_cancel
+# warning-ignore:unused_signal
 signal pressed_close
 
 func set_title(new : String):

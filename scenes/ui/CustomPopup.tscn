@@ -1,4 +1,4 @@
-[gd_scene load_steps=9 format=2]
+[gd_scene load_steps=10 format=2]
 
 [ext_resource path="res://scenes/ui/CustomPopup.gd" type="Script" id=1]
 [ext_resource path="res://fonts/Monda-Regular.ttf" type="DynamicFontData" id=2]
@@ -35,6 +35,11 @@ flags = 13
 atlas = ExtResource( 3 )
 region = Rect2( 24, 0, 24, 24 )
 
+[sub_resource type="AtlasTexture" id=127]
+flags = 13
+atlas = ExtResource( 3 )
+region = Rect2( 72, 0, 24, 24 )
+
 [sub_resource type="DynamicFont" id=2]
 extra_spacing_top = -2
 font_data = ExtResource( 2 )
@@ -70,6 +75,7 @@ focus_mode = 1
 texture_normal = SubResource( 3 )
 texture_pressed = SubResource( 4 )
 texture_hover = SubResource( 5 )
+texture_focused = SubResource( 127 )
 expand = true
 
 [node name="Title" type="Label" parent="Panel"]
