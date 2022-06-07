@@ -20,8 +20,9 @@ But all of the truly "difficult" VN-specific functionality is there.
 - *Most* of the cutscene-scripting-related things you'd expect any VN engine to have
 - Everything Godot supports, including WYSIWYG editing for GUIs
 - Hot reloading mid-cutscene for rapid experimentation (note: you need to quicksave and quickload)
-- Built-in settings manager and save data manager
+- Built-in settings manager and save data manager, with things like save locking and save memos
 - Quicksave backups
+- Autosaves
 
 Beware, though, that MirageVN is still experimental and immature, so a lot of creature comforts are missing. However, the difficult and fragile parts are all there.
 
@@ -36,11 +37,11 @@ Useful features MirageVN does **NOT** currently have, and that you will need to 
 
 Known issues:
 
+- Some things may not be possible to do purely with keyboard or controller inputs; if you find a specific example, please report it, I will fix it ASAP
 - Godot doesn't support mixed-DPI setups 100%; I have a 1x DPI scale main monitor, and if I drag godot projects onto my 1.25x DPI scale monitor, they end up blurry
 - While window resizing results in sharp text and sprites, the project is not truly base-resolution-independent; changing the default window resolution away from 720p will slightly break how things are positioned
 - Speaker face display on the textbox and in the backlog are a huge hack and you will probably have to replace or heavily edit the relevant code if you make a complex game
-- Missing a "return to title" button in the settings screen
-- Missing a way to delete save data
+- Tachie may not render properly in GLES2 mode
 
 ## How to use
 
