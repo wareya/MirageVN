@@ -1041,7 +1041,12 @@ func process_cutscene(delta):
                 suppress_textbox_toggle = true
                 skip_textbox_timer_this_frame = true
     
-    if !input_disabled and (Input.is_action_just_pressed("ui_home") or Input.is_action_just_pressed("ui_up") or Input.is_action_just_released("mscroll_up")):
+    if (get_tree().get_nodes_in_group("MainMenu").size() == 0 and
+        !block_simulation() and !input_disabled and
+        (Input.is_action_just_pressed("ui_home") or
+         Input.is_action_just_pressed("ui_up") or
+         Input.is_action_just_released("mscroll_up"))
+       ):
         $Skip.pressed = false
         $Buttons/Auto.pressed = false
         backlog_show()
@@ -1111,6 +1116,9 @@ func process_cutscene(delta):
         typein_chars = -1
         $Textbox/Label.visible_characters = -1
     elif !just_continued and !input_disabled and (Input.is_action_just_pressed("ui_accept") or m1_pressed or Input.is_action_just_pressed("skip") or Input.is_action_just_pressed("ui_down")):
+        var focus_holder = $Textbox.get_focus_owner()
+        if focus_holder:
+            focus_holder.release_focus()
         $Buttons/Auto.pressed = false
         $Skip.pressed = false
         if !textbox_visibility_intent:

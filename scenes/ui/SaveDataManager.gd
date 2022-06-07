@@ -15,11 +15,13 @@ var locked_saves = []
 func update_latest_saves():
     var sysdata = Manager.load_sysdata()
     if "latest_saves" in sysdata:
-        latest_saves = sysdata["latest_saves"]
+        latest_saves = sysdata["latest_saves"].duplicate()
     if "locked_saves" in sysdata:
-        locked_saves = sysdata["locked_saves"]
+        locked_saves = sysdata["locked_saves"].duplicate()
     if "latest_page" in sysdata:
-        latest_page  = sysdata["latest_page"]
+        latest_page  = int(sysdata["latest_page"])
+    print("after update")
+    print(locked_saves)
 
 var pageflip_sound = preload("res://sfx/paper bag.wav")
 
@@ -92,7 +94,7 @@ func load_data(savenum : int):
     
     return data
 
-func save_data(savenum : int, data : Dictionary, panel):
+func save_data(savenum : int, data : Dictionary, panel, noupdate = false):
     var dir : Directory = Directory.new()
     var _unused = dir.open("user://")
     if !dir.dir_exists("saves"):
@@ -105,12 +107,15 @@ func save_data(savenum : int, data : Dictionary, panel):
     save.store_string(json)
     save.flush()
     save.close()
-    Manager.admit_latest_save(fname)
-    update_latest_saves()
+    
+    if !noupdate:
+        Manager.admit_latest_save(fname)
+        update_latest_saves()
     
     panel.set_new(true)
 
 func set_page(silent : bool = false):
+    block_locking_logic = true
     if !silent:
         EmitterFactory.emit(null, pageflip_sound)
     var panels = $Page.get_children()
@@ -143,6 +148,7 @@ func set_page(silent : bool = false):
         elif pagenum == -2:
             save_type = "autosave"
         else:
+            block_locking_logic = false
             return
         for i in range(0, saves_per_page):
             var panel = panels[i]
@@ -156,6 +162,8 @@ func set_page(silent : bool = false):
             var fname = "user://saves/%04d_%s.json" % [i, save_type]
             panel.fname = fname
             panel.set_new(fname in latest_saves and data)
+    
+    block_locking_logic = false
         
 
 var pagenum = 1
@@ -241,17 +249,22 @@ func pressed_panel(panel):
         add_child(helper)
         helper.invoke()
 
+var block_locking_logic = false
 func panel_lock_changed(locked : bool, panel):
     if not pagenum > 0:
+        return
+    if block_locking_logic:
         return
     
     var sysdata = Manager.load_sysdata()
     if "locked_saves" in sysdata:
-        locked_saves = sysdata["locked_saves"]
+        locked_saves = sysdata["locked_saves"].duplicate()
     if locked and locked_saves.find(panel.fname) < 0:
         locked_saves.push_back(panel.fname)
     elif !locked and locked_saves.find(panel.fname) >= 0:
         locked_saves.erase(panel.fname)
+    
+    print(locked_saves)
     
     sysdata["locked_saves"] = locked_saves
     Manager.save_sysdata(sysdata)
@@ -321,16 +334,20 @@ var prev_focus_owner = null
 var memo_panel = null
 func memo_apply(memo_text):
     memo_panel.data["memo"] = memo_text
-    save_data(memo_panel.number, memo_panel.data, memo_panel)
+    save_data(memo_panel.number, memo_panel.data, memo_panel, true)
+    block_locking_logic = true
     memo_panel.set_savedata(memo_panel.data)
+    memo_panel.set_new(memo_panel.fname in latest_saves and memo_panel.data)
+    if save_type == "save":
+        memo_panel.set_locked(memo_panel.fname in locked_saves)
+    block_locking_logic = false
     memo_panel = null
-    pass
+
 func do_memo_panel(panel):
     memo_panel = panel
     if !$MemoInputPanel.is_connected("pressed_ok", self, "memo_apply"):
         var _unused = $MemoInputPanel.connect("pressed_ok", self, "memo_apply")
     $MemoInputPanel.open(panel)
-    pass
 
 func _process(delta):
     if mode == "save":
@@ -344,16 +361,32 @@ func _process(delta):
         $CategoryButtons/LoadButton.pressed = true
         $Background.texture.atlas = preload("res://art/ui/menubg3.png")
     
-    if get_tree().get_nodes_in_group("CustomPopup").size() == 0 and !$MemoInputPanel.visible and Input.is_action_just_pressed("m2"):
+    if get_tree().get_nodes_in_group("CustomPopup").size() == 0 and !$MemoInputPanel.visible and (Input.is_action_just_pressed("m2") or Input.is_action_just_pressed("do_memo")):
         var found_save_item = null
-        var mouse_pos = $Page.get_global_mouse_position()
-        for panel in $Page.get_children():
-            if panel.get_global_rect().has_point(mouse_pos):
-                found_save_item = panel
-                break
+        if Input.is_action_just_pressed("m2"):
+            var mouse_pos = $Page.get_global_mouse_position()
+            for panel in $Page.get_children():
+                if panel.get_global_rect().has_point(mouse_pos):
+                    found_save_item = panel
+                    break
+        else:
+            var focus_holder = $Page.get_focus_owner()
+            if focus_holder and $Page.is_a_parent_of(focus_holder):
+                found_save_item = focus_holder
         if found_save_item:
             do_memo_panel(found_save_item)
-            pass
+        else:
+            dying = true
+    
+    if get_tree().get_nodes_in_group("CustomPopup").size() == 0 and Input.is_action_just_pressed("do_save_lock"):
+        var found_save_item = null
+        
+        var focus_holder = $Page.get_focus_owner()
+        if focus_holder and $Page.is_a_parent_of(focus_holder):
+            found_save_item = focus_holder
+        
+        if found_save_item:
+            found_save_item.set_locked(not found_save_item.fname in locked_saves)
         else:
             dying = true
     

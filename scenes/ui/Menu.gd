@@ -41,8 +41,7 @@ func load_screen():
 
 func _process(_delta):
     if ($Buttons.get_focus_owner() == null
-    and get_tree().get_nodes_in_group("MenuScreen").size() == 0
-    and Input.is_action_just_pressed("ui_focus_next")):
+    and get_tree().get_nodes_in_group("MenuScreen").size() == 0):
         $"Buttons/New Game".grab_focus()
 
 var block = false
