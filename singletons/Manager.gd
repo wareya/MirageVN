@@ -963,6 +963,14 @@ func choice(choices):
     
     return null
 
+func _input(event : InputEvent):
+    if event.is_action_pressed("ui_accept") and !input_disabled and !block_input_focus() and !block_simulation() and $Buttons.visible:
+        var focus_holder = $Textbox.get_focus_owner()
+        if focus_holder and is_a_parent_of(focus_holder) and focus_holder is BaseButton:
+            print("using and consuming")
+            focus_holder.emit_signal("pressed")
+            get_tree().set_input_as_handled()
+
 var cutscene_processing_blocked = false
 
 var skip_textbox_timer_this_frame = false
@@ -1044,6 +1052,14 @@ func process_cutscene(delta):
         $Buttons/Auto.pressed = false
         return
     
+    if !input_disabled and !block_input_focus() and !block_simulation() and $Buttons.visible:
+        var focus_holder = $Textbox.get_focus_owner()
+        if !focus_holder and (
+            Input.is_action_just_pressed("ui_focus_next") or
+            Input.is_action_just_pressed("ui_right") or
+            Input.is_action_just_pressed("ui_left")
+            ):
+            $Buttons/Save.grab_focus()
     
     # need to copy this because adding theme overrides thrashes it for the remainder of the frame
     var char_limit = $Textbox/Label.get_total_character_count()

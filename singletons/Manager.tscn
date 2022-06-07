@@ -223,7 +223,7 @@ shader_param/fadeamount = 0.0
 shader_param/invert = false
 shader_param/contrast = 1.0
 
-[node name="HUD" type="CanvasLayer"]
+[node name="Manager" type="CanvasLayer"]
 layer = 11
 script = ExtResource( 1 )
 
@@ -270,7 +270,7 @@ fade_invert = true
 normal_strength = Vector2( 0.038, 0.095 )
 normal_scale = Vector2( 0.241, 0.308 )
 normal_timescale = Vector2( 0.008, 0 )
-normal_offset = Vector2( 0.62406, 0.26384 )
+normal_offset = Vector2( 0.175915, 0.26384 )
 texture2 = ExtResource( 25 )
 fadeamount = 0.882
 
@@ -395,7 +395,7 @@ margin_bottom = -121.0
 position = Vector2( 756, 110 )
 frames = SubResource( 15 )
 animation = "done"
-frame = 8
+frame = 4
 playing = true
 
 [node name="Name" type="RichTextLabel" parent="Textbox"]
@@ -434,6 +434,7 @@ anchor_bottom = 1.0
 margin_left = -736.0
 margin_top = -24.0
 margin_right = -636.0
+focus_previous = NodePath("../../Skip")
 theme = ExtResource( 27 )
 __meta__ = {
 "_edit_group_": true
@@ -557,6 +558,8 @@ anchor_bottom = 1.0
 margin_left = -236.0
 margin_top = -24.0
 margin_right = -136.0
+focus_neighbour_right = NodePath("../../Skip")
+focus_next = NodePath("../../Skip")
 theme = ExtResource( 27 )
 toggle_mode = true
 __meta__ = {
@@ -580,6 +583,9 @@ anchor_bottom = 1.0
 margin_left = -136.0
 margin_top = -24.0
 margin_right = -36.0
+focus_neighbour_left = NodePath("../Buttons/Auto")
+focus_next = NodePath("../Buttons/Save")
+focus_previous = NodePath("../Buttons/Auto")
 theme = ExtResource( 27 )
 toggle_mode = true
 __meta__ = {
