@@ -12,7 +12,7 @@ But all of the truly "difficult" VN-specific functionality is there.
 
 ## Features
 
-- Built on mature, widely used technology (Godot)
+- Built on mature, widely used technology (Godot). **Not bespoke**!
 - Proper transitions for almost everything, including for tachie (standing sprites)
 - Built-in animations for tachie
 - Environment coloring for tachie
