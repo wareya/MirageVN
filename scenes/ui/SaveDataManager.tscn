@@ -1,4 +1,4 @@
-[gd_scene load_steps=24 format=2]
+[gd_scene load_steps=25 format=2]
 
 [ext_resource path="res://fonts/Monda-Regular.ttf" type="DynamicFontData" id=1]
 [ext_resource path="res://scenes/ui/SaveDataManager.gd" type="Script" id=2]
@@ -8,6 +8,7 @@
 [ext_resource path="res://scenes/ui/SaveItemPanel.tscn" type="PackedScene" id=6]
 [ext_resource path="res://art/ui/close cross.png" type="Texture" id=7]
 [ext_resource path="res://scenes/ui/MemoInputPanel.gd" type="Script" id=8]
+[ext_resource path="res://fonts/SawarabiGothic-Regular.ttf" type="DynamicFontData" id=9]
 
 [sub_resource type="AtlasTexture" id=120]
 flags = 15
@@ -103,6 +104,7 @@ outline_color = Color( 0, 0, 0, 1 )
 use_mipmaps = true
 use_filter = true
 font_data = ExtResource( 4 )
+fallback/0 = ExtResource( 9 )
 
 [sub_resource type="StyleBoxFlat" id=126]
 bg_color = Color( 1, 1, 1, 1 )

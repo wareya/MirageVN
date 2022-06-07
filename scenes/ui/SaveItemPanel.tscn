@@ -1,10 +1,11 @@
-[gd_scene load_steps=15 format=2]
+[gd_scene load_steps=16 format=2]
 
 [ext_resource path="res://fonts/Monda-Bold.ttf" type="DynamicFontData" id=1]
 [ext_resource path="res://art/cutscene/bg/hill bg.jpg" type="Texture" id=2]
 [ext_resource path="res://fonts/Galdeano-Regular.ttf" type="DynamicFontData" id=3]
 [ext_resource path="res://scenes/ui/SaveItemPanel.gd" type="Script" id=4]
 [ext_resource path="res://art/ui/lock icon.png" type="Texture" id=5]
+[ext_resource path="res://fonts/SawarabiGothic-Regular.ttf" type="DynamicFontData" id=6]
 
 [sub_resource type="StyleBoxFlat" id=112]
 bg_color = Color( 0.870588, 0.882353, 0.92549, 1 )
@@ -57,6 +58,7 @@ outline_color = Color( 0, 0, 0, 1 )
 use_mipmaps = true
 use_filter = true
 font_data = ExtResource( 3 )
+fallback/0 = ExtResource( 6 )
 
 [sub_resource type="AtlasTexture" id=119]
 flags = 13

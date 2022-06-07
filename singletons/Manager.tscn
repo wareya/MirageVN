@@ -1,9 +1,10 @@
-[gd_scene load_steps=50 format=2]
+[gd_scene load_steps=51 format=2]
 
 [ext_resource path="res://singletons/Manager.gd" type="Script" id=1]
 [ext_resource path="res://singletons/Background.gd" type="Script" id=2]
 [ext_resource path="res://art/ui/next.png" type="Texture" id=3]
 [ext_resource path="res://singletons/BGMaterial.tres" type="Material" id=4]
+[ext_resource path="res://fonts/SawarabiGothic-Regular.ttf" type="DynamicFontData" id=5]
 [ext_resource path="res://art/transition/bleedcircle.png" type="Texture" id=6]
 [ext_resource path="res://singletons/Tachie.tscn" type="PackedScene" id=7]
 [ext_resource path="res://art/ui/textbox4.png" type="Texture" id=8]
@@ -124,6 +125,7 @@ use_filter = true
 extra_spacing_top = 2
 extra_spacing_bottom = 1
 font_data = ExtResource( 20 )
+fallback/0 = ExtResource( 5 )
 
 [sub_resource type="AtlasTexture" id=34]
 flags = 13
@@ -268,7 +270,7 @@ fade_invert = true
 normal_strength = Vector2( 0.038, 0.095 )
 normal_scale = Vector2( 0.241, 0.308 )
 normal_timescale = Vector2( 0.008, 0 )
-normal_offset = Vector2( 0.767386, 0.26384 )
+normal_offset = Vector2( 0.62406, 0.26384 )
 texture2 = ExtResource( 25 )
 fadeamount = 0.882
 
@@ -370,11 +372,11 @@ custom_fonts/italics_font = SubResource( 17 )
 custom_fonts/bold_font = SubResource( 18 )
 custom_fonts/normal_font = SubResource( 19 )
 bbcode_enabled = true
-bbcode_text = "Welcome to MirageVN. [b]b[/b] [i]i[/i] [b][i]bi[/i][/b]
+bbcode_text = "Welcome to MirageVN. あ [b]b[/b] [i]i[/i] [b][i]bi[/i][/b]
 [b]Bold test.[/b]
 [i]Italics test.[/i]
 [b][i]Bold italics test.[/i][/b]"
-text = "Welcome to MirageVN. b i bi
+text = "Welcome to MirageVN. あ b i bi
 Bold test.
 Italics test.
 Bold italics test."
@@ -393,7 +395,7 @@ margin_bottom = -121.0
 position = Vector2( 756, 110 )
 frames = SubResource( 15 )
 animation = "done"
-frame = 4
+frame = 8
 playing = true
 
 [node name="Name" type="RichTextLabel" parent="Textbox"]

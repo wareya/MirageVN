@@ -1,8 +1,9 @@
-[gd_scene load_steps=5 format=2]
+[gd_scene load_steps=6 format=2]
 
 [ext_resource path="res://resources/ButtonBG.theme" type="Theme" id=1]
 [ext_resource path="res://scenes/ui/Menu.gd" type="Script" id=2]
 [ext_resource path="res://fonts/Quando-Regular.ttf" type="DynamicFontData" id=3]
+[ext_resource path="res://fonts/SawarabiGothic-Regular.ttf" type="DynamicFontData" id=4]
 
 [sub_resource type="DynamicFont" id=1]
 size = 25
@@ -12,6 +13,7 @@ use_filter = true
 extra_spacing_top = 3
 extra_spacing_bottom = 1
 font_data = ExtResource( 3 )
+fallback/0 = ExtResource( 4 )
 
 [node name="Menu" type="CanvasLayer" groups=["MainMenu"]]
 layer = 63
