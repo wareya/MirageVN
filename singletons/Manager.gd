@@ -1732,6 +1732,9 @@ func scroll_backlog_to_end():
 func block_simulation():
     return cutscene_paused or get_tree().get_nodes_in_group("MenuScreen").size() > 0 or get_tree().get_nodes_in_group("CustomPopup").size() > 0
 
+func block_input_focus():
+    return get_tree().get_nodes_in_group("CustomPopup").size() > 0
+
 var backlog_textbox_visibility_storage = false
 func backlog_hide():
     cutscene_paused = false

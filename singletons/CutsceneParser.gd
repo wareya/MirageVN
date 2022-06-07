@@ -286,5 +286,5 @@ func kill():
     script.set_source_code(new_source_code)
     #warning-ignore:return_value_discarded
     script.reload()
-    script.resource_path = old_path
+    #script.resource_path = old_path
     return script

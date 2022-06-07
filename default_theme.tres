@@ -1,4 +1,4 @@
-[gd_resource type="Theme" load_steps=30 format=2]
+[gd_resource type="Theme" load_steps=31 format=2]
 
 [ext_resource path="res://art/ui/scroll fg a.png" type="Texture" id=1]
 [ext_resource path="res://art/ui/scroll fg b.png" type="Texture" id=2]
@@ -16,6 +16,7 @@
 [ext_resource path="res://art/ui/buttonthing6.png" type="Texture" id=14]
 [ext_resource path="res://art/ui/notches.png" type="Texture" id=15]
 [ext_resource path="res://art/ui/notches2.png" type="Texture" id=16]
+[ext_resource path="res://art/ui/sliderbar_handle 2.png" type="Texture" id=17]
 
 [sub_resource type="DynamicFont" id=111]
 size = 19
@@ -153,11 +154,12 @@ HScrollBar/styles/scroll = SubResource( 31 )
 HScrollBar/styles/scroll_focus = SubResource( 31 )
 HSlider/icons/grabber = ExtResource( 11 )
 HSlider/icons/grabber_disabled = ExtResource( 10 )
-HSlider/icons/grabber_highlight = ExtResource( 11 )
+HSlider/icons/grabber_highlight = ExtResource( 17 )
 HSlider/icons/tick = ExtResource( 15 )
 HSlider/styles/grabber_area = SubResource( 122 )
 HSlider/styles/grabber_area_highlight = SubResource( 122 )
 HSlider/styles/slider = SubResource( 121 )
+OptionButton/styles/focus = SubResource( 120 )
 VScrollBar/styles/grabber = SubResource( 28 )
 VScrollBar/styles/grabber_highlight = SubResource( 29 )
 VScrollBar/styles/grabber_pressed = SubResource( 30 )
@@ -165,7 +167,7 @@ VScrollBar/styles/scroll = SubResource( 31 )
 VScrollBar/styles/scroll_focus = SubResource( 31 )
 VSlider/icons/grabber = ExtResource( 11 )
 VSlider/icons/grabber_disabled = ExtResource( 10 )
-VSlider/icons/grabber_highlight = ExtResource( 11 )
+VSlider/icons/grabber_highlight = ExtResource( 17 )
 VSlider/icons/tick = ExtResource( 16 )
 VSlider/styles/grabber_area = SubResource( 122 )
 VSlider/styles/grabber_area_highlight = SubResource( 122 )

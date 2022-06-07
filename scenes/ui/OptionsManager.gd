@@ -52,6 +52,13 @@ func save_project_settings(list : Array = saved_project_settings):
     file.flush()
     file.close()
 
+onready var category_pairs = [
+    [$ScreenSettings , $CategoryButtons/ScreenButton ],
+    [$DisplaySettings, $CategoryButtons/DisplayButton],
+    [$AudioSettings  , $CategoryButtons/AudioButton  ],
+    [$DialogSettings , $CategoryButtons/DialogButton ],
+    [$SystemSettings , $CategoryButtons/SystemButton ]
+]
 
 var existing_bgm = null
 
@@ -130,6 +137,18 @@ func _ready():
         _unused = (button as BaseButton).connect("pressed", self, "pressed_category_button", [button])
     
     $CategoryButtons/ScreenButton.grab_focus()
+    
+    for pair in category_pairs:
+        var first_focusable = true
+        for _control in pair[0].get_children():
+            if not _control is Control:
+                continue
+            var control : Control = _control
+            if control.focus_mode != Control.FOCUS_NONE:
+                control.focus_neighbour_left = pair[1].get_path()
+                if first_focusable:
+                    control.focus_previous = pair[1].get_path()
+                    first_focusable = false
 
 
 func button_toggled(button_pressed : bool, button : BaseButton):
@@ -316,6 +335,23 @@ var show_amount = 0.0
 func _process(delta):
     if get_tree().get_nodes_in_group("CustomPopup").size() == 0 and Input.is_action_just_pressed("m2"):
         dying = true
+    
+    if $Background.get_focus_owner() == null and !Manager.block_input_focus():
+        $CategoryButtons/ScreenButton.grab_focus()
+    
+    if Input.is_action_just_pressed("ui_right") and $CategoryButtons.is_a_parent_of($CategoryButtons.get_focus_owner()):
+        var focus_owner = $CategoryButtons.get_focus_owner()
+        for pair in category_pairs:
+            if !pair[1].has_focus():
+                continue
+            pair[1].emit_signal("pressed")
+            for _control in pair[0].get_children():
+                if not _control is Control:
+                    continue
+                var control : Control = _control
+                if control.focus_mode != Control.FOCUS_NONE:
+                    control.grab_focus()
+                    break
     
     if dying:
         show_amount -= delta*4.0

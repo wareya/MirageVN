@@ -271,7 +271,6 @@ margin_top = 160.0
 margin_right = -4.0
 margin_bottom = 192.0
 rect_pivot_offset = Vector2( 92, 28 )
-focus_neighbour_right = NodePath("../../SystemSettings/SaveScreenshots")
 custom_fonts/font = SubResource( 111 )
 toggle_mode = true
 text = "System"

@@ -197,22 +197,23 @@ func do_panel_save(panel):
 
 func pressed_panel(panel):
     if mode == "load":
-        if !UserSettings.dialog_load_dialog:
-            do_panel_load(panel)
-            return
-        
-        var helper = Manager.PopupHelper.new(
-            self,
-            "do_panel_load",
-            "Confirm Load",
-            ("Load game?\nUnsaved progress will be lost."
-             if get_tree().get_nodes_in_group("MainMenu").size() == 0 else
-             "Load game?"
-            ),
-            [panel]
-        )
-        add_child(helper)
-        helper.invoke()
+        if panel.data and panel.data.size() > 0:
+            if !UserSettings.dialog_load_dialog:
+                do_panel_load(panel)
+                return
+            
+            var helper = Manager.PopupHelper.new(
+                self,
+                "do_panel_load",
+                "Confirm Load",
+                ("Load game?\nUnsaved progress will be lost."
+                if get_tree().get_nodes_in_group("MainMenu").size() == 0 else
+                "Load game?"
+                ),
+                [panel]
+            )
+            add_child(helper)
+            helper.invoke()
     elif mode == "save":
         if panel.fname in locked_saves:
             EmitterFactory.emit(null, EngineSettings.save_failure_sound)
