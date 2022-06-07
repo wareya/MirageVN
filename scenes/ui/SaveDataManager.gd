@@ -316,6 +316,8 @@ func panel_delete(panel):
 var dying = false
 var show_amount = 0.0
 
+var prev_focus_owner = null
+
 func _process(delta):
     if mode == "save":
         $Title.text = "Save"
@@ -330,6 +332,17 @@ func _process(delta):
     
     if get_tree().get_nodes_in_group("CustomPopup").size() == 0 and Input.is_action_just_pressed("m2"):
         dying = true
+    
+    var focus_holder = $Page.get_focus_owner()
+    if Input.is_action_just_pressed("delete") and focus_holder and $Page.is_a_parent_of(focus_holder):
+        attempt_panel_delete($Page.get_focus_owner())
+    
+    if focus_holder and ($CategoryButtons.is_a_parent_of(focus_holder) or $Page.is_a_parent_of(focus_holder) or $PageButtons.is_a_parent_of(focus_holder)):
+        prev_focus_owner = focus_holder
+    
+    if !Manager.block_input_focus() and focus_holder == null:
+        if prev_focus_owner and is_instance_valid(prev_focus_owner):
+            prev_focus_owner.grab_focus()
     
     if dying:
         show_amount -= delta*4.0
