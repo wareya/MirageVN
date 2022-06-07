@@ -19,10 +19,30 @@ const saved_project_settings = [
   "debug/settings/fps/force_fps",
 ]
 
+var default_project_settings = {
+  "display/window/size/fullscreen" : false,
+  "display/window/size/borderless" : false,
+  "display/window/vsync/use_vsync" : true,
+  "display/window/vsync/vsync_via_compositor" : false,
+  "display/window/dpi/allow_hidpi" : true,
+  "debug/settings/fps/force_fps" : 144,
+}
+
+func reset_project_settings():
+    for setting in default_project_settings:
+        var value = default_project_settings[setting]
+        ProjectSettings.set_setting(setting, value)
+    
+    OS.window_fullscreen = ProjectSettings.get_setting("display/window/size/fullscreen")
+    OS.window_borderless = ProjectSettings.get_setting("display/window/size/borderless")
+    OS.vsync_enabled = ProjectSettings.get_setting("display/window/vsync/use_vsync")
+    OS.vsync_via_compositor = ProjectSettings.get_setting("display/window/vsync/vsync_via_compositor")
+    Engine.target_fps = ProjectSettings.get_setting("debug/settings/fps/force_fps")
+
 func save_project_settings(list : Array = saved_project_settings):
     # ProjectSettings.save_custom() saves too much crap and causes a lot of trouble
+    # so we encode the file manually instead
     var file = File.new()
-    #print(ProjectSettings.get_setting("application/config/project_settings_override"))
     file.open(ProjectSettings.get_setting("application/config/project_settings_override"), File.WRITE)
     file.store_string("config_version=4")
     file.store_string("\n\n")
@@ -60,26 +80,17 @@ onready var category_pairs = [
     [$SystemSettings , $CategoryButtons/SystemButton ]
 ]
 
+onready var cat_buttons = [
+    $CategoryButtons/ScreenButton,
+    $CategoryButtons/DisplayButton,
+    $CategoryButtons/AudioButton,
+    $CategoryButtons/DialogButton,
+    $CategoryButtons/SystemButton
+]
+
 var existing_bgm = null
 
-func _ready():
-    existing_bgm = Manager.get_node("BGM").stream
-    if OS.has_feature("editor"):
-        $Infodump2.visible = true
-    else:
-        $Infodump2.visible = false
-    $ScreenSettings/Framerate.add_item("No Limit/Follow Vsync")
-    for val in [24, 30, 48, 50, 60, 75, 80, 120, 144, 240, 300]:
-        $ScreenSettings/Framerate.add_item("%sfps" % [val])
-    
-    $SystemSettings/AutosaveFreq.add_item("On Quit")
-    $SystemSettings/AutosaveFreq.add_item("Also At Choices")
-    $SystemSettings/AutosaveFreq.add_item("Also At Scene Changes")
-    
-    $SystemSettings/ReadTextSaveFreq.add_item("While Reading")
-    $SystemSettings/ReadTextSaveFreq.add_item("Occasionally")
-    
-    
+func set_controls_from_settings():
     $ScreenSettings/Fullscreen.pressed = ProjectSettings.get_setting("display/window/size/fullscreen")
     $ScreenSettings/Borderless.pressed = ProjectSettings.get_setting("display/window/size/borderless")
     $ScreenSettings/Vsync.pressed = ProjectSettings.get_setting("display/window/vsync/use_vsync")
@@ -103,6 +114,7 @@ func _ready():
     $DialogSettings/Load.pressed = UserSettings.dialog_load_dialog
     $DialogSettings/Delete.pressed = UserSettings.dialog_delete_dialog
     $DialogSettings/Quit.pressed = UserSettings.dialog_quit_dialog
+    $DialogSettings/ToTitle.pressed = UserSettings.dialog_to_title_dialog
     
     $SystemSettings/SaveScreenshots.pressed = UserSettings.system_save_screenshots
     $SystemSettings/AutoContinue.pressed = UserSettings.system_autocontinue_on_boot
@@ -133,8 +145,28 @@ func _ready():
             $ScreenSettings/Framerate.selected = i
             break
     
+
+func _ready():
+    existing_bgm = Manager.get_node("BGM").stream
+    if OS.has_feature("editor"):
+        $Infodump2.visible = true
+    else:
+        $Infodump2.visible = false
+    $ScreenSettings/Framerate.add_item("No Limit/Follow Vsync")
+    for val in [24, 30, 48, 50, 60, 75, 80, 120, 144, 240, 300]:
+        $ScreenSettings/Framerate.add_item("%sfps" % [val])
+    
+    $SystemSettings/AutosaveFreq.add_item("On Quit")
+    $SystemSettings/AutosaveFreq.add_item("Also At Choices")
+    $SystemSettings/AutosaveFreq.add_item("Also At Scene Changes")
+    
+    $SystemSettings/ReadTextSaveFreq.add_item("While Reading")
+    $SystemSettings/ReadTextSaveFreq.add_item("Occasionally")
+    
+    set_controls_from_settings()
+    
     for button in $CategoryButtons.get_children():
-        _unused = (button as BaseButton).connect("pressed", self, "pressed_category_button", [button])
+        var _unused = (button as BaseButton).connect("pressed", self, "pressed_category_button", [button])
     
     $CategoryButtons/ScreenButton.grab_focus()
     
@@ -197,6 +229,8 @@ func button_toggled(button_pressed : bool, button : BaseButton):
         UserSettings.dialog_delete_dialog = button_pressed
     elif button == $DialogSettings/Quit:
         UserSettings.dialog_quit_dialog = button_pressed
+    elif button == $DialogSettings/ToTitle:
+        UserSettings.dialog_to_title_dialog = button_pressed
     
     elif button == $SystemSettings/SaveScreenshots:
         UserSettings.system_save_screenshots = button_pressed
@@ -291,8 +325,10 @@ func pressed_category_button(button : BaseButton):
         if button != other:
             other.pressed = false
     button.pressed = true
-    for panel in [$ScreenSettings, $DisplaySettings, $AudioSettings, $DialogSettings, $SystemSettings]:
-        panel.hide()
+    if button in cat_buttons:
+        for panel in [$ScreenSettings, $DisplaySettings, $AudioSettings, $DialogSettings, $SystemSettings]:
+            panel.hide()
+    
     if button == $CategoryButtons/ScreenButton:
         $ScreenSettings.show()
     
@@ -316,6 +352,52 @@ func pressed_category_button(button : BaseButton):
     
     if button == $CategoryButtons/ReturnButton:
         dying = true
+    
+    if button == $CategoryButtons/ResetDefaultsButton:
+        var helper = Manager.PopupHelper.new(
+            self,
+            "reset_defaults",
+            "Confirm Reset Defaults",
+            "Reset all settings to default? There is no backup."
+        )
+        add_child(helper)
+        helper.invoke()
+    
+    if button == $CategoryButtons/ToTitleButton:
+        if !UserSettings.dialog_to_title_dialog:
+            go_to_title()
+        
+        var helper = Manager.PopupHelper.new(
+            self,
+            "go_to_title",
+            "Confirm Return to Title",
+            ("Return to title?"
+             if get_tree().get_nodes_in_group("MainMenu").size() > 0 or Manager.is_splash else
+             ("Return to title?\nAn autosave will be created."
+              if Manager.can_autosave() else
+              "Return to title?\nUnsaved progress will be lost."
+             )
+            )
+        )
+        add_child(helper)
+        helper.invoke()
+
+func reset_defaults():
+    reset_project_settings()
+    UserSettings.reset_to_defaults()
+    
+    save_project_settings()
+    UserSettings.do_save()
+    
+    set_controls_from_settings()
+
+func go_to_title():
+    Manager.admit_read_line(false, true)
+    if Manager.can_autosave():
+        Manager.autosave()
+    Manager.change_to("res://scenes/ui/Menu.tscn")
+    dying = true
+    
 
 func text_demo_reset():
     text_demo_visible_wait = 0

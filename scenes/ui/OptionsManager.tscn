@@ -287,6 +287,30 @@ custom_fonts/font = SubResource( 111 )
 toggle_mode = true
 text = "Return"
 
+[node name="ResetDefaultsButton" type="Button" parent="CategoryButtons"]
+anchor_left = 1.0
+anchor_right = 1.0
+margin_left = -162.0
+margin_top = 469.0
+margin_right = -4.0
+margin_bottom = 501.0
+rect_pivot_offset = Vector2( 92, 28 )
+custom_fonts/font = SubResource( 111 )
+toggle_mode = true
+text = "Reset to Default"
+
+[node name="ToTitleButton" type="Button" parent="CategoryButtons"]
+anchor_left = 1.0
+anchor_right = 1.0
+margin_left = -164.0
+margin_top = 511.0
+margin_right = -4.0
+margin_bottom = 543.0
+rect_pivot_offset = Vector2( 92, 28 )
+custom_fonts/font = SubResource( 111 )
+toggle_mode = true
+text = "Return to Title"
+
 [node name="ScreenSettings" type="Control" parent="."]
 anchor_left = 0.5
 anchor_right = 0.5
@@ -695,6 +719,19 @@ custom_colors/font_color_hover = Color( 1, 1, 1, 1 )
 custom_colors/font_color_pressed = Color( 1, 1, 1, 1 )
 custom_fonts/font = SubResource( 111 )
 text = "Confirm Quit"
+
+[node name="ToTitle" type="CheckButton" parent="DialogSettings"]
+margin_top = 280.0
+margin_right = 325.0
+margin_bottom = 320.0
+custom_colors/font_color_disabled = Color( 1, 1, 1, 1 )
+custom_colors/font_color_focus = Color( 1, 1, 1, 1 )
+custom_colors/font_color_hover_pressed = Color( 1, 1, 1, 1 )
+custom_colors/font_color = Color( 1, 1, 1, 1 )
+custom_colors/font_color_hover = Color( 1, 1, 1, 1 )
+custom_colors/font_color_pressed = Color( 1, 1, 1, 1 )
+custom_fonts/font = SubResource( 111 )
+text = "Confirm Return to Title"
 
 [node name="SystemSettings" type="Control" parent="."]
 visible = false

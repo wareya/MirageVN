@@ -97,6 +97,7 @@ func change_to(target_level : String, flat_fade : bool = false):
         #call_deferred("_change_to", scene, target_node) # wrong (at least in 3.3.x)
         yield(get_tree(), "idle_frame")
         
+        reset_stuff()
         _change_to(scene)
         changing_room_out = false
         yield(get_tree(), "idle_frame")
@@ -522,6 +523,44 @@ signal bg_transform_1_finished
 signal bg_transform_2_finished
 signal bg_transform_finished
 
+func reset_stuff():
+    $Textbox/Face.hide()
+    $Textbox/Name.hide()
+    
+    $Textbox.hide()
+    textbox_visibility_intent = false
+    textbox_show_nonce += 1
+    textbox_hide_nonce += 1
+    
+    backlog_hide()
+    
+    Engine.time_scale = 1.0
+    
+    for i in len(tachie_slots):
+        if i > 0:
+            set_tachie(i, null, "", true, 0.0)
+            set_tachie_next_flipped(i, false)
+    
+    $Choices.hide()
+    
+    configure_bg_distortion(0)
+    
+    $Textbox/Name.text = ""
+    $Textbox/Name.bbcode_text = ""
+    $Textbox/Label.text = ""
+    $Textbox/Label.bbcode_text = ""
+    push_input_mode("cutscene")
+    configure_bg_distortion(0)
+    set_bg_transform_1(Vector2(), Vector2.ONE)
+    set_bg_transform_2(Vector2(), Vector2.ONE)
+    set_ADV_mode()
+    $Scene.offset = Vector2()
+    block_saving = false
+    is_splash = false
+    env_color = Color(0.5, 0.5, 0.5)
+    env_light = Color(1.0, 1.0, 1.0)
+    env_saturation = 1.0
+
 func _ready():
     get_tree().set_auto_accept_quit(false)
     
@@ -534,22 +573,8 @@ func _ready():
     
     randomize()
     process_priority = -100
-    $Textbox/Face.hide()
-    $Textbox/Name.hide()
     
-    $Textbox.hide()
-    textbox_visibility_intent = false
-    textbox_show_nonce += 1
-    textbox_hide_nonce += 1
-    
-    $Scene/Background.hide()
-    backlog_hide()
-    $Scene/Tachie1.hide()
-    $Scene/Tachie2.hide()
-    $Scene/Tachie3.hide()
-    $Choices.hide()
-    
-    configure_bg_distortion(0)
+    reset_stuff()
     
     background.show()
     background.texture = preload("res://art/ui/white.png")
@@ -1544,39 +1569,9 @@ func call_cutscene(entity : Node, method : String):
     if !entity.has_method(method):
         return input_mode
     
-    Engine.time_scale = 1.0
-    
-    for i in len(tachie_slots):
-        if i > 0:
-            set_tachie(i, null, "", true, 0.0)
-            set_tachie_next_flipped(i, false)
-    
-    $Textbox/Face.hide()
-    $Textbox/Name.hide()
-    
-    $Textbox.hide()
-    textbox_visibility_intent = false
-    textbox_show_nonce += 1
-    textbox_hide_nonce += 1
-    
-    $Textbox/Name.text = ""
-    $Textbox/Name.bbcode_text = ""
-    $Textbox/Label.text = ""
-    $Textbox/Label.bbcode_text = ""
-    push_input_mode("cutscene")
-    configure_bg_distortion(0)
-    set_bg_transform_1(Vector2(), Vector2.ONE)
-    set_bg_transform_2(Vector2(), Vector2.ONE)
-    set_ADV_mode()
-    $Scene.offset = Vector2()
-    block_saving = false
-    is_splash = false
+    reset_stuff()
     
     admit_read_line(false, true)
-    
-    env_color = Color(0.5, 0.5, 0.5)
-    env_light = Color(1.0, 1.0, 1.0)
-    env_saturation = 1.0
     
     LOAD_LINE = -1
     taken_choices = []

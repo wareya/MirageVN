@@ -29,7 +29,7 @@ const textbox_typein_chars_per_sec = 120.0
 const textbox_fade_time = 0.25
 
 const auto_delay_amount = 1.5
-const auto_delay_per_character = 1.0/15.0
+const auto_delay_per_character = 1.0/25.0
 
 const audio_sfx_default_volume = -1.0
 const audio_bgm_default_volume = -12.0

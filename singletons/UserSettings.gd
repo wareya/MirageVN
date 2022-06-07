@@ -18,6 +18,7 @@ var dialog_save_dialog = true
 var dialog_save_overwrite_dialog = true
 var dialog_delete_dialog = true
 var dialog_quit_dialog = true
+var dialog_to_title_dialog = true
 
 var system_save_screenshots = true
 var system_autocontinue_on_boot = false
@@ -27,7 +28,13 @@ var system_read_lines_write_on_save_only = false
 var system_auto_chars_per_second = round(10.0/EngineSettings.auto_delay_per_character)/10.0
 var system_auto_additional_pause_seconds = EngineSettings.auto_delay_amount
 
+var defaults = {}
+
+func reset_to_defaults():
+    from_dict(defaults)
+
 func _init():
+    defaults = to_dict()
     do_load()
 
 func to_dict():
