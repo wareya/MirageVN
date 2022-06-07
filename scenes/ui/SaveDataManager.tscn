@@ -546,7 +546,6 @@ custom_colors/font_color_selected = Color( 1, 1, 1, 1 )
 custom_colors/font_color = Color( 0, 0, 0, 1 )
 custom_fonts/font = SubResource( 114 )
 custom_styles/normal = SubResource( 126 )
-text = "asdf"
 override_selected_font_color = true
 
 [node name="Buttons" type="HBoxContainer" parent="MemoInputPanel/Panel"]

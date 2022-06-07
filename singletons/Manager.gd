@@ -830,9 +830,6 @@ func check_window_size_stuff():
 
 var delta_elapsed = 0.0
 func _process(delta):
-    if Input.is_action_just_pressed("skip") and is_line_read():
-        skip_pressed_during_read_text = true
-    
     input_disabled = false
     $MouseCatcher.visible = true
     for node in get_tree().get_nodes_in_group("MenuScreen") + get_tree().get_nodes_in_group("CustomPopup"):
@@ -842,6 +839,9 @@ func _process(delta):
         $Skip.hide()
         break
     
+    if !input_disabled and Input.is_action_just_pressed("skip") and is_line_read():
+        skip_pressed_during_read_text = true
+    
     #print(LOAD_LINE)
     #for i in range(OS.get_screen_count()):
     #    print(OS.get_screen_dpi(i))
@@ -849,7 +849,7 @@ func _process(delta):
     delta_elapsed += delta
     $DebugText.text = ""
     
-    if !$Skip.pressed and !Input.is_action_pressed("skip"):
+    if !input_disabled and !$Skip.pressed and !Input.is_action_pressed("skip"):
         skip_pressed_during_read_text = false
     
     process_cutscene(delta)
@@ -991,7 +991,7 @@ func process_cutscene(delta):
     
     already_processing = true
     
-    if Input.is_action_just_released("skip"):
+    if !input_disabled and Input.is_action_just_released("skip"):
         $Skip.pressed = false
         $Buttons/Auto.pressed = false
     
@@ -1436,7 +1436,7 @@ func hide_all_tachie():
 # Returns true if the user is reading in skip mode or holding down the "skip" input.
 # Does not return true if loading.
 func realtime_skip():
-    return Input.is_action_pressed("skip") or $Skip.pressed
+    return !input_disabled and !block_simulation() and (Input.is_action_pressed("skip") or $Skip.pressed)
 
 # Returns whether non-timerlike general skippable things should be skipped this frame.
 # True if loading, holding the "skip" input, or the skip button is pressed.
