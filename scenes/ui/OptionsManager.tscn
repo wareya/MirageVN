@@ -336,7 +336,6 @@ toggle_mode = true
 text = "Return to Title"
 
 [node name="ScreenSettings" type="Control" parent="."]
-visible = false
 anchor_left = 0.5
 anchor_right = 0.5
 anchor_bottom = 1.0
@@ -435,6 +434,7 @@ custom_fonts/font = SubResource( 111 )
 text = "HiDPI Support"
 
 [node name="DisplaySettings" type="Control" parent="."]
+visible = false
 anchor_left = 0.5
 anchor_right = 0.5
 anchor_bottom = 1.0
