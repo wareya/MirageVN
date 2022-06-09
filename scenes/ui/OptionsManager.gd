@@ -363,6 +363,47 @@ func pressed_category_button(button : BaseButton):
         add_child(helper)
         helper.invoke()
     
+    if button == $CategoryButtons/ViewCreditsButton:
+        var helper = Manager.PopupHelperNoCancel.new(
+            null,
+            "",
+            "Credits",
+            ""
+        )
+        add_child(helper)
+        var panel = helper.invoke()
+        panel.set_big()
+        var credits =  "\n" + EngineSettings.credits_text.strip_edges() + "\n"
+        panel.set_text_raw(credits)
+        panel.set_text_selectable()
+        panel.set_text_nocenter()
+    
+    if button == $CategoryButtons/ViewLicenseButton:
+        var helper = Manager.PopupHelperNoCancel.new(
+            null,
+            "",
+            "License Info",
+            ""
+        )
+        add_child(helper)
+        var panel = helper.invoke()
+        panel.set_big()
+        var credits = ""
+        for entry in Engine.get_copyright_info():
+            credits += "Uses: [b]%s[/b]\n" % [entry.name]
+            for part in entry.parts:
+                for c in part.copyright:
+                    credits += "Copyright: %s\n" % [c]
+                credits += "License: %s\n\n" % [part.license]
+        credits += "\nLicense texts:\n\n"
+        for key in Engine.get_license_info():
+            credits += "[b]The %s License[/b]\n\n" % [key]
+            var info = Engine.get_license_info()[key]
+            credits += "%s\n\n" % [info]
+        panel.set_text_raw("\n" + credits.strip_edges() + "\n")
+        panel.set_text_selectable()
+        panel.set_text_nocenter()
+    
     if button == $CategoryButtons/ToTitleButton:
         if !UserSettings.dialog_to_title_dialog:
             go_to_title()

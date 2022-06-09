@@ -43,3 +43,11 @@ const load_success_sound = preload("res://sfx/reconfirm.wav")
 const save_failure_sound = preload("res://sfx/errorthing.wav")
 const save_success_sound = preload("res://sfx/progress.wav")
 
+# credits
+
+# feel free to completely change this; this is for YOUR credits, not MirageVN's
+# license text is added automatically in OptionsManager.gd's ViewCreditsButton handler
+const credits_text = """
+Made with MirageVN by Wareya
+Built on top of Godot
+"""

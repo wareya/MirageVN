@@ -17,11 +17,32 @@ func set_title(new : String):
 func set_text(new : String):
     $Panel/LabelScroller/LabelHolder/Label.bbcode_text = "[center]%s[/center]" % [new]
 
+func set_text_raw(new : String):
+    $Panel/LabelScroller/LabelHolder/Label.bbcode_text = "%s" % [new]
+
+func set_text_selectable():
+    $Panel/LabelScroller/LabelHolder/Label.selection_enabled = true
+func set_text_nocenter():
+    $Panel/LabelScroller/LabelHolder/Sep1.hide()
+    $Panel/LabelScroller/LabelHolder/Sep2.hide()
+
 func set_ok_text(new : String):
     button_ok.text = new
 
 func set_cancel_text(new : String):
     button_cancel.text = new
+
+func hide_cancel():
+    $Panel/Buttons/VSeparator2.hide()
+    $Panel/Buttons/Cancel.hide()
+    pass
+
+func set_big():
+    $Panel.margin_left *= 2.35
+    $Panel.margin_right *= 2.35
+    $Panel.margin_top *= 3
+    $Panel.margin_bottom *= 3
+    pass
 
 func emit_cancel():
     emit_signal("pressed_cancel")

@@ -2134,7 +2134,8 @@ class PopupHelper extends Node:
         queue_free()
         emit_signal("cleaned_up")
     func confirm():
-        target.callv(target_method, binds)
+        if target and target.has_method(target_method):
+            target.callv(target_method, binds)
         cleanup()
     func invoke(override = false):
         if !dialog and (override or Manager.get_tree().get_nodes_in_group("CustomPopup").size() == 0):
@@ -2146,6 +2147,21 @@ class PopupHelper extends Node:
             dialog.set_closable()
             dialog.connect("pressed_ok", self, "confirm")
             dialog.connect("pressed_cancel", self, "cleanup")
+        return dialog
+
+class PopupHelperNoCancel extends PopupHelper:
+    func _init(_target : Node, _target_method : String, _title : String, _text : String, _binds : Array = []).(_target, _target_method, _title, _text, _binds):
+        pass
+    func invoke(override = false):
+        if !dialog and (override or Manager.get_tree().get_nodes_in_group("CustomPopup").size() == 0):
+            dialog = preload("res://scenes/ui/CustomPopup.tscn").instance()
+            Manager.get_node("PopupTarget").add_child(dialog)
+            
+            dialog.set_title(title)
+            dialog.set_text(text)
+            dialog.set_closable(true)
+            dialog.hide_cancel()
+            dialog.connect("pressed_ok", self, "confirm")
         return dialog
 
 func attempt_quicksave():
@@ -2173,7 +2189,7 @@ func attempt_quickload():
         self,
         "quickload",
         "Confirm Quickload",
-        "Quickload?\nUnsaved progress will be lost."
+        "Quickload?\nUnsaved progrPopupHelperess will be lost."
     )
     add_child(helper)
     helper.invoke()
