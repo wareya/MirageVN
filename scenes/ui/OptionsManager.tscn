@@ -296,7 +296,6 @@ margin_right = -4.0
 margin_bottom = 417.0
 rect_pivot_offset = Vector2( 92, 28 )
 custom_fonts/font = SubResource( 111 )
-toggle_mode = true
 text = "Credits"
 
 [node name="ViewLicenseButton" type="Button" parent="CategoryButtons"]
@@ -308,7 +307,6 @@ margin_right = -4.0
 margin_bottom = 459.0
 rect_pivot_offset = Vector2( 92, 28 )
 custom_fonts/font = SubResource( 111 )
-toggle_mode = true
 text = "Licenses"
 
 [node name="ResetDefaultsButton" type="Button" parent="CategoryButtons"]
@@ -320,7 +318,6 @@ margin_right = -4.0
 margin_bottom = 501.0
 rect_pivot_offset = Vector2( 92, 28 )
 custom_fonts/font = SubResource( 111 )
-toggle_mode = true
 text = "Reset to Default"
 
 [node name="ToTitleButton" type="Button" parent="CategoryButtons"]
@@ -332,7 +329,6 @@ margin_right = -4.0
 margin_bottom = 543.0
 rect_pivot_offset = Vector2( 92, 28 )
 custom_fonts/font = SubResource( 111 )
-toggle_mode = true
 text = "Return to Title"
 
 [node name="ScreenSettings" type="Control" parent="."]
