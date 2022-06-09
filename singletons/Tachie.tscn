@@ -82,8 +82,8 @@ shader_param/rectsize = Vector2( 1280, 720 )
 shader_param/texturesize = Vector2( 2039, 2894 )
 shader_param/texture2size = Vector2( 16, 16 )
 shader_param/fadeamount = 0.0
-shader_param/position = Vector2( 0.5, 100 )
-shader_param/scale = Vector2( 1.5, 1.5 )
+shader_param/position = Vector2( 0.5, 250 )
+shader_param/scale = Vector2( 1.75, 1.75 )
 shader_param/texture2 = ExtResource( 3 )
 
 [node name="Tachie" type="TextureRect"]

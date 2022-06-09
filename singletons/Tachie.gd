@@ -78,11 +78,12 @@ func update_uniforms():
     else:
         material.set_shader_param("texturesize", Vector2(1.0, 1.0))
     
-    material.set_shader_param("fadeamount", anim_state.texfade)
-    modulate.a = anim_state.alpha
-    material.set_shader_param("rectsize", rect_size * rect_scale)
-    material.set_shader_param("position", offset + anim_state.pos * Vector2(1, scale_factor))
-    material.set_shader_param("scale", Vector2(anim_state.scale, anim_state.scale) * scale_factor)
+    if anim_state:
+        material.set_shader_param("fadeamount", anim_state.texfade)
+        modulate.a = anim_state.alpha
+        material.set_shader_param("rectsize", rect_size * rect_scale)
+        material.set_shader_param("position", offset + anim_state.pos * Vector2(1, scale_factor))
+        material.set_shader_param("scale", Vector2(anim_state.scale, anim_state.scale) * scale_factor)
     
     material.set_shader_param("flipx_1", flip_first)
     material.set_shader_param("flipx_2", flip_second)

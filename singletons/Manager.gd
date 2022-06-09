@@ -2179,7 +2179,7 @@ func attempt_quickload():
     helper.invoke()
 
 func can_autosave():
-    return (input_mode == "cutscene" or input_mode_stack.find("cutscene") >= 0) and !block_saving
+    return (input_mode == "cutscene" or input_mode_stack.find("cutscene") >= 0) and !block_saving and !is_splash
 
 func exit():
     admit_read_line(false, true)

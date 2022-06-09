@@ -1,3 +1,4 @@
+tool
 extends Node
 
 const bgm_fade_time = 0.7
