@@ -336,6 +336,7 @@ toggle_mode = true
 text = "Return to Title"
 
 [node name="ScreenSettings" type="Control" parent="."]
+visible = false
 anchor_left = 0.5
 anchor_right = 0.5
 anchor_bottom = 1.0
@@ -434,7 +435,6 @@ custom_fonts/font = SubResource( 111 )
 text = "HiDPI Support"
 
 [node name="DisplaySettings" type="Control" parent="."]
-visible = false
 anchor_left = 0.5
 anchor_right = 0.5
 anchor_bottom = 1.0
@@ -507,6 +507,20 @@ custom_colors/font_color_pressed = Color( 1, 1, 1, 1 )
 custom_fonts/font = SubResource( 111 )
 pressed = true
 text = "Text Shadow"
+
+[node name="ClipboardCopy" type="CheckButton" parent="DisplaySettings"]
+margin_top = 216.0
+margin_right = 325.0
+margin_bottom = 256.0
+custom_colors/font_color_disabled = Color( 1, 1, 1, 1 )
+custom_colors/font_color_focus = Color( 1, 1, 1, 1 )
+custom_colors/font_color_hover_pressed = Color( 1, 1, 1, 1 )
+custom_colors/font_color = Color( 1, 1, 1, 1 )
+custom_colors/font_color_hover = Color( 1, 1, 1, 1 )
+custom_colors/font_color_pressed = Color( 1, 1, 1, 1 )
+custom_fonts/font = SubResource( 111 )
+pressed = true
+text = "Copy Text to Clipboard"
 
 [node name="Textbox" type="Control" parent="DisplaySettings"]
 margin_left = 20.0

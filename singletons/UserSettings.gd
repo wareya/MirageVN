@@ -5,6 +5,7 @@ var text_speed_max = 10.0
 var text_speed = 1.0
 var text_shadow = true
 var text_outline = true
+var text_copy_to_clipboard = false
 
 var audio_sfx_volume = EngineSettings.audio_sfx_default_volume
 var audio_bgm_volume = EngineSettings.audio_bgm_default_volume
@@ -43,6 +44,7 @@ func to_dict():
         text_speed = text_speed,
         text_shadow = text_shadow,
         text_outline = text_outline,
+        text_copy_to_clipboard = text_copy_to_clipboard,
         
         audio_sfx_volume = audio_sfx_volume,
         audio_bgm_volume = audio_bgm_volume,

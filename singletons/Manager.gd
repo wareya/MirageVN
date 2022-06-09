@@ -1941,6 +1941,8 @@ func textbox_set_bbcode(bbcode : String):
         Input.action_release("skip")
     
     backlog_add(bbcode, current_line_is_narration)
+    if UserSettings.text_copy_to_clipboard:
+        OS.set_clipboard(bbcode)
     
     #if do_logging:
     #    var logline = ""

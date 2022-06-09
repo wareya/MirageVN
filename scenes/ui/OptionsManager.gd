@@ -101,6 +101,7 @@ func set_controls_from_settings():
     $DisplaySettings/TextSpeed.value = (log(UserSettings.text_speed)/log(10)/2.0+0.5) * $DisplaySettings/WindowOpacity.max_value
     $DisplaySettings/TextOutline.pressed = UserSettings.text_outline
     $DisplaySettings/TextShadow.pressed = UserSettings.text_shadow
+    $DisplaySettings/ClipboardCopy.pressed = UserSettings.text_copy_to_clipboard
     
     $AudioSettings/BgMute.pressed = UserSettings.audio_muted_unfocused
     $AudioSettings/SFXVolume.value = $AudioSettings/SFXVolume.max_value * sqrt(Manager.db_to_volts(UserSettings.audio_sfx_volume)) * 4.0 / 5.0
@@ -205,6 +206,8 @@ func button_toggled(button_pressed : bool, button : BaseButton):
         UserSettings.text_outline = button_pressed
     elif button == $DisplaySettings/TextShadow:
         UserSettings.text_shadow = button_pressed
+    elif button == $DisplaySettings/ClipboardCopy:
+        UserSettings.text_copy_to_clipboard = button_pressed
     
     elif button == $AudioSettings/BgMute:
         UserSettings.audio_muted_unfocused = button_pressed
