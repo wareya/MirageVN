@@ -24,6 +24,8 @@ But all of the truly "difficult" VN-specific functionality is there.
 - Quicksave backups
 - Autosaves
 
+Because MirageVN is a base project, not a black box, it's very easy to disable or remove features that you don't want.
+
 Beware, though, that MirageVN is still experimental and immature, so a lot of creature comforts are missing. However, the difficult and fragile parts are all there.
 
 Useful features MirageVN does **NOT** currently have, and that you will need to build yourself if you need them:
