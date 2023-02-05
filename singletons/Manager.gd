@@ -1757,13 +1757,23 @@ class BacklogEntry:
     var icon : Texture
     var bbcode : String
     var is_narration : bool
-    static func build(_name : String, _icon : Texture, _bbcode : String, _is_narration : bool):
+    var load_line : int
+    static func build(_name : String, _icon : Texture, _bbcode : String, _is_narration : bool, _load_line : int):
         var ret = BacklogEntry.new()
         ret.name = _name
         ret.icon = _icon
         ret.bbcode = _bbcode
         ret.is_narration = _is_narration
+        ret.load_line = _load_line
         return ret
+    func same(other : BacklogEntry):
+        return (other != null
+            and load_line == other.load_line
+            and name == other.name
+            and bbcode == other.bbcode
+            and is_narration == other.is_narration
+            and icon == other.icon
+        )
 
 var backlog_entry_size = 128+8*2
 var block_scrollback = false
@@ -1837,6 +1847,7 @@ class BacklogTextbox extends Panel:
     var icon_size = 120.0
     var icon_height = 120.0
     var icon_margin = Vector2(0, 1)
+    
     func _build(entry : BacklogEntry):
         mouse_filter = Control.MOUSE_FILTER_IGNORE
         if entry.icon:
@@ -1924,7 +1935,7 @@ func make_dummy():
 onready var dummyA = make_dummy()
 
 var backlog = []
-func backlog_add(bbcode : String, is_narration : bool):
+func backlog_add(bbcode : String, is_narration : bool, LOAD_LINE : int):
     if hide_from_scrollback:
         return
     if LOAD_SKIP:
@@ -1932,19 +1943,25 @@ func backlog_add(bbcode : String, is_narration : bool):
     
     if len($Scrollback/List.get_children()) == 0:
         $Scrollback/List.add_child(make_dummy())
-    backlog.push_back(BacklogEntry.build($Textbox/Name.bbcode_text, $Textbox/Face.texture, bbcode, is_narration))
+    var new = BacklogEntry.build($Textbox/Name.bbcode_text, $Textbox/Face.texture, bbcode, is_narration, LOAD_LINE)
+    var added = false
+    if backlog.size() == 0 or !new.same(backlog.back()):
+        added = true
+        backlog.push_back(new)
     while backlog.size() > EngineSettings.backlog_max_size:
         backlog.pop_front()
-        var dead = $Scrollback/List.get_children()[1]
+        var dead = $Scrollback/List.get_children()[1] # FIXME: 1...? not 0?
         dead.queue_free()
         $Scrollback/List.remove_child(dead)
     
-    var new_entry = BacklogTextbox.build(backlog.back())
-    $Scrollback/List.add_child(new_entry)
-    scroll_backlog_to_end()
-    if dummyA.get_parent() == $Scrollback/List:
-        $Scrollback/List.remove_child(dummyA)
-    $Scrollback/List.add_child(dummyA)
+    if added:
+        var new_entry = BacklogTextbox.build(backlog.back())
+        $Scrollback/List.add_child(new_entry)
+        scroll_backlog_to_end()
+        # dummy used to help scrolling work properly
+        if dummyA.get_parent() == $Scrollback/List:
+            $Scrollback/List.remove_child(dummyA)
+        $Scrollback/List.add_child(dummyA)
 
 func pageflip_NVL():
     
@@ -1967,7 +1984,7 @@ func textbox_set_bbcode(bbcode : String):
         $Skip.pressed = false
         Input.action_release("skip")
     
-    backlog_add(bbcode, current_line_is_narration)
+    backlog_add(bbcode, current_line_is_narration, LOAD_LINE)
     if UserSettings.text_copy_to_clipboard:
         OS.set_clipboard(bbcode)
     

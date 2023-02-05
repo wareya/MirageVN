@@ -96,8 +96,9 @@ func cutscene():
     # series of dialogue statements with no changes to anything
     "Guide" > "First, a word of warning: MirageVN is very immature, so unless you're already experienced in game development, like, REAL game development, you will run into things you can't do."
     "Guide" > "MirageVN is less of a 'toolkit' to build inside of, and more of a 'base project' to flesh out."
-    "Guide" > "For example: all the code related to saving/loading is there, but it's currently only used for the 'Continue' button on the main menu, and quicksave/quickloading."
-    "Guide" > "If you want a real GUI for managing save data, you're gonna have to build it yourself, because I haven't gotten around to adding one yet."
+    #"Guide" > "For example: all the code related to saving/loading is there, but it's currently only used for the 'Continue' button on the main menu, and quicksave/quickloading."
+    #"Guide" > "If you want a real GUI for managing save data, you're gonna have to build it yourself, because I haven't gotten around to adding one yet."
+    "Guide" > "For example, I had to be forced to build a save data manager. Like, the GUI thing with the save tiles on it. There's a lot of other improtant things still left out."
     Manager.set_tachie(1, tachie_really, "center")
     yield(Manager, "tachie_finished")
     "Guide" > "Here be dragons. Bring a programmer with you. Etc."
