@@ -872,11 +872,13 @@ func _process(delta):
         if changing_room:
             $Buttons.visible = false
             $Skip.visible = false
-            
-    if !cutscene_paused and fade_progress_shadow != 0.0 and fade_progress_shadow != 1.0 and (
-        Input.is_action_just_pressed("m1") or
-        Input.is_action_just_pressed("ui_accept") or
-        Input.is_action_just_pressed("ui_down")
+    
+    # allow skipping even if the cutscene is not running if it's because of a scene transition
+    if Manager.changing_room and !cutscene_paused \
+        and fade_progress_shadow != 0.0 and fade_progress_shadow != 1.0 and (
+            Input.is_action_just_pressed("m1") or
+            Input.is_action_just_pressed("ui_accept") or
+            Input.is_action_just_pressed("ui_down")
         ):
         if !manually_hidden:# and (!textbox_visibility_intent or $Textbox.modulate.a != 1.0 or !$Textbox.visible):
             click_skip_intent = true
