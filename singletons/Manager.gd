@@ -102,6 +102,7 @@ func change_to(target_level : String, flat_fade : bool = false):
         changing_room_out = false
         yield(get_tree(), "idle_frame")
         
+        # pop stale input mode
         if transition_input_mode_to_pop != "":
             pop_input_mode(transition_input_mode_to_pop)
             transition_input_mode_to_pop = ""
@@ -865,6 +866,15 @@ func _process(delta):
         if changing_room:
             $Buttons.visible = false
             $Skip.visible = false
+            
+        if input_mode != "cutscene" and (
+            Input.is_action_just_pressed("m1") or
+            Input.is_action_just_pressed("ui_accept") or
+            Input.is_action_just_pressed("ui_down")
+            ):
+            if !manually_hidden and (!textbox_visibility_intent or $Textbox.modulate.a != 1.0 or !$Textbox.visible):
+                click_skip_intent = true
+    
     m1_pressed = false
 
 # Sets the background distortion configuration. There is a transition.
@@ -980,6 +990,7 @@ var already_processing = false
 var manually_hidden = false
 var cutscene_life = 0.0
 func process_cutscene(delta):
+    click_skip_intent = false
     skip_textbox_timer_this_frame = false
     var just_continued = false
     if input_mode != "cutscene":
@@ -1104,6 +1115,8 @@ func process_cutscene(delta):
             textbox_show()
             manually_hidden = false
             just_continued = true
+        elif !manually_hidden and (!textbox_visibility_intent or $Textbox.modulate.a != 1.0 or !$Textbox.visible):
+            click_skip_intent = true
     
     process_cutscene_timers(delta)
     
@@ -1447,17 +1460,15 @@ func do_general_skip():
         return true
     return false
 
+var click_skip_intent = false
+
 # Returns whether timers should be skipped this frame.
 # True if loading, holding the "skip" input, the skip button is pressed, or the user is
 # performing inputs that should interrupt timers (e.g. mashing the confirm button).
 func do_timer_skip():
     if do_general_skip():
         return true
-    if (!block_simulation() and
-        (   Input.is_action_just_pressed("ui_accept")
-         or Input.is_action_just_pressed("ui_down")
-         or Input.is_action_just_pressed("m1")
-        )):
+    if !block_simulation() and click_skip_intent:
         return true
     return false
 
@@ -1630,6 +1641,7 @@ var transition_input_mode_to_pop = ""
 func end_cutscene():
     if $Textbox.visible:
         textbox_hide()
+    # pop cutscene input mode when the transition to the next scene ends
     transition_input_mode_to_pop = "cutscene"
 
 var name_first_person_whitelist = ["Me"]

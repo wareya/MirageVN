@@ -1,4 +1,4 @@
-[gd_scene load_steps=51 format=2]
+[gd_scene load_steps=52 format=2]
 
 [ext_resource path="res://singletons/Manager.gd" type="Script" id=1]
 [ext_resource path="res://singletons/Background.gd" type="Script" id=2]
@@ -9,6 +9,7 @@
 [ext_resource path="res://singletons/Tachie.tscn" type="PackedScene" id=7]
 [ext_resource path="res://art/ui/textbox4.png" type="Texture" id=8]
 [ext_resource path="res://singletons/TachieShader.tres" type="Material" id=9]
+[ext_resource path="res://art/cutscene/bg/dusk bg.jpg" type="Texture" id=10]
 [ext_resource path="res://art/ui/transparent.png" type="Texture" id=13]
 [ext_resource path="res://art/transition/center.png" type="Texture" id=14]
 [ext_resource path="res://art/ui/textbox2.png" type="Texture" id=15]
@@ -127,36 +128,6 @@ extra_spacing_bottom = 1
 font_data = ExtResource( 20 )
 fallback/0 = ExtResource( 5 )
 
-[sub_resource type="AtlasTexture" id=34]
-flags = 13
-atlas = ExtResource( 3 )
-region = Rect2( 144, 0, 48, 48 )
-
-[sub_resource type="AtlasTexture" id=7]
-flags = 13
-atlas = ExtResource( 3 )
-region = Rect2( 192, 0, 48, 48 )
-
-[sub_resource type="AtlasTexture" id=8]
-flags = 13
-atlas = ExtResource( 3 )
-region = Rect2( 240, 0, 48, 48 )
-
-[sub_resource type="AtlasTexture" id=3]
-flags = 13
-atlas = ExtResource( 3 )
-region = Rect2( 0, 0, 48, 48 )
-
-[sub_resource type="AtlasTexture" id=4]
-flags = 13
-atlas = ExtResource( 3 )
-region = Rect2( 48, 0, 48, 48 )
-
-[sub_resource type="AtlasTexture" id=5]
-flags = 13
-atlas = ExtResource( 3 )
-region = Rect2( 96, 0, 48, 48 )
-
 [sub_resource type="AtlasTexture" id=14]
 flags = 13
 atlas = ExtResource( 16 )
@@ -187,16 +158,46 @@ flags = 13
 atlas = ExtResource( 16 )
 region = Rect2( 144, 0, 48, 48 )
 
+[sub_resource type="AtlasTexture" id=34]
+flags = 13
+atlas = ExtResource( 3 )
+region = Rect2( 144, 0, 48, 48 )
+
+[sub_resource type="AtlasTexture" id=7]
+flags = 13
+atlas = ExtResource( 3 )
+region = Rect2( 192, 0, 48, 48 )
+
+[sub_resource type="AtlasTexture" id=8]
+flags = 13
+atlas = ExtResource( 3 )
+region = Rect2( 240, 0, 48, 48 )
+
+[sub_resource type="AtlasTexture" id=3]
+flags = 13
+atlas = ExtResource( 3 )
+region = Rect2( 0, 0, 48, 48 )
+
+[sub_resource type="AtlasTexture" id=4]
+flags = 13
+atlas = ExtResource( 3 )
+region = Rect2( 48, 0, 48, 48 )
+
+[sub_resource type="AtlasTexture" id=5]
+flags = 13
+atlas = ExtResource( 3 )
+region = Rect2( 96, 0, 48, 48 )
+
 [sub_resource type="SpriteFrames" id=15]
 animations = [ {
-"frames": [ SubResource( 34 ), SubResource( 34 ), SubResource( 7 ), SubResource( 8 ), SubResource( 3 ), SubResource( 4 ), SubResource( 5 ), SubResource( 34 ), SubResource( 34 ), SubResource( 34 ), SubResource( 34 ), SubResource( 34 ) ],
-"loop": true,
-"name": "next",
-"speed": 15.0
-}, {
 "frames": [ SubResource( 14 ), SubResource( 14 ), SubResource( 9 ), SubResource( 10 ), SubResource( 11 ), SubResource( 12 ), SubResource( 13 ), SubResource( 9 ), SubResource( 14 ), SubResource( 14 ), SubResource( 14 ), SubResource( 14 ) ],
 "loop": true,
 "name": "done",
+"speed": 15.0
+}, {
+"frames": [ SubResource( 34 ), SubResource( 34 ), SubResource( 7 ), SubResource( 8 ), SubResource( 3 ), SubResource( 4 ), SubResource( 5 ), SubResource( 34 ), SubResource( 34 ), SubResource( 34 ), SubResource( 34 ), SubResource( 34 ) ],
+"loop": true,
+"name": "next",
 "speed": 15.0
 } ]
 
@@ -270,9 +271,9 @@ fade_invert = true
 normal_strength = Vector2( 0.038, 0.095 )
 normal_scale = Vector2( 0.241, 0.308 )
 normal_timescale = Vector2( 0.008, 0 )
-normal_offset = Vector2( 0.789217, 0.26384 )
-texture2 = ExtResource( 25 )
-fadeamount = 0.882
+normal_offset = Vector2( 0.198281, 0.26384 )
+texture2 = ExtResource( 10 )
+fadeamount = 0.684
 
 [node name="Tachie5" parent="Scene" instance=ExtResource( 7 )]
 visible = false
@@ -395,7 +396,7 @@ margin_bottom = -121.0
 position = Vector2( 756, 110 )
 frames = SubResource( 15 )
 animation = "done"
-frame = 10
+frame = 8
 playing = true
 
 [node name="Name" type="RichTextLabel" parent="Textbox"]
@@ -642,6 +643,8 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 mouse_filter = 2
 texture = ExtResource( 14 )
+expand = true
+stretch_mode = 7
 script = ExtResource( 19 )
 
 [node name="Choices" type="VBoxContainer" parent="."]
