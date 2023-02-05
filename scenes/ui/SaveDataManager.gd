@@ -20,8 +20,8 @@ func update_latest_saves():
         locked_saves = sysdata["locked_saves"].duplicate()
     if "latest_page" in sysdata:
         latest_page  = int(sysdata["latest_page"])
-    print("after update")
-    print(locked_saves)
+    #print("after update")
+    #print(locked_saves)
 
 var pageflip_sound = preload("res://sfx/paper bag.wav")
 
@@ -264,7 +264,7 @@ func panel_lock_changed(locked : bool, panel):
     elif !locked and locked_saves.find(panel.fname) >= 0:
         locked_saves.erase(panel.fname)
     
-    print(locked_saves)
+    #print(locked_saves)
     
     sysdata["locked_saves"] = locked_saves
     Manager.save_sysdata(sysdata)

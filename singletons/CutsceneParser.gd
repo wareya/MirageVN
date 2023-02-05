@@ -245,10 +245,13 @@ static func parsify(script : GDScript):
     while _i < new_code.size():
         var data = parse_yield(new_code[_i])
         if data:
+            # variable declaration guard
             var a = "%sif true:" % [data.indent]
+            # variables with random garbage in them to reduce the chance of collisions
             var b = "%s    var ___yield_expr_kfau234uf2eud_a = %s" % [data.indent, data.obj]
             var c = "%s    var ___yield_expr_kfau234uf2eud_b = %s" % [data.indent, data.sig]
-            var d = "%s    if !Manager.LOAD_SKIP: print('yielding for... ', \"\"\" %s, %s \"\"\")" % [data.indent, data.obj, data.sig]
+            #var d = "%s    if !Manager.LOAD_SKIP: print('yielding for... ', \"\"\" %s, %s \"\"\")" % [data.indent, data.obj, data.sig]
+            var d = "%s    " % [data.indent]
             var e = "%s    if !Manager.LOAD_SKIP: %syield(___yield_expr_kfau234uf2eud_a, ___yield_expr_kfau234uf2eud_b)" % [data.indent, data.prefix]
             new_code[_i] = a
             _i += 1

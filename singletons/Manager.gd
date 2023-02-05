@@ -987,7 +987,7 @@ func _input(event : InputEvent):
     if event.is_action_pressed("ui_accept") and !input_disabled and !block_input_focus() and !block_simulation() and $Buttons.visible:
         var focus_holder = $Textbox.get_focus_owner()
         if focus_holder and is_a_parent_of(focus_holder) and focus_holder is BaseButton:
-            print("using and consuming")
+            #print("using and consuming")
             focus_holder.emit_signal("pressed")
             get_tree().set_input_as_handled()
 
@@ -1196,7 +1196,7 @@ func process_cutscene(delta):
             $Textbox/NextAnimHolder/NextAnim.hide()
         
         if autocontinue:
-            print("waking up cutscene")
+            #print("waking up cutscene")
             admit_read_line()
             emit_signal("cutscene_continue")
             $Textbox/NextAnimHolder/NextAnim.hide()
@@ -1593,9 +1593,9 @@ func sfx(sfx, pos = Vector2(), channel : String = "SFX", delay : float = 0.0):
     if LOAD_SKIP:
         return
     if delay > 0.0:
-        print("!!!!!9314391438 yielding")
+        #print("!!!!!9314391438 yielding")
         yield(cutscene_timer(delay), "timeout")
-        print("!!!!!9314391438 woke up from yield")
+        #print("!!!!!9314391438 woke up from yield")
     return EmitterFactory.emit(null, sfx, pos, channel)
 
 # Plays background ambiance. No associated signal.
@@ -1646,7 +1646,8 @@ func call_cutscene(entity : Node, method : String):
         fade_color = Color.black
         change_to(next_scene)
     else:
-        print("!!!! NOWHERE TO GO TO")
+        #print("!!!! WAKING UP FROM CUTSCENE TRANSITION BUT NOWHERE TO GO TO")
+        pass
 
 var next_scene = null
 var transition_input_mode_to_pop = ""
@@ -1851,9 +1852,11 @@ class BacklogTextbox extends Panel:
             icon_holder.add_child(icon)
             add_child(icon_holder)
             icon_holder.rect_size = Vector2(icon_size, icon_size)
-            print(tex_size)
-            print(icon_height)
-            print(max(0.0, (icon_height - icon_size) / 2.0))
+            
+            #print(tex_size)
+            #print(icon_height)
+            #print(max(0.0, (icon_height - icon_size) / 2.0))
+            
             icon.rect_size = Vector2(icon_size, icon_height)
             icon.rect_position.y = max(0.0, (icon_height - icon_size) / 2.0)
         if entry.name != "":
@@ -2096,16 +2099,17 @@ class Effect extends TextureRect:
         if frame >= total_count or Manager.do_timer_skip():
             modulate.a = 0
             queue_free()
-            print("normal effect finishing")
+            #print("normal effect finishing")
             if Manager.do_timer_skip():
-                print("note: forced skip")
+                #print("note: forced skip")
+                pass
             emit_signal("finished")
 
 class DummyEffect extends Node:
     signal finished
     func _process(_delta):
         queue_free()
-        print("dummy effect finishing")
+        #print("dummy effect finishing")
         emit_signal("finished")
 
 # Low-level animated overlay effect spawner.

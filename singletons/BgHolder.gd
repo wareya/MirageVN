@@ -18,7 +18,7 @@ func change_bg(newbg : Texture, instant : bool = false):
     show()
     if newbg == null:
         if instant:
-            print("--------BG is instant and null?????")
+            #print("--------BG is instant and null?????")
             texture = null
             hide()
             modulate.a = 1.0
@@ -28,16 +28,16 @@ func change_bg(newbg : Texture, instant : bool = false):
             yield(get_tree(), "idle_frame")
             emit_signal("bg_transition_done")
         else:
-            print("--------BG is null, treating as null")
+            #print("--------BG is null, treating as null")
             $Fader.play("FadeOut")
     elif !instant:
-        print("--------BG is NOT null")
+        #print("--------BG is NOT null")
         $BgHolder2.texture = newbg
         $BgHolder2.show()
         $BgHolder2.modulate.a = 0.0
         $Fader.play("Fade")
     else:
-        print("--------BG is instant?????")
+        #print("--------BG is instant?????")
         texture = newbg
         modulate.a = 1.0
         yield(get_tree(), "idle_frame")

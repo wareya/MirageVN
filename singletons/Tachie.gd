@@ -276,7 +276,7 @@ signal offset_finished
 var offset_nonce = 0
 var offset_time = EngineSettings.tachie_anim_time
 func set_offset(arg_offset : Vector2):
-    print("entering set_offset")
+    #print("entering set_offset")
     offset_nonce += 1
     var start_nonce = offset_nonce
     
@@ -311,7 +311,7 @@ func set_offset(arg_offset : Vector2):
         progress += get_process_delta_time()/offset_time
         progress = clamp(progress, 0.0, 1.0)
         offset = lerp(old_offset, offset_target, smoothstep(0.0, 1.0, progress))
-        print(offset_target)
+        #print(offset_target)
     
     emit_signal("offset_finished")
 

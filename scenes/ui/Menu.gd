@@ -75,7 +75,7 @@ func new_game():
         return
     block = true
     EmitterFactory.emit(null, "startgame", Vector2(), "OtherSFX")
-    print("!!!!!!!!new game")
+    #print("!!!!!!!!new game")
     
     Manager.play_bgm(null, 3.0)
     yield(get_tree(), "idle_frame")
