@@ -277,12 +277,14 @@ func attempt_panel_delete(panel):
         panel_delete(panel)
         return
 
+    #OS.move_to_trash()
+
     var helper = Manager.PopupHelper.new(
         self,
         "panel_delete",
         "Confirm Delete",
-        ("Delete save file?\nIf possible, save data will be sent to your OS's trash, but deleted with no backup if sending to trash is not possible."
-         if "move_to_trash" in OS else
+        ("Delete save file?\nIf possible, save data will be sent to trash/recycling bin, but deleted with no backup if sending to trash is not possible."
+         if OS.has_method("move_to_trash") else
          "Delete save file?\nSave data will be permanently deleted with no backup."
         ),
         [panel]
@@ -296,8 +298,9 @@ func panel_delete(panel):
     
     EmitterFactory.emit(null, preload("res://sfx/savedelete.wav"))
     
-    if "move_to_trash" in OS:
-        OS.move_to_trash(panel.fname)
+    if OS.has_method("move_to_trash"):
+        var global_path = ProjectSettings.globalize_path(panel.fname)
+        OS.move_to_trash(global_path)
     else:
         var dir = Directory.new()
         dir.remove(panel.fname)
