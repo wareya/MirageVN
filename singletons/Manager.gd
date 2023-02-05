@@ -2215,13 +2215,15 @@ func attempt_quickload():
         self,
         "quickload",
         "Confirm Quickload",
-        "Quickload?\nUnsaved progrPopupHelperess will be lost."
+        "Quickload?\nUnsaved progress will be lost."
     )
     add_child(helper)
     helper.invoke()
 
 func can_autosave():
-    return (input_mode == "cutscene" or input_mode_stack.find("cutscene") >= 0) and !block_saving and !is_splash
+    if get_tree().get_nodes_in_group("MainMenu").size() > 0 or is_splash:
+        return false
+    return (input_mode == "cutscene" or input_mode_stack.find("cutscene") >= 0) and !block_saving
 
 func exit():
     admit_read_line(false, true)
