@@ -465,7 +465,9 @@ func _process(delta):
     if $Background.get_focus_owner() == null and !Manager.block_input_focus():
         $CategoryButtons/ScreenButton.grab_focus()
     
-    if Input.is_action_just_pressed("ui_right") and $CategoryButtons.is_a_parent_of($CategoryButtons.get_focus_owner()):
+    var focus_owner = $CategoryButtons.get_focus_owner()
+    
+    if Input.is_action_just_pressed("ui_right") and focus_owner and $CategoryButtons.is_a_parent_of(focus_owner):
         for pair in category_pairs:
             if !pair[1].has_focus():
                 continue

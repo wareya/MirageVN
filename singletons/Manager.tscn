@@ -271,7 +271,7 @@ fade_invert = true
 normal_strength = Vector2( 0.038, 0.095 )
 normal_scale = Vector2( 0.241, 0.308 )
 normal_timescale = Vector2( 0.008, 0 )
-normal_offset = Vector2( 0.198281, 0.26384 )
+normal_offset = Vector2( 0.178728, 0.26384 )
 texture2 = ExtResource( 10 )
 fadeamount = 0.684
 
@@ -396,7 +396,6 @@ margin_bottom = -121.0
 position = Vector2( 756, 110 )
 frames = SubResource( 15 )
 animation = "done"
-frame = 8
 playing = true
 
 [node name="Name" type="RichTextLabel" parent="Textbox"]
@@ -679,3 +678,7 @@ __meta__ = {
 
 [node name="PopupTarget" type="CanvasLayer" parent="."]
 layer = 128
+
+[node name="DebugText2" type="Label" parent="."]
+margin_right = 40.0
+margin_bottom = 24.0

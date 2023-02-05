@@ -281,7 +281,7 @@ func attempt_panel_delete(panel):
         self,
         "panel_delete",
         "Confirm Delete",
-        ("Delete save file?\nIf possible, save data will be sent to your OS's trash, but deleted with no backup if not."
+        ("Delete save file?\nIf possible, save data will be sent to your OS's trash, but deleted with no backup if sending to trash is not possible."
          if "move_to_trash" in OS else
          "Delete save file?\nSave data will be permanently deleted with no backup."
         ),

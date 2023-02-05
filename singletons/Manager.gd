@@ -23,10 +23,12 @@ var fade_color : Color = Color.white
 signal fade_completed
 var fading = false
 var fade_nonce = 0
+var fade_progress_shadow = 0.0
 func do_fade_anim(invert = false, fadein = false, fade_time = EngineSettings.scene_fade_time):
     # Use a coroutine to handle the fade overlay. Use a nonce to exit out early if necessary.
     fading = true
     var progress = 0.0
+    fade_progress_shadow = progress
     fade_nonce += 1
     var start_nonce = fade_nonce
     while progress < 1.0:
@@ -38,6 +40,9 @@ func do_fade_anim(invert = false, fadein = false, fade_time = EngineSettings.sce
         
         progress += get_process_delta_time()/fade_time
         if do_timer_skip(): progress = 1.0
+        progress = clamp(progress, 0.0, 1.0)
+        
+        fade_progress_shadow = progress
         
         $FadeLayer/ScreenFader.invert = invert
         $FadeLayer/ScreenFader.contrast = fade_contrast
@@ -854,6 +859,7 @@ func _process(delta):
         skip_pressed_during_read_text = false
     
     process_cutscene(delta)
+    
     if !input_disabled:
         $Buttons.visible = $Textbox.visible
         $Buttons.modulate = $Textbox.modulate
@@ -867,13 +873,15 @@ func _process(delta):
             $Buttons.visible = false
             $Skip.visible = false
             
-        if input_mode != "cutscene" and (
-            Input.is_action_just_pressed("m1") or
-            Input.is_action_just_pressed("ui_accept") or
-            Input.is_action_just_pressed("ui_down")
-            ):
-            if !manually_hidden and (!textbox_visibility_intent or $Textbox.modulate.a != 1.0 or !$Textbox.visible):
-                click_skip_intent = true
+    if !cutscene_paused and fade_progress_shadow != 0.0 and fade_progress_shadow != 1.0 and (
+        Input.is_action_just_pressed("m1") or
+        Input.is_action_just_pressed("ui_accept") or
+        Input.is_action_just_pressed("ui_down")
+        ):
+        if !manually_hidden:# and (!textbox_visibility_intent or $Textbox.modulate.a != 1.0 or !$Textbox.visible):
+            click_skip_intent = true
+    
+    #$DebugText2.text = str(fade_progress_shadow)
     
     m1_pressed = false
 
@@ -1469,6 +1477,8 @@ func do_timer_skip():
     if do_general_skip():
         return true
     if !block_simulation() and click_skip_intent:
+        return true
+    if fade_progress_shadow != 0.0 and fade_progress_shadow != 1.0 and click_skip_intent:
         return true
     return false
 
