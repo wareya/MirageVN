@@ -51,7 +51,7 @@ Known issues:
 
 [Download the repository](https://github.com/wareya/MirageVN/archive/refs/heads/main.zip) into a new folder/directory somewhere on your system.
 
-[Download the newest version of Godot 3](https://godotengine.org/download) on a computer and place it somewhere useful.
+[Download the newest version of Godot 3](https://godotengine.org/download/3.x/windows/) on a computer and place it somewhere useful.
 
 If Godot 4 is released at the time you're reading this, *don't use it, MirageVN is not compatible with Godot 4 yet*. Use Godot 3. Godot 3.4.4 is an example of a version of Godot 3.
 
